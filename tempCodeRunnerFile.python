@@ -1,0 +1,61 @@
+while True:
+    a=int(input("Enter any number:",))
+    b=int(input("Enter 2nd no number:",))
+    print("for Addition press:1 \n Subtraction press:2 \n Multiplication press:3 \n Divide press:4 \n remainder press:5")
+    operation=int(input("write here:",))
+    if operation==1:
+       Sum=a+b
+       print("The sum is:", Sum)
+       print("for further calculation type yes,if not then say no")
+       value=input("tell me your response:").lower()
+       if value!='no':
+             element=int(input("tell me another element:"))
+             print(" Addition:1,Subtraction:2,Multiplication:3,Divide:4,remainder:5")
+             operation_sum=int(input("write here:",))
+             if operation_sum==1:
+                Sum_1=Sum+element
+                print("The sum is:", Sum_1)
+             elif operation_sum==2:
+                sub_1=Sum-element
+                print("The difference is:", sub_1)
+             elif operation_sum==3:
+                mult_1=Sum*element
+                print("The product is:", mult_1)
+             elif operation_sum==4:
+               div_1=Sum/element
+               print("The quotient is:", div_1)
+             elif operation_sum==5:
+               if element!=0:
+                  rem_1=sum%element
+                  print("The remainder is:", rem_1)   
+               else:
+                 print("zero can't give remainder")  
+             else:
+               print("number is invalid") 
+       else:
+            print(" okay ,👍") 
+            break                    
+    elif operation==2:
+        sub=a-b
+        print("The difference is:", sub)
+    elif operation==3:
+        mult=a*b
+        print("The product is:", mult)
+    elif operation==4:
+        div=a/b
+        print("The quotient is:", div)
+    elif operation==5:
+        if b !=0:
+            rem=a%b
+            print("The remainder is:", rem)   
+        else:
+            print("zero can't give remainder")  
+    else:
+       print("number is invalid")            
+    print("if you want to continue  then you can type yes")
+    a=input("write here:")
+    if(a!='yes'):
+        break
+print(" the calculator is stopped......")
+
+
