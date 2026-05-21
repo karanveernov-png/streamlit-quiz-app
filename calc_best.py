@@ -240,35 +240,3 @@ if st.button("🚀 Calculate Now"):
 
     except:
         st.error("❌ Invalid Input Format")
-
-# ---------------- FEATURES ----------------
-st.markdown("<br>", unsafe_allow_html=True)
-
-st.markdown("## ✨ Features")
-
-c1, c2, c3 = st.columns(3)
-
-with c1:
-    st.markdown(
-        '<div class="feature">⚡ Fast Calculation</div>',
-        unsafe_allow_html=True
-    )
-
-with c2:
-    st.markdown(
-        '<div class="feature">🎨 Glassmorphism UI</div>',
-        unsafe_allow_html=True
-    )
-
-with c3:
-    st.markdown(
-        '<div class="feature">➕ Multi Number Support</div>',
-        unsafe_allow_html=True
-    )
-
-# ---------------- GLASS BOX END ----------------
-st.markdown('</div>', unsafe_allow_html=True)
-
-# ---------------- FOOTER ----------------
-st.markdown("<br><br>", unsafe_allow_html=True)
-st.caption("Made with ❤️ using Streamlit")
