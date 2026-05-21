@@ -15,6 +15,7 @@ st.set_page_config(
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap');
+
 /* ─── Base ─────────────────────────────────────────────────────────── */
 #MainMenu, footer, header { visibility: hidden; }
 * { box-sizing: border-box; }
@@ -27,6 +28,7 @@ html, body, .stApp {
     max-width: 740px !important;
     padding: 2.5rem 1.5rem 5rem !important;
 }
+
 /* ─── Orbs ──────────────────────────────────────────────────────────── */
 .orb-a {
     position: fixed; width: 600px; height: 600px;
@@ -46,6 +48,7 @@ html, body, .stApp {
     0%   { transform: translateY(0px) scale(1); }
     100% { transform: translateY(30px) scale(1.06); }
 }
+
 /* ─── Brand ─────────────────────────────────────────────────────────── */
 .brand-wrap { text-align: center; margin-bottom: 4px; }
 .brand-logo {
@@ -61,6 +64,7 @@ html, body, .stApp {
     text-transform: uppercase; color: #2d3748; font-weight: 600;
     margin-bottom: 28px;
 }
+
 /* ─── Step bar ───────────────────────────────────────────────────────── */
 .stepbar {
     display: flex; align-items: center; justify-content: center;
@@ -85,6 +89,7 @@ html, body, .stApp {
 .step-label.idle  { color: #1e2535; }
 .step-line { flex: 1; height: 2px; background: rgba(255,255,255,.07); margin-top: -22px; }
 .step-line.done { background: linear-gradient(90deg,#6366f1,#a855f7); }
+
 /* ─── Login card wrapper (Streamlit-safe) ──────────────────────────── */
 .login-header {
     background: linear-gradient(145deg, rgba(22,30,50,.95), rgba(10,15,28,.98));
@@ -128,6 +133,7 @@ html, body, .stApp {
 .trust-note {
     text-align: center; color: #1e2a3e; font-size: 12px; margin-top: 6px;
 }
+
 /* ─── Inputs ─────────────────────────────────────────────────────────── */
 div[data-testid="stTextInput"] label,
 div[data-testid="stPasswordInput"] label {
@@ -151,6 +157,7 @@ div[data-testid="stPasswordInput"] input:focus {
     box-shadow: 0 0 0 3px rgba(99,102,241,.13) !important;
     background: rgba(99,102,241,.04) !important;
 }
+
 /* ─── Buttons ─────────────────────────────────────────────────────────── */
 div[data-testid="stButton"] > button {
     width: 100%;
@@ -168,6 +175,7 @@ div[data-testid="stButton"] > button:hover {
     transform: translateY(-2px);
 }
 div[data-testid="stButton"] > button:active { transform: translateY(0); }
+
 /* Ghost button (secondary) */
 .ghost-btn div[data-testid="stButton"] > button {
     background: rgba(255,255,255,.05) !important;
@@ -179,6 +187,7 @@ div[data-testid="stButton"] > button:active { transform: translateY(0); }
     background: rgba(255,255,255,.09) !important;
     transform: none !important; box-shadow: none !important;
 }
+
 /* ─── Subject cards ───────────────────────────────────────────────────── */
 .subj-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 18px 0; }
 .subj-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
@@ -206,6 +215,7 @@ div[data-testid="stButton"] > button:active { transform: translateY(0); }
     font-weight: 800; color: #e2e8f0; margin-bottom: 4px;
 }
 .s-desc { font-size: 11px; color: #3d5070; font-weight: 500; }
+
 /* ─── User badge ────────────────────────────────────────────────────── */
 .ubadge {
     display: flex; align-items: center; gap: 12px;
@@ -222,9 +232,11 @@ div[data-testid="stButton"] > button:active { transform: translateY(0); }
 }
 .uname { font-weight: 600; font-size: 14px; color: #dde3f0; }
 .uemail { font-size: 12px; color: #2d3e5a; }
+
 /* ─── Progress bar ──────────────────────────────────────────────────── */
 .stProgress > div > div { background: rgba(255,255,255,.05) !important; border-radius: 99px !important; height: 5px !important; }
 .stProgress > div > div > div > div { background: linear-gradient(90deg,#6366f1,#a855f7,#ec4899) !important; border-radius: 99px !important; }
+
 /* ─── Timer ──────────────────────────────────────────────────────────── */
 .tmr {
     border-radius: 14px; padding: 11px 20px;
@@ -241,6 +253,7 @@ div[data-testid="stButton"] > button:active { transform: translateY(0); }
     from { box-shadow: 0 0 0 0 rgba(239,68,68,.0); }
     to   { box-shadow: 0 0 18px 2px rgba(239,68,68,.22); }
 }
+
 /* ─── Question card ─────────────────────────────────────────────────── */
 .qcard {
     background: linear-gradient(155deg, rgba(18,26,48,.95), rgba(8,12,22,.98));
@@ -263,6 +276,7 @@ div[data-testid="stButton"] > button:active { transform: translateY(0); }
     font-family: 'Syne', sans-serif; font-size: 20px;
     font-weight: 700; color: #f0f4ff; line-height: 1.5;
 }
+
 /* ─── Radio options ──────────────────────────────────────────────────── */
 div[data-testid="stRadio"] > label { display: none; }
 div[data-testid="stRadio"] > div { gap: 10px !important; flex-direction: column; }
@@ -283,11 +297,13 @@ div[data-testid="stRadio"] > div > label[data-checked="true"] {
     border-color: rgba(99,102,241,.7) !important;
     color: #a5b4fc !important;
 }
+
 /* ─── Score pill ───────────────────────────────────────────────────── */
 .spill {
     text-align: right; color: #7c3aed; font-family: 'Syne', sans-serif;
     font-weight: 800; font-size: 15px; padding-top: 6px; letter-spacing: -.3px;
 }
+
 /* ─── Subject pill ─────────────────────────────────────────────────── */
 .subj-pill {
     display: inline-block;
@@ -297,6 +313,7 @@ div[data-testid="stRadio"] > div > label[data-checked="true"] {
     letter-spacing: 1.5px; text-transform: uppercase;
     padding: 5px 16px; border-radius: 99px; margin-bottom: 12px;
 }
+
 /* ─── Metrics ───────────────────────────────────────────────────────── */
 div[data-testid="stMetric"] {
     background: rgba(255,255,255,.03);
@@ -311,6 +328,7 @@ div[data-testid="stMetric"] div[data-testid="stMetricValue"] {
     font-family: 'Syne', sans-serif;
     font-size: 28px !important; font-weight: 900 !important; color: #f0f4ff !important;
 }
+
 /* ─── Expander ─────────────────────────────────────────────────────── */
 details {
     background: rgba(255,255,255,.02) !important;
@@ -321,12 +339,14 @@ details summary {
     color: #4a5878 !important; font-weight: 600 !important;
     padding: 12px 16px !important; font-size: 14px !important;
 }
+
 /* ─── Mistake cards ─────────────────────────────────────────────────── */
 .mk { background:rgba(239,68,68,.07); border:1px solid rgba(239,68,68,.22);
     border-radius:12px; padding:14px 18px; margin:8px 0; }
 .mk-q  { color:#64748b; font-size:13px; margin-bottom:5px; line-height:1.5; }
 .mk-u  { color:#fca5a5; font-size:13px; margin-bottom:2px; }
 .mk-c  { color:#86efac; font-size:13px; font-weight:600; }
+
 /* ─── Result hero ───────────────────────────────────────────────────── */
 .res-hero { text-align:center; padding:28px 0 12px; }
 .res-emoji { font-size:72px; line-height:1; margin-bottom:10px; }
@@ -337,6 +357,7 @@ details summary {
     background:linear-gradient(90deg,transparent,rgba(99,102,241,.35),transparent);
     margin:26px 0;
 }
+
 /* ─── Comprehension box ─────────────────────────────────────────────── */
 .comp-box {
     background: rgba(99,102,241,.06);
@@ -347,6 +368,7 @@ details summary {
     font-size: 14px; line-height: 1.8; color: #8899b8;
     font-style: italic;
 }
+
 /* ─── Alerts ────────────────────────────────────────────────────────── */
 div[data-testid="stAlert"] { border-radius: 12px !important; }
 </style>
@@ -486,24 +508,28 @@ QUESTION_BANK = {
     },
 }
 SUBJECTS      = list(QUESTION_BANK.keys())
-TIMER_SECONDS = 30  
+TIMER_SECONDS = 30  # Changed from 12 to 30 seconds
 
 # ══════════════════════════════════════════════════════════════════════════════
 # HELPERS
 # ══════════════════════════════════════════════════════════════════════════════
 def valid_email(e):
     return bool(re.match(r"^[\w\.\+\-]+@[\w\-]+\.[a-zA-Z]{2,}$", e.strip()))
+
 def valid_pw(p):
     return len(p) >= 6
+
 def initials(email):
     n = email.split("@")[0]
     parts = re.split(r"[.\-_]", n)
     return "".join(p[0].upper() for p in parts if p)[:2] or "U"
+
 def full_reset():
     for k in list(st.session_state.keys()):
         del st.session_state[k]
+
 def quiz_reset():
-    for k in ["question_index","score","wrong_answers","start_time","feedback"]:
+    for k in ["question_index","score","wrong_answers","start_time"]:
         st.session_state.pop(k, None)
     for k in [k for k in st.session_state if isinstance(k,str) and k.startswith("q_")]:
         del st.session_state[k]
@@ -512,6 +538,7 @@ def quiz_reset():
 def render_brand():
     st.markdown('<div class="brand-wrap"><span class="brand-logo">BrainBlitz</span></div>', unsafe_allow_html=True)
     st.markdown('<div class="brand-tag">Personalised Knowledge Challenge</div>', unsafe_allow_html=True)
+
 def render_steps(current):
     labels = ["Login","Subject","Quiz","Result"]
     icons  = ["🔐","📚","⚡","🏆"]
@@ -524,6 +551,7 @@ def render_steps(current):
             html += f'<div class="step-line {lc}"></div>'
     html += '</div>'
     st.markdown(html, unsafe_allow_html=True)
+
 def render_badge():
     email = st.session_state.get("email","")
     av    = initials(email)
@@ -549,6 +577,8 @@ if "page" not in st.session_state:
 if st.session_state.page == "login":
     render_brand()
     render_steps(0)
+    
+    # ── Hero banner (replaces the empty blue bar) ────────────────────────────
     st.markdown("""
     <div style="
         background: linear-gradient(135deg, rgba(99,102,241,.15) 0%, rgba(168,85,247,.12) 50%, rgba(236,72,153,.10) 100%);
@@ -572,6 +602,8 @@ if st.session_state.page == "login":
         </div>
     </div>
     """, unsafe_allow_html=True)
+    
+    # ── Card top ─────────────────────────────────────────────────────────────
     st.markdown("""
     <div class="login-header">
         <div class="section-chip">🔐 Sign In</div>
@@ -579,14 +611,21 @@ if st.session_state.page == "login":
         <div class="login-sub">Enter your email and password to begin your personalised quiz journey.</div>
     </div>
     """, unsafe_allow_html=True)
+    
+    # ── Streamlit inputs (must be outside html divs) ─────────────────────────
     with st.container():
+        st.markdown('<div style="padding: 0 0 0 0;">', unsafe_allow_html=True)
         email    = st.text_input("Email Address", placeholder="yourname@example.com", key="li_email")
         password = st.text_input("Password", type="password", placeholder="Minimum 6 characters", key="li_pw")
+        st.markdown("</div>", unsafe_allow_html=True)
+        
+    # ── Card bottom ───────────────────────────────────────────────────────────
     st.markdown("""
     <div class="login-footer">
         <div class="divider-line"></div>
     </div>
     """, unsafe_allow_html=True)
+    
     if st.button("Continue to Subject →", use_container_width=True):
         e = email.strip()
         if not e or not password:
@@ -599,6 +638,7 @@ if st.session_state.page == "login":
             st.session_state.email = e
             st.session_state.page  = "subject"
             st.rerun()
+            
     st.markdown("""
     <div class="trust-note" style="margin-top:14px;">
         🛡️ Credentials stay in your browser session only — never stored anywhere.
@@ -624,10 +664,14 @@ elif st.session_state.page == "subject":
         with a <strong style="color:#f59e0b;">30-second countdown</strong> per question.
     </div>
     """, unsafe_allow_html=True)
+    
     chosen = st.session_state.get("subject_pick", None)
+    
+    # 3-column + 2-column grid
     row1 = st.columns(3)
     row2 = st.columns(2)
     grid = list(zip([*row1, *row2], SUBJECTS))
+    
     for col, subj in grid:
         info   = QUESTION_BANK[subj]
         sel_c  = "sel" if chosen == subj else ""
@@ -642,6 +686,7 @@ elif st.session_state.page == "subject":
             if st.button(f"{'✓ ' if chosen==subj else ''}{subj}", key=f"pick_{subj}", use_container_width=True):
                 st.session_state.subject_pick = subj
                 st.rerun()
+                
     st.markdown("<br>", unsafe_allow_html=True)
     if chosen:
         info = QUESTION_BANK[chosen]
@@ -656,6 +701,7 @@ elif st.session_state.page == "subject":
             st.session_state.start_time     = time.time()
             st.session_state.page           = "quiz"
             st.rerun()
+            
     st.markdown("<br>", unsafe_allow_html=True)
     with st.container():
         st.markdown('<div class="ghost-btn">', unsafe_allow_html=True)
@@ -665,7 +711,7 @@ elif st.session_state.page == "subject":
         st.markdown('</div>', unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
-# PAGE — QUIZ
+# PAGE — QUIZ (FIXED DUPLICATION BUG USING st.empty)
 # ══════════════════════════════════════════════════════════════════════════════
 elif st.session_state.page == "quiz":
     subj  = st.session_state.subject
@@ -683,95 +729,88 @@ elif st.session_state.page == "quiz":
     render_steps(2)
     render_badge()
     
-    # ── Progress + score ──────────────────────────────────────────────────────
-    pc, sc = st.columns([5, 1])
-    with pc: st.progress(idx / total)
-    with sc: st.markdown(f'<div class="spill">⚡{st.session_state.score}</div>', unsafe_allow_html=True)
+    # Create an empty placeholder container to completely clear out on every loop cycle
+    quiz_container = st.empty()
     
-    # ── Timer Calculation ──────────────────────────────────────────────────────
-    remaining = TIMER_SECONDS - int(time.time() - st.session_state.start_time)
-    
-    # ── Check if Time is Up ────────────────────────────────────────────────────
-    if remaining <= 0:
-        ca = q["answer"]
-        st.session_state.wrong_answers.append({
-            "question":    q["question"],
-            "your_answer": "⏰ Time up — skipped",
-            "correct":     f"{ca} → {q['options'][ca]}",
-        })
-        st.session_state.question_index += 1
-        st.session_state.start_time      = time.time()
-        st.session_state.pop("feedback", None) # Clean old feedback flags
-        st.rerun()
+    with quiz_container.container():
+        # ── Progress + score ──────────────────────────────────────────────────────
+        pc, sc = st.columns([5, 1])
+        with pc: st.progress(idx / total)
+        with sc: st.markdown(f'<div class="spill">⚡{st.session_state.score}</div>', unsafe_allow_html=True)
         
-    if   remaining > 15: tc, ti = "t-safe",   "🟢"
-    elif remaining > 8:  tc, ti = "t-warn",   "🟡"
-    else:                tc, ti = "t-danger", "🔴"
-    
-    st.markdown(
-        f'<div class="tmr {tc}">{ti}&nbsp;&nbsp;{max(remaining,0)} seconds remaining</div>',
-        unsafe_allow_html=True
-    )
-    
-    # ── Subject pill ───────────────────────────────────────────────────────────
-    st.markdown(f'<div class="subj-pill">{info["icon"]} {subj}</div>', unsafe_allow_html=True)
-    
-    # ── Comprehension passage (English only) ───────────────────────────────────
-    if subj == "English" and q.get("comp") and "passage" in info:
+        # ── Timer ──────────────────────────────────────────────────────────────────
+        remaining = TIMER_SECONDS - int(time.time() - st.session_state.start_time)
+        if   remaining > 15: tc, ti = "t-safe",   "🟢"
+        elif remaining > 8:  tc, ti = "t-warn",   "🟡"
+        else:                tc, ti = "t-danger", "🔴"
         st.markdown(
-            f'<div class="comp-box">📖 <strong>Read the passage:</strong><br><br>{info["passage"]}</div>',
+            f'<div class="tmr {tc}">{ti}&nbsp;&nbsp;{max(remaining,0)} seconds remaining</div>',
             unsafe_allow_html=True
         )
         
-    # ── Question card ──────────────────────────────────────────────────────────
-    st.markdown(f"""
-    <div class="qcard">
-        <div class="qnum">Question {idx+1} of {total}</div>
-        <div class="qtxt">{q['question']}</div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # ── Answer options ─────────────────────────────────────────────────────────
-    selected = st.radio(
-        "Your answer",
-        list(q["options"].keys()),
-        format_func=lambda k: f"  {k}  ·  {q['options'][k]}",
-        index=None,
-        key=f"q_{idx}"
-    )
-    
-    # ── Render feedback elements safely before the next page redraw ─────────────
-    feedback_container = st.container()
-    
-    st.markdown("<br>", unsafe_allow_html=True)
-    _, bc, _ = st.columns([1, 3, 1])
-    
-    with bc:
-        if st.button("Submit Answer →", use_container_width=True):
-            if selected is None:
-                st.warning("⚠️  Please select an option first.")
-            else:
-                if selected == q["answer"]:
-                    with feedback_container:
-                        st.success("✅  Correct!  Great job!")
-                    st.session_state.score += 1
+        # ── Auto-skip ──────────────────────────────────────────────────────────────
+        if remaining <= 0:
+            ca = q["answer"]
+            st.session_state.wrong_answers.append({
+                "question":    q["question"],
+                "your_answer": "⏰ Time up — skipped",
+                "correct":     f"{ca} → {q['options'][ca]}",
+            })
+            st.session_state.question_index += 1
+            st.session_state.start_time      = time.time()
+            st.rerun()
+            
+        # ── Subject pill ───────────────────────────────────────────────────────────
+        st.markdown(f'<div class="subj-pill">{info["icon"]} {subj}</div>', unsafe_allow_html=True)
+        
+        # ── Comprehension passage (English only) ───────────────────────────────────
+        if subj == "English" and q.get("comp") and "passage" in info:
+            st.markdown(
+                f'<div class="comp-box">📖 <strong>Read the passage:</strong><br><br>{info["passage"]}</div>',
+                unsafe_allow_html=True
+            )
+            
+        # ── Question card ──────────────────────────────────────────────────────────
+        st.markdown(f"""
+        <div class="qcard">
+            <div class="qnum">Question {idx+1} of {total}</div>
+            <div class="qtxt">{q['question']}</div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # ── Answer options ─────────────────────────────────────────────────────────
+        selected = st.radio(
+            "Your answer",
+            list(q["options"].keys()),
+            format_func=lambda k: f"  {k}  ·  {q['options'][k]}",
+            index=None,
+            key=f"q_{idx}"
+        )
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+        _, bc, _ = st.columns([1, 3, 1])
+        with bc:
+            if st.button("Submit Answer →", use_container_width=True):
+                if selected is None:
+                    st.warning("⚠️  Please select an option first.")
                 else:
-                    ca = q["answer"]
-                    with feedback_container:
+                    if selected == q["answer"]:
+                        st.success("✅  Correct!  Great job!")
+                        st.session_state.score += 1
+                    else:
+                        ca = q["answer"]
                         st.error(f"❌  Wrong!  Correct: **{ca} → {q['options'][ca]}**")
-                    st.session_state.wrong_answers.append({
-                        "question":    q["question"],
-                        "your_answer": f"{selected} → {q['options'][selected]}",
-                        "correct":     f"{ca} → {q['options'][ca]}",
-                    })
-                
-                # Sleep to let user process the feedback, then shift index smoothly
-                time.sleep(1.2)
-                st.session_state.question_index += 1
-                st.session_state.start_time      = time.time()
-                st.rerun()
-                
-    # Live timer ticking mechanism 
+                        st.session_state.wrong_answers.append({
+                            "question":    q["question"],
+                            "your_answer": f"{selected} → {q['options'][selected]}",
+                            "correct":     f"{ca} → {q['options'][ca]}",
+                        })
+                    time.sleep(1.2)
+                    st.session_state.question_index += 1
+                    st.session_state.start_time      = time.time()
+                    st.rerun()
+                    
+    # Precise 1-second refresh ticker for the UI live timer loop
     time.sleep(1)
     st.rerun()
 
@@ -785,10 +824,12 @@ elif st.session_state.page == "result":
     total       = len(info["questions"])
     pct         = (fs / total) * 100
     wrongs      = st.session_state.wrong_answers
+    
     render_brand()
     render_steps(3)
     render_badge()
     st.balloons()
+    
     if pct == 100:
         em,gr,ms,cl = "🏆","Perfect Score!","Absolutely flawless — you're a legend!","#fbbf24"
     elif pct >= 80:
@@ -797,6 +838,7 @@ elif st.session_state.page == "result":
         em,gr,ms,cl = "👍","Good Job!","Solid effort — keep pushing.","#60a5fa"
     else:
         em,gr,ms,cl = "💪","Keep Practising!","Review & come back stronger!","#f87171"
+        
     st.markdown(f"""
     <div class="res-hero">
         <div class="res-emoji">{em}</div>
@@ -804,15 +846,19 @@ elif st.session_state.page == "result":
         <div class="res-msg">{ms}</div>
     </div>
     """, unsafe_allow_html=True)
+    
     st.markdown(f'<div class="subj-pill">{info["icon"]} {subj}</div>', unsafe_allow_html=True)
     st.progress(fs / total)
     st.markdown("<br>", unsafe_allow_html=True)
+    
     c1,c2,c3,c4 = st.columns(4)
     with c1: st.metric("✅ Correct", fs)
     with c2: st.metric("❌ Wrong",   total-fs)
     with c3: st.metric("📊 Score",   f"{pct:.0f}%")
     with c4: st.metric("❓ Total",   total)
+    
     st.markdown('<div class="h-divider"></div>', unsafe_allow_html=True)
+    
     if wrongs:
         with st.expander(f"📋  Review mistakes  ({len(wrongs)} wrong)"):
             for i, w in enumerate(wrongs, 1):
@@ -824,6 +870,7 @@ elif st.session_state.page == "result":
                 </div>""", unsafe_allow_html=True)
     else:
         st.success("🔥  Zero mistakes — you aced every question!")
+        
     st.markdown("<br>", unsafe_allow_html=True)
     a, b, c = st.columns(3)
     with a:
