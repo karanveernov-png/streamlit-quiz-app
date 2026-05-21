@@ -1,18 +1,20 @@
 import streamlit as st
 import time
 import re
+
 # ── PAGE CONFIG ────────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="BrainBlitz · Quiz App",
     page_icon="🧠",
     layout="centered"
 )
+
 # ══════════════════════════════════════════════════════════════════════════════
 # GLOBAL CSS
 # ══════════════════════════════════════════════════════════════════════════════
 st.markdown("""
 <style>
-@import url('[fonts.googleapis.com](https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap)');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap');
 /* ─── Base ─────────────────────────────────────────────────────────── */
 #MainMenu, footer, header { visibility: hidden; }
 * { box-sizing: border-box; }
@@ -351,6 +353,7 @@ div[data-testid="stAlert"] { border-radius: 12px !important; }
 <div class="orb-a"></div>
 <div class="orb-b"></div>
 """, unsafe_allow_html=True)
+
 # ══════════════════════════════════════════════════════════════════════════════
 # QUESTION BANK — India-focused
 # ══════════════════════════════════════════════════════════════════════════════
@@ -483,7 +486,8 @@ QUESTION_BANK = {
     },
 }
 SUBJECTS      = list(QUESTION_BANK.keys())
-TIMER_SECONDS = 30  # Changed from 12 to 30 seconds
+TIMER_SECONDS = 30  
+
 # ══════════════════════════════════════════════════════════════════════════════
 # HELPERS
 # ══════════════════════════════════════════════════════════════════════════════
@@ -499,10 +503,11 @@ def full_reset():
     for k in list(st.session_state.keys()):
         del st.session_state[k]
 def quiz_reset():
-    for k in ["question_index","score","wrong_answers","start_time"]:
+    for k in ["question_index","score","wrong_answers","start_time","feedback"]:
         st.session_state.pop(k, None)
     for k in [k for k in st.session_state if isinstance(k,str) and k.startswith("q_")]:
         del st.session_state[k]
+
 # ── UI components ──────────────────────────────────────────────────────────
 def render_brand():
     st.markdown('<div class="brand-wrap"><span class="brand-logo">BrainBlitz</span></div>', unsafe_allow_html=True)
@@ -533,16 +538,17 @@ def render_badge():
             <div class="uemail">{email}</div>
         </div>
     </div>""", unsafe_allow_html=True)
+
 # ── Init ───────────────────────────────────────────────────────────────────
 if "page" not in st.session_state:
     st.session_state.page = "login"
+
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE — LOGIN
 # ══════════════════════════════════════════════════════════════════════════════
 if st.session_state.page == "login":
     render_brand()
     render_steps(0)
-    # ── Hero banner (replaces the empty blue bar) ────────────────────────────
     st.markdown("""
     <div style="
         background: linear-gradient(135deg, rgba(99,102,241,.15) 0%, rgba(168,85,247,.12) 50%, rgba(236,72,153,.10) 100%);
@@ -566,7 +572,6 @@ if st.session_state.page == "login":
         </div>
     </div>
     """, unsafe_allow_html=True)
-    # ── Card top ─────────────────────────────────────────────────────────────
     st.markdown("""
     <div class="login-header">
         <div class="section-chip">🔐 Sign In</div>
@@ -574,13 +579,9 @@ if st.session_state.page == "login":
         <div class="login-sub">Enter your email and password to begin your personalised quiz journey.</div>
     </div>
     """, unsafe_allow_html=True)
-    # ── Streamlit inputs (must be outside html divs) ─────────────────────────
     with st.container():
-        st.markdown('<div style="padding: 0 0 0 0;">', unsafe_allow_html=True)
         email    = st.text_input("Email Address", placeholder="yourname@example.com", key="li_email")
         password = st.text_input("Password", type="password", placeholder="Minimum 6 characters", key="li_pw")
-        st.markdown("</div>", unsafe_allow_html=True)
-    # ── Card bottom ───────────────────────────────────────────────────────────
     st.markdown("""
     <div class="login-footer">
         <div class="divider-line"></div>
@@ -603,6 +604,7 @@ if st.session_state.page == "login":
         🛡️ Credentials stay in your browser session only — never stored anywhere.
     </div>
     """, unsafe_allow_html=True)
+
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE — SUBJECT SELECTION
 # ══════════════════════════════════════════════════════════════════════════════
@@ -623,7 +625,6 @@ elif st.session_state.page == "subject":
     </div>
     """, unsafe_allow_html=True)
     chosen = st.session_state.get("subject_pick", None)
-    # 3-column + 2-column grid
     row1 = st.columns(3)
     row2 = st.columns(2)
     grid = list(zip([*row1, *row2], SUBJECTS))
@@ -662,6 +663,7 @@ elif st.session_state.page == "subject":
             full_reset()
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
+
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE — QUIZ
 # ══════════════════════════════════════════════════════════════════════════════
@@ -671,27 +673,25 @@ elif st.session_state.page == "quiz":
     qs    = info["questions"]
     total = len(qs)
     idx   = st.session_state.get("question_index", 0)
+    
     if idx >= total:
         st.session_state.page = "result"
         st.rerun()
+        
     q = qs[idx]
     render_brand()
     render_steps(2)
     render_badge()
+    
     # ── Progress + score ──────────────────────────────────────────────────────
     pc, sc = st.columns([5, 1])
     with pc: st.progress(idx / total)
     with sc: st.markdown(f'<div class="spill">⚡{st.session_state.score}</div>', unsafe_allow_html=True)
-    # ── Timer ──────────────────────────────────────────────────────────────────
+    
+    # ── Timer Calculation ──────────────────────────────────────────────────────
     remaining = TIMER_SECONDS - int(time.time() - st.session_state.start_time)
-    if   remaining > 15: tc, ti = "t-safe",   "🟢"
-    elif remaining > 8:  tc, ti = "t-warn",   "🟡"
-    else:                tc, ti = "t-danger", "🔴"
-    st.markdown(
-        f'<div class="tmr {tc}">{ti}&nbsp;&nbsp;{max(remaining,0)} seconds remaining</div>',
-        unsafe_allow_html=True
-    )
-    # ── Auto-skip ──────────────────────────────────────────────────────────────
+    
+    # ── Check if Time is Up ────────────────────────────────────────────────────
     if remaining <= 0:
         ca = q["answer"]
         st.session_state.wrong_answers.append({
@@ -701,15 +701,28 @@ elif st.session_state.page == "quiz":
         })
         st.session_state.question_index += 1
         st.session_state.start_time      = time.time()
+        st.session_state.pop("feedback", None) # Clean old feedback flags
         st.rerun()
+        
+    if   remaining > 15: tc, ti = "t-safe",   "🟢"
+    elif remaining > 8:  tc, ti = "t-warn",   "🟡"
+    else:                tc, ti = "t-danger", "🔴"
+    
+    st.markdown(
+        f'<div class="tmr {tc}">{ti}&nbsp;&nbsp;{max(remaining,0)} seconds remaining</div>',
+        unsafe_allow_html=True
+    )
+    
     # ── Subject pill ───────────────────────────────────────────────────────────
     st.markdown(f'<div class="subj-pill">{info["icon"]} {subj}</div>', unsafe_allow_html=True)
+    
     # ── Comprehension passage (English only) ───────────────────────────────────
     if subj == "English" and q.get("comp") and "passage" in info:
         st.markdown(
             f'<div class="comp-box">📖 <strong>Read the passage:</strong><br><br>{info["passage"]}</div>',
             unsafe_allow_html=True
         )
+        
     # ── Question card ──────────────────────────────────────────────────────────
     st.markdown(f"""
     <div class="qcard">
@@ -717,6 +730,7 @@ elif st.session_state.page == "quiz":
         <div class="qtxt">{q['question']}</div>
     </div>
     """, unsafe_allow_html=True)
+    
     # ── Answer options ─────────────────────────────────────────────────────────
     selected = st.radio(
         "Your answer",
@@ -725,31 +739,42 @@ elif st.session_state.page == "quiz":
         index=None,
         key=f"q_{idx}"
     )
+    
+    # ── Render feedback elements safely before the next page redraw ─────────────
+    feedback_container = st.container()
+    
     st.markdown("<br>", unsafe_allow_html=True)
     _, bc, _ = st.columns([1, 3, 1])
+    
     with bc:
         if st.button("Submit Answer →", use_container_width=True):
             if selected is None:
                 st.warning("⚠️  Please select an option first.")
             else:
                 if selected == q["answer"]:
-                    st.success("✅  Correct!  Great job!")
+                    with feedback_container:
+                        st.success("✅  Correct!  Great job!")
                     st.session_state.score += 1
                 else:
                     ca = q["answer"]
-                    st.error(f"❌  Wrong!  Correct: **{ca} → {q['options'][ca]}**")
+                    with feedback_container:
+                        st.error(f"❌  Wrong!  Correct: **{ca} → {q['options'][ca]}**")
                     st.session_state.wrong_answers.append({
                         "question":    q["question"],
                         "your_answer": f"{selected} → {q['options'][selected]}",
                         "correct":     f"{ca} → {q['options'][ca]}",
                     })
+                
+                # Sleep to let user process the feedback, then shift index smoothly
                 time.sleep(1.2)
                 st.session_state.question_index += 1
                 st.session_state.start_time      = time.time()
                 st.rerun()
-    # ── Refresh every second for live timer ────────────────────────────────────
+                
+    # Live timer ticking mechanism 
     time.sleep(1)
     st.rerun()
+
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE — RESULT
 # ══════════════════════════════════════════════════════════════════════════════
