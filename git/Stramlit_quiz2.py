@@ -158,7 +158,7 @@ div[data-testid="stPasswordInput"] input:focus {
     background: rgba(99,102,241,.04) !important;
 }
 
-/* ─── ALL Buttons (primary style) ─────────────────────────────────────── */
+/* ─── ALL Buttons ─────────────────────────────────────── */
 div[data-testid="stButton"] > button {
     width: 100%;
     background: linear-gradient(135deg, #5a5fdb 0%, #9b44e8 100%);
@@ -176,14 +176,6 @@ div[data-testid="stButton"] > button:hover {
 }
 div[data-testid="stButton"] > button:active { transform: translateY(0); }
 
-/* ─── Secondary / logout button — scoped by key attribute ──────────────
-   Streamlit adds data-testid on the outer div, but the button itself
-   gets no key attr in the DOM. We scope by a wrapper class instead,
-   but ONLY set it via st.markdown BEFORE the button on the same page,
-   NOT as a wrapping div (which leaks). We use :has() on modern browsers
-   or target by order inside a known container.
-   Safest: just give logout a muted style via a unique CSS variable trick.
-   We inject a tiny <style> block right before the logout button.        */
 .logout-area div[data-testid="stButton"] > button {
     background: rgba(255,255,255,.05) !important;
     border: 1px solid rgba(255,255,255,.1) !important;
@@ -255,10 +247,6 @@ div[data-testid="stButton"] > button:active { transform: translateY(0); }
 .t-warn   { background:rgba(245,158,11,.08); border-color:rgba(245,158,11,.3); color:#fbbf24; }
 .t-danger { background:rgba(239,68,68,.1);   border-color:rgba(239,68,68,.4);  color:#f87171;
     animation: pulse-red .6s ease-in-out infinite alternate; }
-@keyframes pulse-red {
-    from { box-shadow: 0 0 0 0 rgba(239,68,68,.0); }
-    to   { box-shadow: 0 0 18px 2px rgba(239,68,68,.22); }
-}
 
 /* ─── Question card ─────────────────────────────────────────────────── */
 .qcard {
@@ -277,7 +265,6 @@ div[data-testid="stButton"] > button:active { transform: translateY(0); }
     text-transform: uppercase; color: #5a5fdb; margin-bottom: 12px;
     display: flex; align-items: center; gap: 8px;
 }
-.qnum::after { content:""; flex:1; height:1px; background:rgba(99,102,241,.18); }
 .qtxt {
     font-family: 'Syne', sans-serif; font-size: 20px;
     font-weight: 700; color: #f0f4ff; line-height: 1.5;
@@ -291,7 +278,6 @@ div[data-testid="stRadio"] > div > label {
     border: 1.5px solid rgba(255,255,255,.08) !important;
     border-radius: 13px !important; padding: 13px 18px !important;
     color: #8899b8 !important; font-size: 14px !important;
-    font-weight: 500 !important; transition: all .2s ease !important;
 }
 div[data-testid="stRadio"] > div > label:hover {
     background: rgba(99,102,241,.1) !important;
@@ -304,13 +290,11 @@ div[data-testid="stRadio"] > div > label[data-checked="true"] {
     color: #a5b4fc !important;
 }
 
-/* ─── Score pill ───────────────────────────────────────────────────── */
+/* ─── Score & Subjects ─────────────────────────────────────────────────── */
 .spill {
     text-align: right; color: #7c3aed; font-family: 'Syne', sans-serif;
     font-weight: 800; font-size: 15px; padding-top: 6px; letter-spacing: -.3px;
 }
-
-/* ─── Subject pill ─────────────────────────────────────────────────── */
 .subj-pill {
     display: inline-block;
     background: rgba(99,102,241,.12);
@@ -320,131 +304,114 @@ div[data-testid="stRadio"] > div > label[data-checked="true"] {
     padding: 5px 16px; border-radius: 99px; margin-bottom: 12px;
 }
 
-/* ─── Metrics ───────────────────────────────────────────────────────── */
-div[data-testid="stMetric"] {
-    background: rgba(255,255,255,.03);
-    border: 1px solid rgba(255,255,255,.07);
-    border-radius: 16px; padding: 18px 12px; text-align: center;
-}
-div[data-testid="stMetric"] label {
-    color: #2d3e5a !important; font-size: 10px !important;
-    letter-spacing: 2px; text-transform: uppercase; font-weight: 700;
-}
-div[data-testid="stMetric"] div[data-testid="stMetricValue"] {
-    font-family: 'Syne', sans-serif;
-    font-size: 28px !important; font-weight: 900 !important; color: #f0f4ff !important;
-}
-
-/* ─── Expander ─────────────────────────────────────────────────────── */
-details {
-    background: rgba(255,255,255,.02) !important;
-    border: 1px solid rgba(255,255,255,.07) !important;
-    border-radius: 14px !important; overflow: hidden;
-}
-details summary {
-    color: #4a5878 !important; font-weight: 600 !important;
-    padding: 12px 16px !important; font-size: 14px !important;
-}
-
-/* ─── Mistake cards ─────────────────────────────────────────────────── */
+/* ─── Mistake cards & Explanations ──────────────────────────────────── */
 .mk { background:rgba(239,68,68,.07); border:1px solid rgba(239,68,68,.22);
-    border-radius:12px; padding:14px 18px; margin:8px 0; }
-.mk-q  { color:#64748b; font-size:13px; margin-bottom:5px; line-height:1.5; }
-.mk-u  { color:#fca5a5; font-size:13px; margin-bottom:2px; }
-.mk-c  { color:#86efac; font-size:13px; font-weight:600; }
+    border-radius:12px; padding:16px 18px; margin:10px 0; }
+.mk-q  { color:#64748b; font-size:14px; margin-bottom:6px; line-height:1.5; font-weight: 600;}
+.mk-u  { color:#fca5a5; font-size:13px; margin-bottom:4px; }
+.mk-c  { color:#86efac; font-size:13px; font-weight:700; margin-bottom: 8px;}
+.mk-e  { color:#94a3b8; font-size:13px; margin-top:8px; line-height: 1.6; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px;}
 
 /* ─── Result hero ───────────────────────────────────────────────────── */
 .res-hero { text-align:center; padding:28px 0 12px; }
 .res-emoji { font-size:72px; line-height:1; margin-bottom:10px; }
 .res-grade { font-family:'Syne',sans-serif; font-size:34px; font-weight:900; margin-bottom:6px; }
 .res-msg { color:#2d3e5a; font-size:15px; }
-.h-divider {
-    height:1px;
-    background:linear-gradient(90deg,transparent,rgba(99,102,241,.35),transparent);
-    margin:26px 0;
-}
 
 /* ─── Comprehension box ─────────────────────────────────────────────── */
 .comp-box {
-    background: rgba(99,102,241,.06);
-    border: 1px solid rgba(99,102,241,.2);
-    border-left: 3px solid #6366f1;
-    border-radius: 0 12px 12px 0;
-    padding: 16px 20px; margin: 12px 0 18px;
-    font-size: 14px; line-height: 1.8; color: #8899b8;
-    font-style: italic;
+    background: rgba(99,102,241,.06); border: 1px solid rgba(99,102,241,.2);
+    border-left: 3px solid #6366f1; border-radius: 0 12px 12px 0;
+    padding: 16px 20px; margin: 12px 0 18px; font-size: 14px; color: #8899b8; font-style: italic;
 }
-
-/* ─── Alerts ────────────────────────────────────────────────────────── */
-div[data-testid="stAlert"] { border-radius: 12px !important; }
 </style>
 <div class="orb-a"></div>
 <div class="orb-b"></div>
 """, unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
-# QUESTION BANK
+# QUESTION BANK WITH EXPLANATIONS
 # ══════════════════════════════════════════════════════════════════════════════
 QUESTION_BANK = {
     "History": {
         "icon": "📜", "color": "#f59e0b", "desc": "India & the world",
         "questions": [
             {"question": "In which year did India gain independence from British rule?",
-             "options": {"A": "1945", "B": "1946", "C": "1947", "D": "1948"}, "answer": "C"},
+             "options": {"A": "1945", "B": "1946", "C": "1947", "D": "1948"}, "answer": "C",
+             "explanation": "India officially gained independence on August 15, 1947, following the Indian Independence Act. This marked the end of nearly 200 years of British colonial rule. The transfer of power was accompanied by the historic and tragic partition of the subcontinent. It remains a monumental event in global history, inspiring other nations."},
             {"question": "Who is known as the 'Father of the Indian Nation'?",
-             "options": {"A": "Jawaharlal Nehru", "B": "Sardar Patel", "C": "B.R. Ambedkar", "D": "Mahatma Gandhi"}, "answer": "D"},
+             "options": {"A": "Jawaharlal Nehru", "B": "Sardar Patel", "C": "B.R. Ambedkar", "D": "Mahatma Gandhi"}, "answer": "D",
+             "explanation": "Mahatma Gandhi is revered as the Father of the Nation for his leadership in the independence movement. He utilized non-violent resistance, known as Satyagraha, to challenge British authority. Subhas Chandra Bose formally addressed him with this title in a 1944 radio broadcast. His methods deeply influenced global civil rights leaders."},
             {"question": "The Indian National Congress was founded in which year?",
-             "options": {"A": "1875", "B": "1885", "C": "1895", "D": "1905"}, "answer": "B"},
+             "options": {"A": "1875", "B": "1885", "C": "1895", "D": "1905"}, "answer": "B",
+             "explanation": "The Indian National Congress was founded in December 1885 in Bombay (Mumbai). Allan Octavian Hume, a retired British civil servant, played a key role in its formation alongside Indian leaders. Initially seeking a greater share in government for educated Indians, it eventually became the principal driving force of the independence struggle."},
             {"question": "The Battle of Plassey (1757) was fought between the British East India Company and the Nawab of —",
-             "options": {"A": "Mysore", "B": "Hyderabad", "C": "Bengal", "D": "Maratha"}, "answer": "C"},
+             "options": {"A": "Mysore", "B": "Hyderabad", "C": "Bengal", "D": "Maratha"}, "answer": "C",
+             "explanation": "The Battle of Plassey took place in 1757 against Siraj-ud-Daulah, the Nawab of Bengal. Robert Clive led the British forces to victory, largely due to the defection of the Nawab's commander, Mir Jafar. This battle is highly significant as it marked the beginning of decisive political and military dominance by the British in India."},
             {"question": "World War II ended in which year?",
-             "options": {"A": "1943", "B": "1944", "C": "1945", "D": "1946"}, "answer": "C"},
+             "options": {"A": "1943", "B": "1944", "C": "1945", "D": "1946"}, "answer": "C",
+             "explanation": "World War II officially ended in September 1945. The conflict drew to a close following the surrender of Germany in May 1945 and Japan in September 1945. The latter surrender occurred shortly after the devastating atomic bombings of Hiroshima and Nagasaki. The war's end led directly to the creation of the United Nations."},
         ]
     },
     "Geography": {
         "icon": "🌍", "color": "#10b981", "desc": "India, planets & beyond",
         "questions": [
             {"question": "Which is the longest river in India?",
-             "options": {"A": "Yamuna", "B": "Brahmaputra", "C": "Godavari", "D": "Ganga"}, "answer": "D"},
+             "options": {"A": "Yamuna", "B": "Brahmaputra", "C": "Godavari", "D": "Ganga"}, "answer": "D",
+             "explanation": "The Ganga (Ganges) is the longest river entirely within India, flowing over 2,500 kilometers. It originates from the Gangotri Glacier in the Himalayas. The river is a critical water source for millions and holds immense cultural and religious significance. The Brahmaputra is longer overall, but most of its course lies outside India."},
             {"question": "Which planet is known as the 'Red Planet'?",
-             "options": {"A": "Jupiter", "B": "Venus", "C": "Mars", "D": "Saturn"}, "answer": "C"},
+             "options": {"A": "Jupiter", "B": "Venus", "C": "Mars", "D": "Saturn"}, "answer": "C",
+             "explanation": "Mars is commonly called the 'Red Planet' because of the iron oxide (rust) prevalent on its surface. This gives the planet a distinct reddish appearance visible even to the naked eye from Earth. Mars features the largest volcano in the solar system, Olympus Mons. It remains a primary target for future space exploration."},
             {"question": "The Thar Desert is primarily located in which Indian state?",
-             "options": {"A": "Gujarat", "B": "Rajasthan", "C": "Punjab", "D": "Haryana"}, "answer": "B"},
+             "options": {"A": "Gujarat", "B": "Rajasthan", "C": "Punjab", "D": "Haryana"}, "answer": "B",
+             "explanation": "The Thar Desert, also known as the Great Indian Desert, is mostly located in the state of Rajasthan. It forms a natural boundary between India and Pakistan. Despite the harsh, arid conditions, it is the most densely populated desert in the world. It features a unique ecosystem adapted to extreme heat and low rainfall."},
             {"question": "Which planet has the most moons in our solar system?",
-             "options": {"A": "Jupiter", "B": "Uranus", "C": "Neptune", "D": "Saturn"}, "answer": "D"},
+             "options": {"A": "Jupiter", "B": "Uranus", "C": "Neptune", "D": "Saturn"}, "answer": "D",
+             "explanation": "Recent astronomical discoveries have confirmed that Saturn holds the record for the most moons in our solar system. As of the latest counts, Saturn has over 140 recognized moons, surpassing Jupiter. Its largest moon, Titan, is unique because it has a dense atmosphere and liquid lakes of methane."},
             {"question": "The Siachen Glacier, the world's highest battlefield, is in which Indian state/UT?",
-             "options": {"A": "Himachal Pradesh", "B": "Uttarakhand", "C": "Ladakh", "D": "Sikkim"}, "answer": "C"},
+             "options": {"A": "Himachal Pradesh", "B": "Uttarakhand", "C": "Ladakh", "D": "Sikkim"}, "answer": "C",
+             "explanation": "The Siachen Glacier is located in the eastern Karakoram range in the Himalayas, falling within the Union Territory of Ladakh. It is known as the world's highest battlefield due to the military presence of India and Pakistan since 1984. Soldiers here face extreme cold, high altitude, and avalanches, which are often deadlier than combat."},
         ]
     },
     "Politics": {
         "icon": "🏛️", "color": "#6366f1", "desc": "Easy civics everyone knows",
         "questions": [
             {"question": "Who is the President of India as per the Constitution?",
-             "options": {"A": "Prime Minister", "B": "Chief Justice", "C": "Head of State", "D": "Speaker"}, "answer": "C"},
+             "options": {"A": "Prime Minister", "B": "Chief Justice", "C": "Head of State", "D": "Speaker"}, "answer": "C",
+             "explanation": "According to the Indian Constitution, the President is the Head of State and the first citizen of India. The President is also the Supreme Commander of the Indian Armed Forces. However, it is primarily a ceremonial role, as real executive power rests with the Prime Minister and the Council of Ministers."},
             {"question": "How many members are in the Lok Sabha (maximum strength)?",
-             "options": {"A": "250", "B": "545", "C": "552", "D": "543"}, "answer": "C"},
+             "options": {"A": "250", "B": "545", "C": "552", "D": "543"}, "answer": "C",
+             "explanation": "The maximum authorized strength of the Lok Sabha (House of the People) is 552 members. This includes representatives of the states and union territories. Currently, the operational strength is 543 elected members, following the constitutional amendment that removed the two nominated Anglo-Indian seats."},
             {"question": "Which is the supreme law of India?",
-             "options": {"A": "IPC", "B": "Constitution", "C": "CrPC", "D": "Parliament Acts"}, "answer": "B"},
+             "options": {"A": "IPC", "B": "Constitution", "C": "CrPC", "D": "Parliament Acts"}, "answer": "B",
+             "explanation": "The Constitution of India is the supreme law of the land. It lays down the framework defining fundamental political principles, structures, procedures, powers, and duties of government institutions. Every other law, including the IPC or acts of Parliament, must conform to the constitutional framework to be valid."},
             {"question": "In which year was the Indian Constitution adopted?",
-             "options": {"A": "1947", "B": "1948", "C": "1949", "D": "1950"}, "answer": "C"},
+             "options": {"A": "1947", "B": "1948", "C": "1949", "D": "1950"}, "answer": "C",
+             "explanation": "The Constituent Assembly officially adopted the Indian Constitution on November 26, 1949. This day is now celebrated annually as Constitution Day (Samvidhan Divas). However, it came into legal force a few months later on January 26, 1950, which is celebrated as Republic Day."},
             {"question": "Who was the first Prime Minister of India?",
-             "options": {"A": "Sardar Patel", "B": "Jawaharlal Nehru", "C": "Rajendra Prasad", "D": "Lal Bahadur Shastri"}, "answer": "B"},
+             "options": {"A": "Sardar Patel", "B": "Jawaharlal Nehru", "C": "Rajendra Prasad", "D": "Lal Bahadur Shastri"}, "answer": "B",
+             "explanation": "Jawaharlal Nehru was the first Prime Minister of independent India, taking office on August 15, 1947. He was a central figure in Indian politics before and after independence. He served as PM until his death in 1964, making him the longest-serving Prime Minister in the nation's history."},
         ]
     },
     "Biology": {
         "icon": "🔬", "color": "#ec4899", "desc": "Life & living systems",
         "questions": [
             {"question": "What is the powerhouse of the cell?",
-             "options": {"A": "Nucleus", "B": "Ribosome", "C": "Mitochondria", "D": "Golgi body"}, "answer": "C"},
+             "options": {"A": "Nucleus", "B": "Ribosome", "C": "Mitochondria", "D": "Golgi body"}, "answer": "C",
+             "explanation": "Mitochondria are universally known as the powerhouses of the cell. They generate most of the chemical energy needed to power the cell's biochemical reactions. This energy is stored in a complex molecule called ATP (adenosine triphosphate). They are unique as they contain their own DNA."},
             {"question": "DNA stands for —",
              "options": {"A": "Deoxyribonucleic Acid", "B": "Dioxynucleic Acid",
-                         "C": "Deoxyribose Nitrogen Acid", "D": "Double Nitrogen Acid"}, "answer": "A"},
+                         "C": "Deoxyribose Nitrogen Acid", "D": "Double Nitrogen Acid"}, "answer": "A",
+             "explanation": "DNA stands for Deoxyribonucleic Acid. It is the hereditary material in humans and almost all other organisms. The DNA molecule forms a double helix structure, acting like an instruction manual that carries the genetic information for the development and functioning of living things."},
             {"question": "How many chromosomes does a healthy human cell contain?",
-             "options": {"A": "23", "B": "44", "C": "46", "D": "48"}, "answer": "C"},
+             "options": {"A": "23", "B": "44", "C": "46", "D": "48"}, "answer": "C",
+             "explanation": "A healthy human somatic cell contains 46 chromosomes in total. These are organized into 23 pairs, with one chromosome of each pair inherited from each parent. The 23rd pair determines the biological sex of the individual (XX for females, XY for males)."},
             {"question": "Which blood type is the universal donor?",
-             "options": {"A": "AB+", "B": "O+", "C": "O−", "D": "A−"}, "answer": "C"},
+             "options": {"A": "AB+", "B": "O+", "C": "O−", "D": "A−"}, "answer": "C",
+             "explanation": "Blood type O negative (O-) is considered the universal donor type. This means O- blood can be given to individuals of any blood type in an emergency. This is because it lacks A, B, and Rh antigens on the red blood cells, minimizing the risk of an immune reaction during a transfusion."},
             {"question": "Photosynthesis primarily occurs in which organelle?",
-             "options": {"A": "Mitochondria", "B": "Vacuole", "C": "Chloroplast", "D": "Nucleus"}, "answer": "C"},
+             "options": {"A": "Mitochondria", "B": "Vacuole", "C": "Chloroplast", "D": "Nucleus"}, "answer": "C",
+             "explanation": "Photosynthesis takes place primarily in the chloroplasts of plant cells. Chloroplasts contain the green pigment chlorophyll, which captures light energy from the sun. This energy is then used to convert water and carbon dioxide into glucose, providing food for the plant and releasing oxygen into the air."},
         ]
     },
     "English": {
@@ -460,21 +427,26 @@ QUESTION_BANK = {
             {"question": "[Comprehension] Where did Riya go every evening to observe the sky?",
              "options": {"A": "A hilltop garden", "B": "The rooftop of her house",
                          "C": "A nearby observatory", "D": "Her balcony"},
-             "answer": "B", "comp": True},
+             "answer": "B", "comp": True,
+             "explanation": "The passage explicitly states that Riya 'would climb to the rooftop of her small house in Jaipur.' This detail establishes her setting and routine for stargazing."},
             {"question": "[Comprehension] What did Riya's neighbours think of her habit?",
              "options": {"A": "They admired her", "B": "They joined her",
                          "C": "They thought she was peculiar", "D": "They ignored her"},
-             "answer": "C", "comp": True},
+             "answer": "C", "comp": True,
+             "explanation": "The text directly mentions that 'Her neighbours thought she was peculiar.' In this context, peculiar means they found her behavior strange or unusual compared to normal evening routines."},
             {"question": "[Comprehension] What lesson did Riya believe the universe taught first?",
              "options": {"A": "Curiosity", "B": "Patience", "C": "Discipline", "D": "Courage"},
-             "answer": "B", "comp": True},
+             "answer": "B", "comp": True,
+             "explanation": "The passage provides Riya's philosophical view: 'She believed that patience was the first lesson the universe taught.' Observing the slow movement of stars requires a lot of waiting and calm observation."},
             {"question": "[Synonym] Choose the best synonym for 'Peculiar':",
              "options": {"A": "Ordinary", "B": "Cheerful", "C": "Strange", "D": "Polite"},
-             "answer": "C", "comp": False},
+             "answer": "C", "comp": False,
+             "explanation": "The word 'peculiar' means something that is strange, odd, or unusual. In the context of the story, her neighbors found her nightly rooftop visits strange, hence 'strange' is the perfect synonym."},
             {"question": "[Idiom] 'Hit the books' means —",
              "options": {"A": "Throw books away", "B": "Study hard",
                          "C": "Damage books", "D": "Visit a library"},
-             "answer": "B", "comp": False},
+             "answer": "B", "comp": False,
+             "explanation": "The idiom 'hit the books' is a common English phrase that means to begin studying intensely or with great focus. It has nothing to do with physically striking a book, but rather tackling academics energetically!"},
         ]
     },
 }
@@ -660,7 +632,6 @@ elif st.session_state.page == "subject":
             st.session_state.page           = "quiz"
             st.rerun()
 
-    # ── Logout: rendered with scoped CSS, NO wrapping div ────────────────────
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown('<div class="logout-area">', unsafe_allow_html=True)
     if st.button("← Log out", key="subj_logout"):
@@ -670,8 +641,6 @@ elif st.session_state.page == "subject":
 
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE — QUIZ
-# THE FIX: use @st.fragment for the timer so only the timer div reruns
-# every second — NOT the whole page (which was causing double buttons).
 # ══════════════════════════════════════════════════════════════════════════════
 elif st.session_state.page == "quiz":
     subj  = st.session_state.subject
@@ -697,8 +666,6 @@ elif st.session_state.page == "quiz":
     with sc:
         st.markdown(f'<div class="spill">⚡{st.session_state.score}</div>', unsafe_allow_html=True)
 
-    # ── Timer — fragment so ONLY this block reruns every second ──────────────
-    # @st.fragment lets the timer tick without re-rendering buttons below it.
     @st.fragment(run_every=1)
     def live_timer():
         remaining = TIMER_SECONDS - int(time.time() - st.session_state.start_time)
@@ -713,15 +680,15 @@ elif st.session_state.page == "quiz":
             unsafe_allow_html=True
         )
 
-        # Auto-skip when time runs out — triggers a full rerun from fragment
+        # Auto-skip when time runs out
         if remaining <= 0:
             ca = q["answer"]
-            # Only record once (guard against double-fire)
             if st.session_state.get("question_index") == idx:
                 st.session_state.wrong_answers.append({
                     "question":    q["question"],
                     "your_answer": "⏰ Time up — skipped",
                     "correct":     f"{ca} → {q['options'][ca]}",
+                    "explanation": q.get("explanation", "No explanation available.") # Added Explanation
                 })
                 st.session_state.question_index += 1
                 st.session_state.start_time      = time.time()
@@ -729,17 +696,14 @@ elif st.session_state.page == "quiz":
 
     live_timer()
 
-    # ── Subject pill ───────────────────────────────────────────────────────────
     st.markdown(f'<div class="subj-pill">{info["icon"]} {subj}</div>', unsafe_allow_html=True)
 
-    # ── Comprehension passage (English only) ───────────────────────────────────
     if subj == "English" and q.get("comp") and "passage" in info:
         st.markdown(
             f'<div class="comp-box">📖 <strong>Read the passage:</strong><br><br>{info["passage"]}</div>',
             unsafe_allow_html=True
         )
 
-    # ── Question card ──────────────────────────────────────────────────────────
     st.markdown(f"""
     <div class="qcard">
         <div class="qnum">Question {idx+1} of {total}</div>
@@ -747,7 +711,6 @@ elif st.session_state.page == "quiz":
     </div>
     """, unsafe_allow_html=True)
 
-    # ── Answer options ─────────────────────────────────────────────────────────
     selected = st.radio(
         "Your answer",
         list(q["options"].keys()),
@@ -758,14 +721,12 @@ elif st.session_state.page == "quiz":
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # ── Single Submit button — rendered once, handled inline ──────────────────
     _, bc, _ = st.columns([1, 3, 1])
     with bc:
         if st.button("Submit Answer →", use_container_width=True, key=f"submit_{idx}"):
             if selected is None:
                 st.warning("⚠️  Please select an option first.")
             else:
-                # Record result silently — no feedback shown until Result page
                 if selected == q["answer"]:
                     st.session_state.score = st.session_state.get("score", 0) + 1
                 else:
@@ -774,6 +735,7 @@ elif st.session_state.page == "quiz":
                         "question":    q["question"],
                         "your_answer": f"{selected} → {q['options'][selected]}",
                         "correct":     f"{ca} → {q['options'][ca]}",
+                        "explanation": q.get("explanation", "No explanation available.") # Added Explanation
                     })
                 st.session_state.question_index += 1
                 st.session_state.start_time = time.time()
@@ -824,15 +786,17 @@ elif st.session_state.page == "result":
 
     st.markdown('<div class="h-divider"></div>', unsafe_allow_html=True)
 
+    # ── Render Mistakes with Explanations ─────────────────────────────────
     if wrongs:
-        with st.expander(f"📋  Review mistakes  ({len(wrongs)} wrong)"):
-            for i, w in enumerate(wrongs, 1):
-                st.markdown(f"""
-                <div class="mk">
-                    <div class="mk-q">Q{i}: {w['question']}</div>
-                    <div class="mk-u">Your answer: {w['your_answer']}</div>
-                    <div class="mk-c">✓ Correct: {w['correct']}</div>
-                </div>""", unsafe_allow_html=True)
+        st.markdown(f"<h4 style='color:#f0f4ff;'>📋 Review mistakes ({len(wrongs)} wrong)</h4>", unsafe_allow_html=True)
+        for i, w in enumerate(wrongs, 1):
+            st.markdown(f"""
+            <div class="mk">
+                <div class="mk-q">Q{i}: {w['question']}</div>
+                <div class="mk-u">Your answer: {w['your_answer']}</div>
+                <div class="mk-c">✓ Correct: {w['correct']}</div>
+                <div class="mk-e">💡 <strong>Explanation:</strong> {w['explanation']}</div>
+            </div>""", unsafe_allow_html=True)
     else:
         st.success("🔥  Zero mistakes — you aced every question!")
 
