@@ -130,9 +130,6 @@ html, body, .stApp {
     background: linear-gradient(90deg,transparent,rgba(99,102,241,.35),transparent);
     margin: 22px 0;
 }
-.trust-note {
-    text-align: center; color: #1e2a3e; font-size: 12px; margin-top: 6px;
-}
 
 /* ─── Inputs ─────────────────────────────────────────────────────────── */
 div[data-testid="stTextInput"] label,
@@ -147,9 +144,7 @@ div[data-testid="stPasswordInput"] input {
     border: 1.5px solid rgba(255,255,255,.09) !important;
     border-radius: 12px !important;
     color: #dde3f0 !important;
-    font-family: 'Inter', sans-serif !important;
     font-size: 15px !important; padding: 13px 16px !important;
-    transition: border-color .2s, box-shadow .2s !important;
 }
 div[data-testid="stTextInput"] input:focus,
 div[data-testid="stPasswordInput"] input:focus {
@@ -183,64 +178,53 @@ div[data-testid="stButton"] > button:active { transform: translateY(0); }
     box-shadow: none !important; letter-spacing: 0 !important;
     width: auto !important; padding: 8px 20px !important;
 }
-.logout-area div[data-testid="stButton"] > button:hover {
-    background: rgba(255,255,255,.09) !important;
-    transform: none !important; box-shadow: none !important;
-}
 
-/* ─── Subject cards ───────────────────────────────────────────────────── */
+/* ─── Subject cards & Difficulty Panel ────────────────────────────────── */
 .s-card {
-    background: rgba(255,255,255,.03);
-    border: 1.5px solid rgba(255,255,255,.08);
-    border-radius: 18px; padding: 22px 14px;
-    text-align: center; cursor: pointer;
-    transition: all .25s ease;
+    background: rgba(255,255,255,.03); border: 1.5px solid rgba(255,255,255,.08);
+    border-radius: 18px; padding: 22px 14px; text-align: center; transition: all .25s ease;
 }
 .s-card:hover {
-    border-color: rgba(99,102,241,.5);
-    background: rgba(99,102,241,.07);
-    transform: translateY(-4px);
-    box-shadow: 0 10px 32px rgba(99,102,241,.18);
+    border-color: rgba(99,102,241,.5); background: rgba(99,102,241,.07);
+    transform: translateY(-4px); box-shadow: 0 10px 32px rgba(99,102,241,.18);
 }
 .s-card.sel {
-    border-color: rgba(168,85,247,.75);
-    background: rgba(168,85,247,.1);
+    border-color: rgba(168,85,247,.75); background: rgba(168,85,247,.1);
     box-shadow: 0 0 0 3px rgba(168,85,247,.2), 0 10px 32px rgba(168,85,247,.15);
 }
 .s-icon { font-size: 38px; line-height: 1; margin-bottom: 10px; }
-.s-name {
-    font-family: 'Syne', sans-serif; font-size: 15px;
-    font-weight: 800; color: #e2e8f0; margin-bottom: 4px;
-}
+.s-name { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 800; color: #e2e8f0; margin-bottom: 4px; }
 .s-desc { font-size: 11px; color: #3d5070; font-weight: 500; }
+
+.diff-panel {
+    background: linear-gradient(145deg, rgba(18,26,48,.6), rgba(8,12,22,.8));
+    border: 1px solid rgba(168,85,247,.3); border-radius: 16px;
+    padding: 24px; margin-top: 16px; text-align: center;
+    animation: fadeIn .4s ease;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+.diff-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: #f0f4ff; margin-bottom: 16px; }
 
 /* ─── User badge ────────────────────────────────────────────────────── */
 .ubadge {
-    display: flex; align-items: center; gap: 12px;
-    background: rgba(255,255,255,.03);
-    border: 1px solid rgba(255,255,255,.07);
-    border-radius: 14px; padding: 11px 18px; margin-bottom: 22px;
+    display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.07); border-radius: 14px; padding: 11px 18px; margin-bottom: 22px;
 }
 .uavatar {
     width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
-    background: linear-gradient(135deg,#6366f1,#a855f7);
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Syne', sans-serif; font-weight: 900;
-    font-size: 14px; color: white;
+    background: linear-gradient(135deg,#6366f1,#a855f7); display: flex; align-items: center;
+    justify-content: center; font-family: 'Syne', sans-serif; font-weight: 900; font-size: 14px; color: white;
 }
 .uname  { font-weight: 600; font-size: 14px; color: #dde3f0; }
 .uemail { font-size: 12px; color: #2d3e5a; }
 
-/* ─── Progress bar ──────────────────────────────────────────────────── */
+/* ─── Timer & Progress ────────────────────────────────────────────────── */
 .stProgress > div > div { background: rgba(255,255,255,.05) !important; border-radius: 99px !important; height: 5px !important; }
-.stProgress > div > div > div > div { background: linear-gradient(90deg,#6366f1,#a855f7,#ec4899) !important; border-radius: 99px !important; }
+.stProgress > div > div > div > div { background: linear-gradient(90deg,#6366f1,#a855f7,#ec4899) !important; }
 
-/* ─── Timer ──────────────────────────────────────────────────────────── */
 .tmr {
-    border-radius: 14px; padding: 11px 20px;
-    text-align: center; font-family: 'Syne', sans-serif;
-    font-size: 20px; font-weight: 800; margin-bottom: 16px;
-    border: 1.5px solid; letter-spacing: -.3px;
+    border-radius: 14px; padding: 11px 20px; text-align: center; font-family: 'Syne', sans-serif;
+    font-size: 20px; font-weight: 800; margin-bottom: 16px; border: 1.5px solid;
     display: flex; align-items: center; justify-content: center; gap: 10px;
 }
 .t-safe   { background:rgba(16,185,129,.08); border-color:rgba(16,185,129,.3); color:#34d399; }
@@ -251,233 +235,195 @@ div[data-testid="stButton"] > button:active { transform: translateY(0); }
 /* ─── Question card ─────────────────────────────────────────────────── */
 .qcard {
     background: linear-gradient(155deg, rgba(18,26,48,.95), rgba(8,12,22,.98));
-    border: 1.5px solid rgba(99,102,241,.2);
-    border-radius: 22px; padding: 28px 30px;
+    border: 1.5px solid rgba(99,102,241,.2); border-radius: 22px; padding: 28px 30px;
     margin: 12px 0 20px; position: relative; overflow: hidden;
-    box-shadow: 0 16px 48px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.05);
 }
 .qcard::before {
     content:""; position:absolute; top:0; left:0; right:0; height:3px;
     background: linear-gradient(90deg,#6366f1,#a855f7,#ec4899);
 }
-.qnum {
-    font-size: 10px; font-weight: 700; letter-spacing: 3px;
-    text-transform: uppercase; color: #5a5fdb; margin-bottom: 12px;
-    display: flex; align-items: center; gap: 8px;
-}
-.qtxt {
-    font-family: 'Syne', sans-serif; font-size: 20px;
-    font-weight: 700; color: #f0f4ff; line-height: 1.5;
-}
+.qnum { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #5a5fdb; margin-bottom: 12px; }
+.qtxt { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; color: #f0f4ff; line-height: 1.5; }
 
 /* ─── Radio options ──────────────────────────────────────────────────── */
 div[data-testid="stRadio"] > label { display: none; }
 div[data-testid="stRadio"] > div { gap: 10px !important; flex-direction: column; }
 div[data-testid="stRadio"] > div > label {
-    background: rgba(255,255,255,.03) !important;
-    border: 1.5px solid rgba(255,255,255,.08) !important;
-    border-radius: 13px !important; padding: 13px 18px !important;
-    color: #8899b8 !important; font-size: 14px !important;
+    background: rgba(255,255,255,.03) !important; border: 1.5px solid rgba(255,255,255,.08) !important;
+    border-radius: 13px !important; padding: 13px 18px !important; color: #8899b8 !important; font-size: 14px !important;
 }
 div[data-testid="stRadio"] > div > label:hover {
-    background: rgba(99,102,241,.1) !important;
-    border-color: rgba(99,102,241,.45) !important;
+    background: rgba(99,102,241,.1) !important; border-color: rgba(99,102,241,.45) !important;
     color: #dde3f0 !important; transform: translateX(6px);
 }
 div[data-testid="stRadio"] > div > label[data-checked="true"] {
-    background: rgba(99,102,241,.15) !important;
-    border-color: rgba(99,102,241,.7) !important;
-    color: #a5b4fc !important;
-}
-
-/* ─── Score & Subjects ─────────────────────────────────────────────────── */
-.spill {
-    text-align: right; color: #7c3aed; font-family: 'Syne', sans-serif;
-    font-weight: 800; font-size: 15px; padding-top: 6px; letter-spacing: -.3px;
-}
-.subj-pill {
-    display: inline-block;
-    background: rgba(99,102,241,.12);
-    border: 1px solid rgba(99,102,241,.3);
-    color: #818cf8; font-size: 11px; font-weight: 700;
-    letter-spacing: 1.5px; text-transform: uppercase;
-    padding: 5px 16px; border-radius: 99px; margin-bottom: 12px;
+    background: rgba(99,102,241,.15) !important; border-color: rgba(99,102,241,.7) !important; color: #a5b4fc !important;
 }
 
 /* ─── Mistake cards & Explanations ──────────────────────────────────── */
-.mk { background:rgba(239,68,68,.07); border:1px solid rgba(239,68,68,.22);
-    border-radius:12px; padding:16px 18px; margin:10px 0; }
+.mk { background:rgba(239,68,68,.07); border:1px solid rgba(239,68,68,.22); border-radius:12px; padding:16px 18px; margin:10px 0; }
 .mk-q  { color:#64748b; font-size:14px; margin-bottom:6px; line-height:1.5; font-weight: 600;}
 .mk-u  { color:#fca5a5; font-size:13px; margin-bottom:4px; }
 .mk-c  { color:#86efac; font-size:13px; font-weight:700; margin-bottom: 8px;}
 .mk-e  { color:#94a3b8; font-size:13px; margin-top:8px; line-height: 1.6; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px;}
 
 /* ─── Expander overrides ────────────────────────────────────────────── */
-details {
-    background: rgba(255,255,255,.02) !important;
-    border: 1px solid rgba(255,255,255,.07) !important;
-    border-radius: 14px !important; overflow: hidden;
-    margin-bottom: 20px;
-}
-details summary {
-    color: #4a5878 !important; font-weight: 600 !important;
-    padding: 12px 16px !important; font-size: 14px !important;
-}
-
-/* ─── Result hero ───────────────────────────────────────────────────── */
+details { background: rgba(255,255,255,.02) !important; border: 1px solid rgba(255,255,255,.07) !important; border-radius: 14px !important; margin-bottom: 20px; }
+details summary { color: #4a5878 !important; font-weight: 600 !important; padding: 12px 16px !important; font-size: 14px !important; }
 .res-hero { text-align:center; padding:28px 0 12px; }
 .res-emoji { font-size:72px; line-height:1; margin-bottom:10px; }
 .res-grade { font-family:'Syne',sans-serif; font-size:34px; font-weight:900; margin-bottom:6px; }
 .res-msg { color:#2d3e5a; font-size:15px; }
-
-/* ─── Comprehension box ─────────────────────────────────────────────── */
-.comp-box {
-    background: rgba(99,102,241,.06); border: 1px solid rgba(99,102,241,.2);
-    border-left: 3px solid #6366f1; border-radius: 0 12px 12px 0;
-    padding: 16px 20px; margin: 12px 0 18px; font-size: 14px; color: #8899b8; font-style: italic;
-}
 </style>
 <div class="orb-a"></div>
 <div class="orb-b"></div>
 """, unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
-# QUESTION BANK WITH EXPLANATIONS
+# MULTI-TIER QUESTION BANK (India Focus + World)
 # ══════════════════════════════════════════════════════════════════════════════
 QUESTION_BANK = {
     "History": {
         "icon": "📜", "color": "#f59e0b", "desc": "India & the world",
-        "questions": [
-            {"question": "In which year did India gain independence from British rule?",
-             "options": {"A": "1945", "B": "1946", "C": "1947", "D": "1948"}, "answer": "C",
-             "explanation": "India officially gained independence on August 15, 1947, following the Indian Independence Act. This marked the end of nearly 200 years of British colonial rule. The transfer of power was accompanied by the historic and tragic partition of the subcontinent. It remains a monumental event in global history, inspiring other nations."},
-            {"question": "Who is known as the 'Father of the Indian Nation'?",
-             "options": {"A": "Jawaharlal Nehru", "B": "Sardar Patel", "C": "B.R. Ambedkar", "D": "Mahatma Gandhi"}, "answer": "D",
-             "explanation": "Mahatma Gandhi is revered as the Father of the Nation for his leadership in the independence movement. He utilized non-violent resistance, known as Satyagraha, to challenge British authority. Subhas Chandra Bose formally addressed him with this title in a 1944 radio broadcast. His methods deeply influenced global civil rights leaders."},
-            {"question": "The Indian National Congress was founded in which year?",
-             "options": {"A": "1875", "B": "1885", "C": "1895", "D": "1905"}, "answer": "B",
-             "explanation": "The Indian National Congress was founded in December 1885 in Bombay (Mumbai). Allan Octavian Hume, a retired British civil servant, played a key role in its formation alongside Indian leaders. Initially seeking a greater share in government for educated Indians, it eventually became the principal driving force of the independence struggle."},
-            {"question": "The Battle of Plassey (1757) was fought between the British East India Company and the Nawab of —",
-             "options": {"A": "Mysore", "B": "Hyderabad", "C": "Bengal", "D": "Maratha"}, "answer": "C",
-             "explanation": "The Battle of Plassey took place in 1757 against Siraj-ud-Daulah, the Nawab of Bengal. Robert Clive led the British forces to victory, largely due to the defection of the Nawab's commander, Mir Jafar. This battle is highly significant as it marked the beginning of decisive political and military dominance by the British in India."},
-            {"question": "World War II ended in which year?",
-             "options": {"A": "1943", "B": "1944", "C": "1945", "D": "1946"}, "answer": "C",
-             "explanation": "World War II officially ended in September 1945. The conflict drew to a close following the surrender of Germany in May 1945 and Japan in September 1945. The latter surrender occurred shortly after the devastating atomic bombings of Hiroshima and Nagasaki. The war's end led directly to the creation of the United Nations."},
-        ]
+        "questions": {
+            "Easy": [
+                {"question": "In which year did India gain independence from British rule?", "options": {"A": "1945", "B": "1946", "C": "1947", "D": "1948"}, "answer": "C", "explanation": "India officially gained independence on August 15, 1947."},
+                {"question": "Who is known as the 'Father of the Indian Nation'?", "options": {"A": "Jawaharlal Nehru", "B": "Bhagat Singh", "C": "B.R. Ambedkar", "D": "Mahatma Gandhi"}, "answer": "D", "explanation": "Mahatma Gandhi led the non-violent freedom struggle in India."},
+                {"question": "[World] World War II officially ended in which year?", "options": {"A": "1943", "B": "1944", "C": "1945", "D": "1946"}, "answer": "C", "explanation": "WWII ended in 1945 following the surrender of Axis powers."},
+                {"question": "Who built the Taj Mahal in Agra?", "options": {"A": "Akbar", "B": "Shah Jahan", "C": "Aurangzeb", "D": "Babur"}, "answer": "B", "explanation": "Mughal Emperor Shah Jahan commissioned the Taj Mahal for his wife Mumtaz."},
+                {"question": "Who was the first President of independent India?", "options": {"A": "Sardar Patel", "B": "Dr. Rajendra Prasad", "C": "Dr. S. Radhakrishnan", "D": "Jawaharlal Nehru"}, "answer": "B", "explanation": "Dr. Rajendra Prasad served as the first President of India from 1950 to 1962."}
+            ],
+            "Medium": [
+                {"question": "In which year was the 'Quit India Movement' launched?", "options": {"A": "1930", "B": "1942", "C": "1945", "D": "1947"}, "answer": "B", "explanation": "Mahatma Gandhi launched the Quit India Movement in August 1942 at the Gowalia Tank Maidan."},
+                {"question": "[World] In which year did the French Revolution begin?", "options": {"A": "1776", "B": "1789", "C": "1812", "D": "1848"}, "answer": "B", "explanation": "The French Revolution began in 1789 with the storming of the Bastille."},
+                {"question": "Which historic battle in 1526 marked the beginning of the Mughal Empire in India?", "options": {"A": "Battle of Buxar", "B": "First Battle of Panipat", "C": "Battle of Haldighati", "D": "Battle of Plassey"}, "answer": "B", "explanation": "Babur defeated Ibrahim Lodi in the First Battle of Panipat in 1526."},
+                {"question": "Which great warrior king is known as the founder of the Maratha Empire and the father of the Indian Navy?", "options": {"A": "Rana Pratap", "B": "Chhatrapati Shivaji Maharaj", "C": "Baji Rao I", "D": "Tipu Sultan"}, "answer": "B", "explanation": "Shivaji Maharaj laid the foundation of the Maratha Empire and built a formidable naval fleet."},
+                {"question": "The Gateway of India in Mumbai was built to commemorate the visit of which British monarch?", "options": {"A": "Queen Victoria", "B": "King George V", "C": "King Edward VII", "D": "Queen Elizabeth II"}, "answer": "B", "explanation": "It was built to commemorate the 1911 royal visit of King George V and Queen Mary."}
+            ],
+            "Hard": [
+                {"question": "The tragic Jallianwala Bagh massacre took place on which exact date?", "options": {"A": "April 13, 1919", "B": "March 23, 1931", "C": "August 15, 1947", "D": "January 26, 1930"}, "answer": "A", "explanation": "General Dyer ordered troops to fire on a peaceful gathering on April 13, 1919, in Amritsar."},
+                {"question": "[World] The collapse of the Soviet Union (USSR), marking the end of the Cold War, occurred in?", "options": {"A": "1989", "B": "1991", "C": "1993", "D": "1995"}, "answer": "B", "explanation": "The USSR officially dissolved on December 26, 1991."},
+                {"question": "Who was the founder of the Indian National Army (Azad Hind Fauj) before Subhas Chandra Bose took command?", "options": {"A": "Captain Mohan Singh", "B": "Rash Behari Bose", "C": "Bhagat Singh", "D": "Chandrashekhar Azad"}, "answer": "A", "explanation": "Captain Mohan Singh originally formed the INA with Indian POWs in 1942."},
+                {"question": "Which ancient ruler defeated the Greek king Seleucus Nicator?", "options": {"A": "King Porus", "B": "Chandragupta Maurya", "C": "Ashoka", "D": "Samudragupta"}, "answer": "B", "explanation": "Chandragupta Maurya defeated Seleucus Nicator, securing the northwestern borders of India."},
+                {"question": "The Chola dynasty is famous for its powerful navy. Which Chola king conquered parts of Southeast Asia?", "options": {"A": "Aditya Chola", "B": "Rajaraja Chola I", "C": "Rajendra Chola I", "D": "Karikala Chola"}, "answer": "C", "explanation": "Rajendra Chola I expanded the empire overseas, using his navy to conquer Srivijaya (modern Indonesia/Malaysia)."}
+            ]
+        }
     },
     "Geography": {
         "icon": "🌍", "color": "#10b981", "desc": "India, planets & beyond",
-        "questions": [
-            {"question": "Which is the longest river in India?",
-             "options": {"A": "Yamuna", "B": "Brahmaputra", "C": "Godavari", "D": "Ganga"}, "answer": "D",
-             "explanation": "The Ganga (Ganges) is the longest river entirely within India, flowing over 2,500 kilometers. It originates from the Gangotri Glacier in the Himalayas. The river is a critical water source for millions and holds immense cultural and religious significance. The Brahmaputra is longer overall, but most of its course lies outside India."},
-            {"question": "Which planet is known as the 'Red Planet'?",
-             "options": {"A": "Jupiter", "B": "Venus", "C": "Mars", "D": "Saturn"}, "answer": "C",
-             "explanation": "Mars is commonly called the 'Red Planet' because of the iron oxide (rust) prevalent on its surface. This gives the planet a distinct reddish appearance visible even to the naked eye from Earth. Mars features the largest volcano in the solar system, Olympus Mons. It remains a primary target for future space exploration."},
-            {"question": "The Thar Desert is primarily located in which Indian state?",
-             "options": {"A": "Gujarat", "B": "Rajasthan", "C": "Punjab", "D": "Haryana"}, "answer": "B",
-             "explanation": "The Thar Desert, also known as the Great Indian Desert, is mostly located in the state of Rajasthan. It forms a natural boundary between India and Pakistan. Despite the harsh, arid conditions, it is the most densely populated desert in the world. It features a unique ecosystem adapted to extreme heat and low rainfall."},
-            {"question": "Which planet has the most moons in our solar system?",
-             "options": {"A": "Jupiter", "B": "Uranus", "C": "Neptune", "D": "Saturn"}, "answer": "D",
-             "explanation": "Recent astronomical discoveries have confirmed that Saturn holds the record for the most moons in our solar system. As of the latest counts, Saturn has over 140 recognized moons, surpassing Jupiter. Its largest moon, Titan, is unique because it has a dense atmosphere and liquid lakes of methane."},
-            {"question": "The Siachen Glacier, the world's highest battlefield, is in which Indian state/UT?",
-             "options": {"A": "Himachal Pradesh", "B": "Uttarakhand", "C": "Ladakh", "D": "Sikkim"}, "answer": "C",
-             "explanation": "The Siachen Glacier is located in the eastern Karakoram range in the Himalayas, falling within the Union Territory of Ladakh. It is known as the world's highest battlefield due to the military presence of India and Pakistan since 1984. Soldiers here face extreme cold, high altitude, and avalanches, which are often deadlier than combat."},
-        ]
+        "questions": {
+            "Easy": [
+                {"question": "Which is the longest river flowing entirely within India?", "options": {"A": "Yamuna", "B": "Brahmaputra", "C": "Godavari", "D": "Ganga"}, "answer": "D", "explanation": "The Ganga flows for over 2,500 km within Indian territory."},
+                {"question": "[World] Which planet in our solar system is known as the 'Red Planet'?", "options": {"A": "Jupiter", "B": "Venus", "C": "Mars", "D": "Saturn"}, "answer": "C", "explanation": "Mars appears red due to the abundance of iron oxide (rust) on its surface."},
+                {"question": "The Indian state of Punjab is famously known as the 'Land of ____ Rivers'.", "options": {"A": "Three", "B": "Five", "C": "Seven", "D": "Nine"}, "answer": "B", "explanation": "Punjab translates to 'Land of Five Rivers' (Sutlej, Beas, Ravi, Chenab, Jhelum)."},
+                {"question": "Which Indian state primarily hosts the harsh and arid Thar Desert?", "options": {"A": "Gujarat", "B": "Rajasthan", "C": "Punjab", "D": "Haryana"}, "answer": "B", "explanation": "The Thar Desert is predominantly located in Rajasthan."},
+                {"question": "How many states does India currently have?", "options": {"A": "27", "B": "28", "C": "29", "D": "30"}, "answer": "B", "explanation": "India currently has 28 States and 8 Union Territories."}
+            ],
+            "Medium": [
+                {"question": "Which is the largest brackish water lake in India?", "options": {"A": "Wular Lake", "B": "Dal Lake", "C": "Chilika Lake", "D": "Vembanad Lake"}, "answer": "C", "explanation": "Chilika Lake in Odisha is the largest coastal lagoon in India."},
+                {"question": "[World] The Equator passes through which of these continents?", "options": {"A": "Europe", "B": "North America", "C": "Africa", "D": "Antarctica"}, "answer": "C", "explanation": "The Equator passes through South America, Africa, and Asia."},
+                {"question": "Which is the highest mountain peak located fully in undisputed Indian territory?", "options": {"A": "K2 (Godwin Austen)", "B": "Mount Everest", "C": "Nanda Devi", "D": "Kanchenjunga"}, "answer": "D", "explanation": "Kanchenjunga is the highest peak in India (Sikkim). Nanda Devi is the highest located *entirely* within India, but Kanchenjunga is standardly recognized as India's highest."},
+                {"question": "Majuli, the world's largest river island, is located in which river?", "options": {"A": "Ganga", "B": "Brahmaputra", "C": "Godavari", "D": "Narmada"}, "answer": "B", "explanation": "Majuli island is situated in the Brahmaputra River in Assam."},
+                {"question": "Which type of soil is most suitable for growing cotton in India?", "options": {"A": "Red Soil", "B": "Alluvial Soil", "C": "Laterite Soil", "D": "Black Soil (Regur)"}, "answer": "D", "explanation": "Black soil is ideal for cotton due to its high moisture retention capacity."}
+            ],
+            "Hard": [
+                {"question": "The Siachen Glacier, known as the world's highest militarized zone, is located in which mountain range?", "options": {"A": "Pir Panjal", "B": "Karakoram", "C": "Zanskar", "D": "Dhauladhar"}, "answer": "B", "explanation": "Siachen is in the eastern Karakoram range in the Himalayas."},
+                {"question": "[World] The 'Ring of Fire', known for earthquakes and volcanoes, is located in which ocean?", "options": {"A": "Atlantic Ocean", "B": "Indian Ocean", "C": "Pacific Ocean", "D": "Arctic Ocean"}, "answer": "C", "explanation": "The Ring of Fire forms a massive horseshoe shape around the Pacific Ocean."},
+                {"question": "India's only active volcano is located in which island group?", "options": {"A": "Lakshadweep", "B": "Barren Island (Andaman)", "C": "Minicoy", "D": "Majuli"}, "answer": "B", "explanation": "Barren Island in the Andaman Sea is home to South Asia's only active volcano."},
+                {"question": "The Standard Meridian of India (82°30' E) passes through which of these cities?", "options": {"A": "Bhopal", "B": "Mirzapur", "C": "Patna", "D": "Nagpur"}, "answer": "B", "explanation": "The Standard Meridian passes through Mirzapur in Uttar Pradesh."},
+                {"question": "Which Himalayan pass connects the Kashmir Valley with the Ladakh region?", "options": {"A": "Rohtang Pass", "B": "Nathu La", "C": "Zoji La", "D": "Shipki La"}, "answer": "C", "explanation": "Zoji La is a high mountain pass providing vital connectivity to Ladakh."}
+            ]
+        }
     },
     "Politics": {
         "icon": "🏛️", "color": "#6366f1", "desc": "Easy civics everyone knows",
-        "questions": [
-            {"question": "Who is the President of India as per the Constitution?",
-             "options": {"A": "Prime Minister", "B": "Chief Justice", "C": "Head of State", "D": "Speaker"}, "answer": "C",
-             "explanation": "According to the Indian Constitution, the President is the Head of State and the first citizen of India. The President is also the Supreme Commander of the Indian Armed Forces. However, it is primarily a ceremonial role, as real executive power rests with the Prime Minister and the Council of Ministers."},
-            {"question": "How many members are in the Lok Sabha (maximum strength)?",
-             "options": {"A": "250", "B": "545", "C": "552", "D": "543"}, "answer": "C",
-             "explanation": "The maximum authorized strength of the Lok Sabha (House of the People) is 552 members. This includes representatives of the states and union territories. Currently, the operational strength is 543 elected members, following the constitutional amendment that removed the two nominated Anglo-Indian seats."},
-            {"question": "Which is the supreme law of India?",
-             "options": {"A": "IPC", "B": "Constitution", "C": "CrPC", "D": "Parliament Acts"}, "answer": "B",
-             "explanation": "The Constitution of India is the supreme law of the land. It lays down the framework defining fundamental political principles, structures, procedures, powers, and duties of government institutions. Every other law, including the IPC or acts of Parliament, must conform to the constitutional framework to be valid."},
-            {"question": "In which year was the Indian Constitution adopted?",
-             "options": {"A": "1947", "B": "1948", "C": "1949", "D": "1950"}, "answer": "C",
-             "explanation": "The Constituent Assembly officially adopted the Indian Constitution on November 26, 1949. This day is now celebrated annually as Constitution Day (Samvidhan Divas). However, it came into legal force a few months later on January 26, 1950, which is celebrated as Republic Day."},
-            {"question": "Who was the first Prime Minister of India?",
-             "options": {"A": "Sardar Patel", "B": "Jawaharlal Nehru", "C": "Rajendra Prasad", "D": "Lal Bahadur Shastri"}, "answer": "B",
-             "explanation": "Jawaharlal Nehru was the first Prime Minister of independent India, taking office on August 15, 1947. He was a central figure in Indian politics before and after independence. He served as PM until his death in 1964, making him the longest-serving Prime Minister in the nation's history."},
-        ]
+        "questions": {
+            "Easy": [
+                {"question": "Who is the Constitutional Head of State in India?", "options": {"A": "Prime Minister", "B": "Chief Justice", "C": "President", "D": "Speaker of Lok Sabha"}, "answer": "C", "explanation": "The President is the Head of State and the Supreme Commander of the Armed Forces."},
+                {"question": "In which year did the Constitution of India formally come into effect?", "options": {"A": "1947", "B": "1949", "C": "1950", "D": "1952"}, "answer": "C", "explanation": "The Constitution came into effect on January 26, 1950 (Republic Day)."},
+                {"question": "[World] Where is the headquarters of the United Nations (UN) located?", "options": {"A": "Geneva", "B": "London", "C": "Paris", "D": "New York"}, "answer": "D", "explanation": "The UN Headquarters is located in New York City, USA."},
+                {"question": "Which Article of the Indian Constitution, granting special status to Jammu & Kashmir, was abrogated in 2019?", "options": {"A": "Article 356", "B": "Article 370", "C": "Article 21", "D": "Article 44"}, "answer": "B", "explanation": "Article 370 was revoked, restructuring the state into two Union Territories."},
+                {"question": "Who was the first Prime Minister of independent India?", "options": {"A": "Sardar Patel", "B": "Jawaharlal Nehru", "C": "B.R. Ambedkar", "D": "Lal Bahadur Shastri"}, "answer": "B", "explanation": "Jawaharlal Nehru served as the first Prime Minister from 1947 to 1964."}
+            ],
+            "Medium": [
+                {"question": "What is the minimum age requirement to become a member of the Lok Sabha?", "options": {"A": "18 years", "B": "21 years", "C": "25 years", "D": "30 years"}, "answer": "C", "explanation": "Article 84(b) sets the minimum age for Lok Sabha MPs at 25 years."},
+                {"question": "Fundamental Rights are enshrined in which Part of the Indian Constitution?", "options": {"A": "Part II", "B": "Part III", "C": "Part IV", "D": "Part V"}, "answer": "B", "explanation": "Part III (Articles 12 to 35) guarantees Fundamental Rights to citizens."},
+                {"question": "[World] Which of these countries is NOT a permanent veto-wielding member of the UN Security Council?", "options": {"A": "France", "B": "Russia", "C": "India", "D": "China"}, "answer": "C", "explanation": "India is not a permanent member. The P5 are US, UK, France, Russia, and China."},
+                {"question": "Who appoints the Chief Election Commissioner of India?", "options": {"A": "Prime Minister", "B": "Chief Justice of India", "C": "President of India", "D": "Parliament"}, "answer": "C", "explanation": "The President appoints the Chief Election Commissioner under Article 324."},
+                {"question": "The Panchayati Raj system in India was introduced through which Constitutional Amendment?", "options": {"A": "42nd", "B": "44th", "C": "73rd", "D": "86th"}, "answer": "C", "explanation": "The 73rd Amendment Act (1992) gave constitutional status to Panchayati Raj institutions."}
+            ],
+            "Hard": [
+                {"question": "Which Article was called the 'Heart and Soul of the Constitution' by Dr. B.R. Ambedkar?", "options": {"A": "Article 14", "B": "Article 19", "C": "Article 21", "D": "Article 32"}, "answer": "D", "explanation": "Article 32 provides the right to Constitutional Remedies to enforce Fundamental Rights."},
+                {"question": "The concept of 'Directive Principles of State Policy' was borrowed from which country's constitution?", "options": {"A": "USA", "B": "UK", "C": "Ireland", "D": "USSR"}, "answer": "C", "explanation": "The DPSP concept was inspired by the Irish Constitution."},
+                {"question": "[World] The International Court of Justice (ICJ) is located in which city?", "options": {"A": "Geneva", "B": "The Hague", "C": "Vienna", "D": "Brussels"}, "answer": "B", "explanation": "The ICJ is seated at the Peace Palace in The Hague, Netherlands."},
+                {"question": "Under which Article can the President declare a National Emergency in India?", "options": {"A": "Article 352", "B": "Article 356", "C": "Article 360", "D": "Article 365"}, "answer": "A", "explanation": "Article 352 allows for National Emergency due to war, external aggression, or armed rebellion."},
+                {"question": "When did the Constituent Assembly of India hold its very first session?", "options": {"A": "August 15, 1947", "B": "December 9, 1946", "C": "January 26, 1950", "D": "November 26, 1949"}, "answer": "B", "explanation": "The first session took place on December 9, 1946, before independence."}
+            ]
+        }
     },
     "Biology": {
         "icon": "🔬", "color": "#ec4899", "desc": "Life & living systems",
-        "questions": [
-            {"question": "What is the powerhouse of the cell?",
-             "options": {"A": "Nucleus", "B": "Ribosome", "C": "Mitochondria", "D": "Golgi body"}, "answer": "C",
-             "explanation": "Mitochondria are universally known as the powerhouses of the cell. They generate most of the chemical energy needed to power the cell's biochemical reactions. This energy is stored in a complex molecule called ATP (adenosine triphosphate). They are unique as they contain their own DNA."},
-            {"question": "DNA stands for —",
-             "options": {"A": "Deoxyribonucleic Acid", "B": "Dioxynucleic Acid",
-                         "C": "Deoxyribose Nitrogen Acid", "D": "Double Nitrogen Acid"}, "answer": "A",
-             "explanation": "DNA stands for Deoxyribonucleic Acid. It is the hereditary material in humans and almost all other organisms. The DNA molecule forms a double helix structure, acting like an instruction manual that carries the genetic information for the development and functioning of living things."},
-            {"question": "How many chromosomes does a healthy human cell contain?",
-             "options": {"A": "23", "B": "44", "C": "46", "D": "48"}, "answer": "C",
-             "explanation": "A healthy human somatic cell contains 46 chromosomes in total. These are organized into 23 pairs, with one chromosome of each pair inherited from each parent. The 23rd pair determines the biological sex of the individual (XX for females, XY for males)."},
-            {"question": "Which blood type is the universal donor?",
-             "options": {"A": "AB+", "B": "O+", "C": "O−", "D": "A−"}, "answer": "C",
-             "explanation": "Blood type O negative (O-) is considered the universal donor type. This means O- blood can be given to individuals of any blood type in an emergency. This is because it lacks A, B, and Rh antigens on the red blood cells, minimizing the risk of an immune reaction during a transfusion."},
-            {"question": "Photosynthesis primarily occurs in which organelle?",
-             "options": {"A": "Mitochondria", "B": "Vacuole", "C": "Chloroplast", "D": "Nucleus"}, "answer": "C",
-             "explanation": "Photosynthesis takes place primarily in the chloroplasts of plant cells. Chloroplasts contain the green pigment chlorophyll, which captures light energy from the sun. This energy is then used to convert water and carbon dioxide into glucose, providing food for the plant and releasing oxygen into the air."},
-        ]
+        "questions": {
+            "Easy": [
+                {"question": "What is generally called the 'powerhouse of the cell'?", "options": {"A": "Nucleus", "B": "Ribosome", "C": "Mitochondria", "D": "Golgi body"}, "answer": "C", "explanation": "Mitochondria generate ATP, which acts as cellular energy."},
+                {"question": "Which blood type is considered the 'Universal Donor'?", "options": {"A": "AB+", "B": "O+", "C": "O−", "D": "A−"}, "answer": "C", "explanation": "O-negative blood lacks A, B, and Rh antigens, making it safe for all recipients."},
+                {"question": "[World] Who discovered Penicillin, the world's first widely used antibiotic?", "options": {"A": "Louis Pasteur", "B": "Alexander Fleming", "C": "Marie Curie", "D": "Gregor Mendel"}, "answer": "B", "explanation": "Alexander Fleming discovered Penicillin in 1928."},
+                {"question": "How many chambers does a normal human heart have?", "options": {"A": "Two", "B": "Three", "C": "Four", "D": "Five"}, "answer": "C", "explanation": "The human heart has four chambers: two atria and two ventricles."},
+                {"question": "The traditional Indian medical system that focuses on holistic body-weight and diet balance is called:", "options": {"A": "Homeopathy", "B": "Allopathy", "C": "Ayurveda", "D": "Acupuncture"}, "answer": "C", "explanation": "Ayurveda is a historic Indian system emphasizing diet (like desi ghee and milk) and physical harmony."}
+            ],
+            "Medium": [
+                {"question": "What is the average lifespan of a human Red Blood Cell (RBC)?", "options": {"A": "30 days", "B": "60 days", "C": "120 days", "D": "240 days"}, "answer": "C", "explanation": "RBCs circulate for about 120 days before being recycled in the spleen."},
+                {"question": "Which mosquito is the primary vector for Dengue fever, a common disease in India?", "options": {"A": "Anopheles", "B": "Culex", "C": "Aedes aegypti", "D": "Mansonia"}, "answer": "C", "explanation": "Aedes mosquitoes bite during the day and transmit Dengue and Chikungunya."},
+                {"question": "[World] Which molecule carries genetic instructions in all living organisms?", "options": {"A": "RNA", "B": "DNA", "C": "Protein", "D": "Lipid"}, "answer": "B", "explanation": "Deoxyribonucleic Acid (DNA) holds genetic blueprints."},
+                {"question": "Which is the largest internal organ/gland in the human body?", "options": {"A": "Heart", "B": "Lungs", "C": "Liver", "D": "Kidney"}, "answer": "C", "explanation": "The liver is the largest internal organ, responsible for detoxification."},
+                {"question": "Which Indian scientist proved that plants have life using a device called the Crescograph?", "options": {"A": "C.V. Raman", "B": "Homi Bhabha", "C": "Satyendra Nath Bose", "D": "Jagadish Chandra Bose"}, "answer": "D", "explanation": "J.C. Bose pioneered plant biophysics and wireless communication."}
+            ],
+            "Hard": [
+                {"question": "In the human kidney, what is the basic structural and functional unit?", "options": {"A": "Neuron", "B": "Alveolus", "C": "Nephron", "D": "Villus"}, "answer": "C", "explanation": "Nephrons filter blood to produce urine in the kidneys."},
+                {"question": "Which plant tissue is responsible for the transport of food (sugars) from leaves to other parts?", "options": {"A": "Xylem", "B": "Phloem", "C": "Epidermis", "D": "Cambium"}, "answer": "B", "explanation": "Phloem transports food, while Xylem transports water."},
+                {"question": "[World] In cell division, which phase involves the separation of sister chromatids to opposite poles?", "options": {"A": "Prophase", "B": "Metaphase", "C": "Anaphase", "D": "Telophase"}, "answer": "C", "explanation": "During Anaphase, chromosomes are pulled apart."},
+                {"question": "What is the scientific name of the Indian National Animal (Bengal Tiger)?", "options": {"A": "Panthera leo", "B": "Panthera tigris", "C": "Elephas maximus", "D": "Pavo cristatus"}, "answer": "B", "explanation": "Panthera tigris is the scientific name for the tiger."},
+                {"question": "Which hormone, produced by the pancreas, regulates blood sugar levels?", "options": {"A": "Glucagon", "B": "Insulin", "C": "Thyroxine", "D": "Adrenaline"}, "answer": "B", "explanation": "Insulin lowers blood glucose, and its deficiency causes Diabetes."}
+            ]
+        }
     },
     "English": {
-        "icon": "✍️", "color": "#f472b6", "desc": "Comprehension, synonyms & idioms",
-        "passage": (
-            "Riya had always been fascinated by the night sky. Every evening she would climb "
-            "to the rooftop of her small house in Jaipur, armed with a battered notebook and a "
-            "pencil, and stare into the vast darkness above. Her neighbours thought she was peculiar, "
-            "but Riya did not mind. She believed that patience was the first lesson the universe "
-            "taught, and that every star had a story waiting to be told."
-        ),
-        "questions": [
-            {"question": "[Comprehension] Where did Riya go every evening to observe the sky?",
-             "options": {"A": "A hilltop garden", "B": "The rooftop of her house",
-                         "C": "A nearby observatory", "D": "Her balcony"},
-             "answer": "B", "comp": True,
-             "explanation": "The passage explicitly states that Riya 'would climb to the rooftop of her small house in Jaipur.' This detail establishes her setting and routine for stargazing."},
-            {"question": "[Comprehension] What did Riya's neighbours think of her habit?",
-             "options": {"A": "They admired her", "B": "They joined her",
-                         "C": "They thought she was peculiar", "D": "They ignored her"},
-             "answer": "C", "comp": True,
-             "explanation": "The text directly mentions that 'Her neighbours thought she was peculiar.' In this context, peculiar means they found her behavior strange or unusual compared to normal evening routines."},
-            {"question": "[Comprehension] What lesson did Riya believe the universe taught first?",
-             "options": {"A": "Curiosity", "B": "Patience", "C": "Discipline", "D": "Courage"},
-             "answer": "B", "comp": True,
-             "explanation": "The passage provides Riya's philosophical view: 'She believed that patience was the first lesson the universe taught.' Observing the slow movement of stars requires a lot of waiting and calm observation."},
-            {"question": "[Synonym] Choose the best synonym for 'Peculiar':",
-             "options": {"A": "Ordinary", "B": "Cheerful", "C": "Strange", "D": "Polite"},
-             "answer": "C", "comp": False,
-             "explanation": "The word 'peculiar' means something that is strange, odd, or unusual. In the context of the story, her neighbors found her nightly rooftop visits strange, hence 'strange' is the perfect synonym."},
-            {"question": "[Idiom] 'Hit the books' means —",
-             "options": {"A": "Throw books away", "B": "Study hard",
-                         "C": "Damage books", "D": "Visit a library"},
-             "answer": "B", "comp": False,
-             "explanation": "The idiom 'hit the books' is a common English phrase that means to begin studying intensely or with great focus. It has nothing to do with physically striking a book, but rather tackling academics energetically!"},
-        ]
-    },
+        "icon": "✍️", "color": "#f472b6", "desc": "Comprehension & Grammar",
+        "questions": {
+            "Easy": [
+                {"question": "Choose the correct spelling:", "options": {"A": "Grammer", "B": "Grammar", "C": "Grammer", "D": "Gramer"}, "answer": "B", "explanation": "Grammar is spelled with an 'ar' at the end."},
+                {"question": "Which word is a synonym for 'Beautiful'?", "options": {"A": "Ugly", "B": "Hideous", "C": "Gorgeous", "D": "Angry"}, "answer": "C", "explanation": "Gorgeous means very beautiful or attractive."},
+                {"question": "[World] 'To let the cat out of the bag' is a common idiom meaning:", "options": {"A": "To free an animal", "B": "To reveal a secret", "C": "To buy a pet", "D": "To hide something"}, "answer": "B", "explanation": "This idiom means to accidentally reveal a hidden truth or secret."},
+                {"question": "Fill in the blank: 'He went ___ the market.'", "options": {"A": "at", "B": "in", "C": "to", "D": "for"}, "answer": "C", "explanation": "'To' is the correct preposition showing direction toward a destination."},
+                {"question": "Which of these is a noun?", "options": {"A": "Run", "B": "Quickly", "C": "Happy", "D": "Tiger"}, "answer": "D", "explanation": "A noun is a person, place, or thing. 'Tiger' is a thing (animal)."}
+            ],
+            "Medium": [
+                {"question": "Find the antonym for 'Abundant':", "options": {"A": "Plentiful", "B": "Scarce", "C": "Heavy", "D": "Rich"}, "answer": "B", "explanation": "Abundant means having plenty; scarce means very little."},
+                {"question": "Identify the error in this sentence: 'She don't like playing cricket.'", "options": {"A": "She", "B": "don't", "C": "playing", "D": "cricket"}, "answer": "B", "explanation": "The singular pronoun 'She' requires the verb 'doesn't', not 'don't'."},
+                {"question": "[World] 'Bite the bullet' means:", "options": {"A": "To eat fast", "B": "To endure a painful situation bravely", "C": "To get angry", "D": "To shoot a gun"}, "answer": "B", "explanation": "Originating from historical battlefields, it means facing hardship with courage."},
+                {"question": "What is the plural of 'Syllabus'?", "options": {"A": "Syllabuses", "B": "Syllabi", "C": "Both A and B", "D": "Syllabise"}, "answer": "C", "explanation": "Both 'Syllabuses' and 'Syllabi' are accepted plural forms in English."},
+                {"question": "Choose the correct sentence:", "options": {"A": "I have visited Delhi yesterday.", "B": "I visited Delhi yesterday.", "C": "I had visit Delhi yesterday.", "D": "I was visited Delhi yesterday."}, "answer": "B", "explanation": "For a specific past time ('yesterday'), use the simple past tense ('visited')."}
+            ],
+            "Hard": [
+                {"question": "In Indian political English history, the term 'Himalayan blunder' was coined by:", "options": {"A": "Jawaharlal Nehru", "B": "Mahatma Gandhi", "C": "Sardar Patel", "D": "Subhas Chandra Bose"}, "answer": "B", "explanation": "Gandhi used this term in 1919 to describe a severe mistake he made regarding satyagraha."},
+                {"question": "What is the meaning of the word 'Ephemeral'?", "options": {"A": "Everlasting", "B": "Short-lived", "C": "Dangerous", "D": "Glowing"}, "answer": "B", "explanation": "Ephemeral refers to things that exist only for a very short time."},
+                {"question": "[World] What is a 'Pyrrhic victory'?", "options": {"A": "A victory won at too great a cost", "B": "A victory achieved easily", "C": "A naval victory", "D": "A fake victory"}, "answer": "A", "explanation": "Named after King Pyrrhus, it's a win that takes such a heavy toll it's basically a defeat."},
+                {"question": "Identify the figure of speech: 'The camel is the ship of the desert.'", "options": {"A": "Simile", "B": "Metaphor", "C": "Personification", "D": "Hyperbole"}, "answer": "B", "explanation": "A metaphor makes a direct comparison without using 'like' or 'as'."},
+                {"question": "Which of these is grammatically correct?", "options": {"A": "Neither of the boys are here.", "B": "Neither of the boys is here.", "C": "Neither of boy is here.", "D": "Neither of the boys were here."}, "answer": "B", "explanation": "'Neither' is a singular pronoun and requires a singular verb ('is')."}
+            ]
+        }
+    }
 }
 
-SUBJECTS      = list(QUESTION_BANK.keys())
-TIMER_SECONDS = 30
+SUBJECTS = list(QUESTION_BANK.keys())
 
 # ══════════════════════════════════════════════════════════════════════════════
 # HELPERS
 # ══════════════════════════════════════════════════════════════════════════════
-def valid_email(e):
-    return bool(re.match(r"^[\w\.\+\-]+@[\w\-]+\.[a-zA-Z]{2,}$", e.strip()))
-
-def valid_pw(p):
-    return len(p) >= 6
-
+def valid_email(e): return bool(re.match(r"^[\w\.\+\-]+@[\w\-]+\.[a-zA-Z]{2,}$", e.strip()))
+def valid_pw(p): return len(p) >= 6
 def initials(email):
-    n = email.split("@")[0]
-    parts = re.split(r"[.\-_]", n)
+    parts = re.split(r"[.\-_]", email.split("@")[0])
     return "".join(p[0].upper() for p in parts if p)[:2] or "U"
 
 def full_reset():
@@ -489,6 +435,18 @@ def quiz_reset():
         st.session_state.pop(k, None)
     for k in [k for k in st.session_state if isinstance(k, str) and k.startswith("q_")]:
         del st.session_state[k]
+
+def start_quiz(subj, difficulty, timer_sec):
+    st.session_state.subject = subj
+    st.session_state.difficulty = difficulty
+    st.session_state.timer_seconds = timer_sec
+    quiz_reset()
+    st.session_state.question_index = 0
+    st.session_state.score = 0
+    st.session_state.wrong_answers = []
+    st.session_state.start_time = time.time()
+    st.session_state.page = "quiz"
+    st.rerun()
 
 # ── UI components ──────────────────────────────────────────────────────────
 def render_brand():
@@ -509,11 +467,17 @@ def render_steps(current):
     st.markdown(html, unsafe_allow_html=True)
 
 def render_badge():
-    email   = st.session_state.get("email", "")
-    av      = initials(email)
-    name    = email.split("@")[0].replace(".", " ").replace("_", " ").title()
-    subj    = st.session_state.get("subject", "")
-    subj_tag = f'&nbsp;·&nbsp;<span style="color:#a855f7;font-size:11px;font-weight:700">{QUESTION_BANK[subj]["icon"]} {subj}</span>' if subj else ""
+    email = st.session_state.get("email", "")
+    av = initials(email)
+    name = email.split("@")[0].replace(".", " ").replace("_", " ").title()
+    subj = st.session_state.get("subject", "")
+    diff = st.session_state.get("difficulty", "")
+    
+    subj_tag = ""
+    if subj and diff:
+        icon = QUESTION_BANK[subj]["icon"]
+        subj_tag = f'&nbsp;·&nbsp;<span style="color:#a855f7;font-size:11px;font-weight:700">{icon} {subj} ({diff})</span>'
+        
     st.markdown(f"""
     <div class="ubadge">
         <div class="uavatar">{av}</div>
@@ -524,8 +488,7 @@ def render_badge():
     </div>""", unsafe_allow_html=True)
 
 # ── Init ───────────────────────────────────────────────────────────────────
-if "page" not in st.session_state:
-    st.session_state.page = "login"
+if "page" not in st.session_state: st.session_state.page = "login"
 
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE — LOGIN
@@ -537,14 +500,8 @@ if st.session_state.page == "login":
     st.markdown("""
     <div style="
         background: linear-gradient(135deg, rgba(99,102,241,.15) 0%, rgba(168,85,247,.12) 50%, rgba(236,72,153,.10) 100%);
-        border: 1px solid rgba(99,102,241,.25);
-        border-radius: 20px;
-        padding: 22px 28px;
-        margin-bottom: 24px;
-        display: flex;
-        align-items: center;
-        gap: 18px;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,.07);
+        border: 1px solid rgba(99,102,241,.25); border-radius: 20px; padding: 22px 28px; margin-bottom: 24px;
+        display: flex; align-items: center; gap: 18px; box-shadow: inset 0 1px 0 rgba(255,255,255,.07);
     ">
         <div style="font-size:48px;line-height:1">🧠</div>
         <div>
@@ -552,13 +509,11 @@ if st.session_state.page == "login":
                 Ready to challenge your mind?
             </div>
             <div style="font-size:13px;color:#3d5070;line-height:1.6;">
-                Sign in · Pick a subject · Answer 5 timed MCQs · Track your score
+                Sign in · Pick a subject · Choose Difficulty · Answer 5 timed MCQs
             </div>
         </div>
     </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown("""
+    
     <div class="login-header">
         <div class="section-chip">🔐 Sign In</div>
         <div class="login-title">Welcome, challenger!</div>
@@ -566,28 +521,23 @@ if st.session_state.page == "login":
     </div>
     """, unsafe_allow_html=True)
 
-    email    = st.text_input("Email Address", placeholder="yourname@example.com", key="li_email")
+    email = st.text_input("Email Address", placeholder="yourname@example.com", key="li_email")
     password = st.text_input("Password", type="password", placeholder="Minimum 6 characters", key="li_pw")
 
     st.markdown('<div class="login-footer"><div class="divider-line"></div></div>', unsafe_allow_html=True)
 
     if st.button("Continue to Subject →", use_container_width=True):
         e = email.strip()
-        if not e or not password:
-            st.error("⚠️  Both fields are required.")
-        elif not valid_email(e):
-            st.error("⚠️  Enter a valid email — e.g. name@gmail.com")
-        elif not valid_pw(password):
-            st.error("⚠️  Password must be at least 6 characters.")
+        if not e or not password: st.error("⚠️ Both fields are required.")
+        elif not valid_email(e): st.error("⚠️ Enter a valid email — e.g. name@gmail.com")
+        elif not valid_pw(password): st.error("⚠️ Password must be at least 6 characters.")
         else:
             st.session_state.email = e
-            st.session_state.page  = "subject"
+            st.session_state.page = "subject"
             st.rerun()
 
-    st.markdown('<div class="trust-note" style="margin-top:14px;">🛡️ Credentials stay in your browser session only — never stored anywhere.</div>', unsafe_allow_html=True)
-
 # ══════════════════════════════════════════════════════════════════════════════
-# PAGE — SUBJECT SELECTION
+# PAGE — SUBJECT SELECTION & DIFFICULTY
 # ══════════════════════════════════════════════════════════════════════════════
 elif st.session_state.page == "subject":
     render_brand()
@@ -595,15 +545,12 @@ elif st.session_state.page == "subject":
     render_badge()
 
     st.markdown("""
-    <div style="margin-bottom:6px;">
-        <div class="section-chip">📚 Pick Your Subject</div>
-    </div>
+    <div style="margin-bottom:6px;"><div class="section-chip">📚 Pick Your Subject</div></div>
     <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#f0f4ff;margin-bottom:6px;">
         What do you want to be tested on?
     </div>
     <div style="color:#2d3e5a;font-size:14px;margin-bottom:20px;">
-        Choose wisely — you'll get <strong style="color:#6366f1;">5 subject-specific MCQs</strong>
-        with a <strong style="color:#f59e0b;">30-second countdown</strong> per question.
+        Choose a subject, then pick your difficulty level to start the timer.
     </div>
     """, unsafe_allow_html=True)
 
@@ -614,7 +561,7 @@ elif st.session_state.page == "subject":
     grid = list(zip([*row1, *row2], SUBJECTS))
 
     for col, subj in grid:
-        info  = QUESTION_BANK[subj]
+        info = QUESTION_BANK[subj]
         sel_c = "sel" if chosen == subj else ""
         with col:
             st.markdown(f"""
@@ -628,21 +575,25 @@ elif st.session_state.page == "subject":
                 st.session_state.subject_pick = subj
                 st.rerun()
 
-    st.markdown("<br>", unsafe_allow_html=True)
-
+    # ── Difficulty Selection Panel ─────────────────────────────────────────
     if chosen:
         info = QUESTION_BANK[chosen]
-        st.success(f"{info['icon']}  **{chosen}** selected — Let's test your knowledge!")
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button(f"🚀  Start {chosen} Quiz →", use_container_width=True, key="start_quiz"):
-            st.session_state.subject = chosen
-            quiz_reset()
-            st.session_state.question_index = 0
-            st.session_state.score          = 0
-            st.session_state.wrong_answers  = []
-            st.session_state.start_time     = time.time()
-            st.session_state.page           = "quiz"
-            st.rerun()
+        st.markdown(f"""
+        <div class="diff-panel">
+            <div class="diff-title">You selected {info['icon']} {chosen}. Now choose your difficulty:</div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            if st.button("🌱 Easy Mode\n30s / Question", key="btn_easy", use_container_width=True):
+                start_quiz(chosen, "Easy", 30)
+        with c2:
+            if st.button("⚖️ Medium Mode\n20s / Question", key="btn_med", use_container_width=True):
+                start_quiz(chosen, "Medium", 20)
+        with c3:
+            if st.button("🔥 Hard Mode\n15s / Question", key="btn_hard", use_container_width=True):
+                start_quiz(chosen, "Hard", 15)
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown('<div class="logout-area">', unsafe_allow_html=True)
@@ -655,11 +606,14 @@ elif st.session_state.page == "subject":
 # PAGE — QUIZ
 # ══════════════════════════════════════════════════════════════════════════════
 elif st.session_state.page == "quiz":
-    subj  = st.session_state.subject
-    info  = QUESTION_BANK[subj]
-    qs    = info["questions"]
+    subj = st.session_state.subject
+    diff = st.session_state.difficulty
+    timer = st.session_state.timer_seconds
+    
+    info = QUESTION_BANK[subj]
+    qs = info["questions"][diff]
     total = len(qs)
-    idx   = st.session_state.get("question_index", 0)
+    idx = st.session_state.get("question_index", 0)
 
     if idx >= total:
         st.session_state.page = "result"
@@ -671,50 +625,38 @@ elif st.session_state.page == "quiz":
     render_steps(2)
     render_badge()
 
-    # ── Progress + score ──────────────────────────────────────────────────────
     pc, sc = st.columns([5, 1])
-    with pc:
-        st.progress(idx / total)
-    with sc:
-        st.markdown(f'<div class="spill">⚡{st.session_state.score}</div>', unsafe_allow_html=True)
+    with pc: st.progress(idx / total)
+    with sc: st.markdown(f'<div class="spill">⚡{st.session_state.score}</div>', unsafe_allow_html=True)
 
     @st.fragment(run_every=1)
     def live_timer():
-        remaining = TIMER_SECONDS - int(time.time() - st.session_state.start_time)
+        remaining = timer - int(time.time() - st.session_state.start_time)
         remaining = max(remaining, 0)
 
-        if   remaining > 15: tc, ti = "t-safe",   "🟢"
-        elif remaining > 8:  tc, ti = "t-warn",   "🟡"
-        else:                tc, ti = "t-danger", "🔴"
+        # Dynamic color coding based on the current timer
+        if remaining > (timer * 0.5): tc, ti = "t-safe", "🟢"
+        elif remaining > (timer * 0.25): tc, ti = "t-warn", "🟡"
+        else: tc, ti = "t-danger", "🔴"
 
-        st.markdown(
-            f'<div class="tmr {tc}">{ti}&nbsp;&nbsp;{remaining} seconds remaining</div>',
-            unsafe_allow_html=True
-        )
+        st.markdown(f'<div class="tmr {tc}">{ti}&nbsp;&nbsp;{remaining} seconds remaining</div>', unsafe_allow_html=True)
 
-        # Auto-skip when time runs out
         if remaining <= 0:
             ca = q["answer"]
             if st.session_state.get("question_index") == idx:
                 st.session_state.wrong_answers.append({
-                    "question":    q["question"],
+                    "question": q["question"],
                     "your_answer": "⏰ Time up — skipped",
-                    "correct":     f"{ca} → {q['options'][ca]}",
-                    "explanation": q.get("explanation", "No explanation available.") # Added Explanation
+                    "correct": f"{ca} → {q['options'][ca]}",
+                    "explanation": q.get("explanation", "No explanation available.")
                 })
                 st.session_state.question_index += 1
-                st.session_state.start_time      = time.time()
+                st.session_state.start_time = time.time()
             st.rerun()
 
     live_timer()
 
-    st.markdown(f'<div class="subj-pill">{info["icon"]} {subj}</div>', unsafe_allow_html=True)
-
-    if subj == "English" and q.get("comp") and "passage" in info:
-        st.markdown(
-            f'<div class="comp-box">📖 <strong>Read the passage:</strong><br><br>{info["passage"]}</div>',
-            unsafe_allow_html=True
-        )
+    st.markdown(f'<div class="subj-pill">{info["icon"]} {subj} — {diff} Mode</div>', unsafe_allow_html=True)
 
     st.markdown(f"""
     <div class="qcard">
@@ -724,30 +666,27 @@ elif st.session_state.page == "quiz":
     """, unsafe_allow_html=True)
 
     selected = st.radio(
-        "Your answer",
-        list(q["options"].keys()),
+        "Your answer", list(q["options"].keys()),
         format_func=lambda k: f"  {k}  ·  {q['options'][k]}",
-        index=None,
-        key=f"q_{idx}"
+        index=None, key=f"q_{idx}"
     )
 
     st.markdown("<br>", unsafe_allow_html=True)
-
     _, bc, _ = st.columns([1, 3, 1])
     with bc:
         if st.button("Submit Answer →", use_container_width=True, key=f"submit_{idx}"):
             if selected is None:
-                st.warning("⚠️  Please select an option first.")
+                st.warning("⚠️ Please select an option first.")
             else:
                 if selected == q["answer"]:
                     st.session_state.score = st.session_state.get("score", 0) + 1
                 else:
                     ca = q["answer"]
                     st.session_state.wrong_answers.append({
-                        "question":    q["question"],
+                        "question": q["question"],
                         "your_answer": f"{selected} → {q['options'][selected]}",
-                        "correct":     f"{ca} → {q['options'][ca]}",
-                        "explanation": q.get("explanation", "No explanation available.") # Added Explanation
+                        "correct": f"{ca} → {q['options'][ca]}",
+                        "explanation": q.get("explanation", "No explanation available.")
                     })
                 st.session_state.question_index += 1
                 st.session_state.start_time = time.time()
@@ -757,11 +696,12 @@ elif st.session_state.page == "quiz":
 # PAGE — RESULT
 # ══════════════════════════════════════════════════════════════════════════════
 elif st.session_state.page == "result":
-    subj   = st.session_state.subject
-    info   = QUESTION_BANK[subj]
-    fs     = st.session_state.score
-    total  = len(info["questions"])
-    pct    = (fs / total) * 100
+    subj = st.session_state.subject
+    diff = st.session_state.difficulty
+    info = QUESTION_BANK[subj]
+    fs = st.session_state.score
+    total = len(info["questions"][diff])
+    pct = (fs / total) * 100
     wrongs = st.session_state.wrong_answers
 
     render_brand()
@@ -769,14 +709,10 @@ elif st.session_state.page == "result":
     render_badge()
     st.balloons()
 
-    if pct == 100:
-        em, gr, ms, cl = "🏆", "Perfect Score!",     "Absolutely flawless — you're a legend!", "#fbbf24"
-    elif pct >= 80:
-        em, gr, ms, cl = "🌟", "Excellent!",          "Outstanding performance!",               "#34d399"
-    elif pct >= 60:
-        em, gr, ms, cl = "👍", "Good Job!",            "Solid effort — keep pushing.",           "#60a5fa"
-    else:
-        em, gr, ms, cl = "💪", "Keep Practising!",    "Review & come back stronger!",           "#f87171"
+    if pct == 100: em, gr, ms, cl = "🏆", "Perfect Score!", "Absolutely flawless — you're a legend!", "#fbbf24"
+    elif pct >= 80: em, gr, ms, cl = "🌟", "Excellent!", "Outstanding performance!", "#34d399"
+    elif pct >= 60: em, gr, ms, cl = "👍", "Good Job!", "Solid effort — keep pushing.", "#60a5fa"
+    else: em, gr, ms, cl = "💪", "Keep Practising!", "Review & come back stronger!", "#f87171"
 
     st.markdown(f"""
     <div class="res-hero">
@@ -786,19 +722,17 @@ elif st.session_state.page == "result":
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown(f'<div class="subj-pill">{info["icon"]} {subj}</div>', unsafe_allow_html=True)
     st.progress(fs / total)
     st.markdown("<br>", unsafe_allow_html=True)
 
     c1, c2, c3, c4 = st.columns(4)
     with c1: st.metric("✅ Correct", fs)
-    with c2: st.metric("❌ Wrong",   total - fs)
-    with c3: st.metric("📊 Score",   f"{pct:.0f}%")
-    with c4: st.metric("❓ Total",   total)
+    with c2: st.metric("❌ Wrong", total - fs)
+    with c3: st.metric("📊 Score", f"{pct:.0f}%")
+    with c4: st.metric("❓ Total", total)
 
     st.markdown('<div class="h-divider"></div>', unsafe_allow_html=True)
 
-    # ── Render Mistakes with Explanations (Hidden inside Expander) ────────
     if wrongs:
         with st.expander(f"📋 Review mistakes ({len(wrongs)} wrong)"):
             for i, w in enumerate(wrongs, 1):
@@ -810,27 +744,22 @@ elif st.session_state.page == "result":
                     <div class="mk-e">💡 <strong>Explanation:</strong> {w['explanation']}</div>
                 </div>""", unsafe_allow_html=True)
     else:
-        st.success("🔥  Zero mistakes — you aced every question!")
+        st.success("🔥 Zero mistakes — you aced every question!")
 
     st.markdown("<br>", unsafe_allow_html=True)
     a, b, c = st.columns(3)
     with a:
-        if st.button("🔄  Retry Same", use_container_width=True):
-            quiz_reset()
-            st.session_state.question_index = 0
-            st.session_state.score          = 0
-            st.session_state.wrong_answers  = []
-            st.session_state.start_time     = time.time()
-            st.session_state.page           = "quiz"
-            st.rerun()
+        if st.button("🔄 Retry Same", use_container_width=True):
+            start_quiz(subj, diff, st.session_state.timer_seconds)
     with b:
-        if st.button("📚  New Subject", use_container_width=True):
+        if st.button("📚 New Subject", use_container_width=True):
             quiz_reset()
             st.session_state.pop("subject_pick", None)
             st.session_state.pop("subject", None)
+            st.session_state.pop("difficulty", None)
             st.session_state.page = "subject"
             st.rerun()
     with c:
-        if st.button("🚪  Log Out", use_container_width=True):
+        if st.button("🚪 Log Out", use_container_width=True):
             full_reset()
             st.rerun()
