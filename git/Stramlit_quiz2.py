@@ -500,7 +500,7 @@ def full_reset():
         del st.session_state[k]
 def quiz_reset():
     for k in ["question_index","score","wrong_answers","start_time",
-              "answered","answer_msg","answer_ok"]:
+              "answered","answer_msg","answer_ok","feedback_idx"]:
         st.session_state.pop(k, None)
     for k in [k for k in st.session_state if isinstance(k,str) and k.startswith("q_")]:
         del st.session_state[k]
@@ -537,6 +537,15 @@ def render_badge():
 # ── Init ───────────────────────────────────────────────────────────────────
 if "page" not in st.session_state:
     st.session_state.page = "login"
+
+# ── SAFETY DEFAULTS FOR QUIZ FEEDBACK STATE ─────────────────────────────────
+for _k, _v in {
+    "answered": False,
+    "answer_msg": "",
+    "answer_ok": False,
+    "feedback_idx": None,
+}.items():
+    st.session_state.setdefault(_k, _v)
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE — LOGIN
 # ══════════════════════════════════════════════════════════════════════════════
@@ -657,12 +666,9 @@ elif st.session_state.page == "subject":
             st.session_state.page           = "quiz"
             st.rerun()
     st.markdown("<br>", unsafe_allow_html=True)
-    with st.container():
-        st.markdown('<div class="ghost-btn">', unsafe_allow_html=True)
-        if st.button("← Log out"):
-            full_reset()
-            st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
+    if st.button("← Log out", key="subj_logout"):
+        full_reset()
+        st.rerun()
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE — QUIZ
 # ══════════════════════════════════════════════════════════════════════════════
@@ -730,47 +736,31 @@ elif st.session_state.page == "quiz":
     )
     st.markdown("<br>", unsafe_allow_html=True)
     _, bc, _ = st.columns([1, 3, 1])
+    _submit_clicked = False
     with bc:
-        # ── Phase 1 — unanswered: show Submit button ───────────────────────────
         if not answered:
-            if st.button("Submit Answer →", use_container_width=True, key=f"submit_{idx}"):
-                if selected is None:
-                    st.warning("⚠️  Please select an option first.")
-                else:
-                    if selected == q["answer"]:
-                        st.session_state.score     += 1
-                        st.session_state.answer_msg = "✅  Correct!  Great job!"
-                        st.session_state.answer_ok  = True
-                    else:
-                        ca = q["answer"]
-                        st.session_state.answer_msg = f"❌  Wrong!  Correct: **{ca} → {q['options'][ca]}**"
-                        st.session_state.answer_ok  = False
-                        st.session_state.wrong_answers.append({
-                            "question":    q["question"],
-                            "your_answer": f"{selected} → {q['options'][selected]}",
-                            "correct":     f"{ca} → {q['options'][ca]}",
-                        })
-                    # Store result and rerun immediately — NO sleep inside handler
-                    st.session_state.answered = True
-                    st.rerun()
+            _submit_clicked = st.button("Submit Answer →", use_container_width=True, key=f"submit_{idx}")
 
-    # ── Phase 2 — answered: show feedback then auto-advance ────────────────────
-    # Feedback lives outside the button block so it can never bleed into the
-    # next question's render cycle.
-    if answered:
-        msg = st.session_state.get("answer_msg", "")
-        ok  = st.session_state.get("answer_ok", False)
-        if ok:
-            st.success(msg)
+    # Handle submit OUTSIDE column block to prevent double-render bug
+    if not answered and _submit_clicked:
+        if selected is None:
+            st.warning("⚠️  Please select an option first.")
         else:
-            st.error(msg)
-        time.sleep(1.5)                               # Show feedback for 1.5 s
-        st.session_state.answered       = False       # Clear before advancing
-        st.session_state.question_index += 1
-        st.session_state.start_time     = time.time()
-        st.rerun()
+            if selected == q["answer"]:
+                st.session_state.score = st.session_state.get("score", 0) + 1
+            else:
+                ca = q["answer"]
+                st.session_state.wrong_answers.append({
+                    "question":    q["question"],
+                    "your_answer": f"{selected} → {q['options'][selected]}",
+                    "correct":     f"{ca} → {q['options'][ca]}",
+                })
+            st.session_state.answered = False
+            st.session_state.question_index += 1
+            st.session_state.start_time = time.time()
+            st.rerun()
 
-    # ── Refresh every second for live timer (skipped during feedback phase) ────
+    # ── Refresh every second for live timer ───────────────────────────────────
     if not answered:
         time.sleep(1)
         st.rerun()
