@@ -312,6 +312,18 @@ div[data-testid="stRadio"] > div > label[data-checked="true"] {
 .mk-c  { color:#86efac; font-size:13px; font-weight:700; margin-bottom: 8px;}
 .mk-e  { color:#94a3b8; font-size:13px; margin-top:8px; line-height: 1.6; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px;}
 
+/* ─── Expander overrides ────────────────────────────────────────────── */
+details {
+    background: rgba(255,255,255,.02) !important;
+    border: 1px solid rgba(255,255,255,.07) !important;
+    border-radius: 14px !important; overflow: hidden;
+    margin-bottom: 20px;
+}
+details summary {
+    color: #4a5878 !important; font-weight: 600 !important;
+    padding: 12px 16px !important; font-size: 14px !important;
+}
+
 /* ─── Result hero ───────────────────────────────────────────────────── */
 .res-hero { text-align:center; padding:28px 0 12px; }
 .res-emoji { font-size:72px; line-height:1; margin-bottom:10px; }
@@ -786,17 +798,17 @@ elif st.session_state.page == "result":
 
     st.markdown('<div class="h-divider"></div>', unsafe_allow_html=True)
 
-    # ── Render Mistakes with Explanations ─────────────────────────────────
+    # ── Render Mistakes with Explanations (Hidden inside Expander) ────────
     if wrongs:
-        st.markdown(f"<h4 style='color:#f0f4ff;'>📋 Review mistakes ({len(wrongs)} wrong)</h4>", unsafe_allow_html=True)
-        for i, w in enumerate(wrongs, 1):
-            st.markdown(f"""
-            <div class="mk">
-                <div class="mk-q">Q{i}: {w['question']}</div>
-                <div class="mk-u">Your answer: {w['your_answer']}</div>
-                <div class="mk-c">✓ Correct: {w['correct']}</div>
-                <div class="mk-e">💡 <strong>Explanation:</strong> {w['explanation']}</div>
-            </div>""", unsafe_allow_html=True)
+        with st.expander(f"📋 Review mistakes ({len(wrongs)} wrong)"):
+            for i, w in enumerate(wrongs, 1):
+                st.markdown(f"""
+                <div class="mk">
+                    <div class="mk-q">Q{i}: {w['question']}</div>
+                    <div class="mk-u">Your answer: {w['your_answer']}</div>
+                    <div class="mk-c">✓ Correct: {w['correct']}</div>
+                    <div class="mk-e">💡 <strong>Explanation:</strong> {w['explanation']}</div>
+                </div>""", unsafe_allow_html=True)
     else:
         st.success("🔥  Zero mistakes — you aced every question!")
 
