@@ -12,7 +12,7 @@ st.set_page_config(
 # ══════════════════════════════════════════════════════════════════════════════
 # GLOBAL CSS
 # ══════════════════════════════════════════════════════════════════════════════
-st.markdown("""
+st.markdown('''
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap');
 
@@ -93,90 +93,59 @@ html, body, .stApp {
 /* ─── Login card ──────────────────────────────────────────────────── */
 .login-header {
     background: linear-gradient(145deg, rgba(22,30,50,.95), rgba(10,15,28,.98));
-    border: 1px solid rgba(99,102,241,.22);
-    border-radius: 24px;
-    padding: 36px 40px 8px;
-    margin-bottom: -10px;
-    position: relative; overflow: hidden;
+    border: 1px solid rgba(99,102,241,.22); border-radius: 24px;
+    padding: 36px 40px 8px; margin-bottom: -10px; position: relative; overflow: hidden;
 }
 .login-header::before {
     content:""; position:absolute; top:0; left:0; right:0; height:3px;
-    background: linear-gradient(90deg,#6366f1,#a855f7,#ec4899);
-    border-radius: 24px 24px 0 0;
+    background: linear-gradient(90deg,#6366f1,#a855f7,#ec4899); border-radius: 24px 24px 0 0;
 }
 .login-footer {
     background: linear-gradient(145deg, rgba(22,30,50,.95), rgba(10,15,28,.98));
-    border: 1px solid rgba(99,102,241,.22);
-    border-top: none;
-    border-radius: 0 0 24px 24px;
-    padding: 8px 40px 32px;
+    border: 1px solid rgba(99,102,241,.22); border-top: none;
+    border-radius: 0 0 24px 24px; padding: 8px 40px 32px;
 }
 .section-chip {
     display: inline-flex; align-items: center; gap: 6px;
     background: rgba(99,102,241,.12); border: 1px solid rgba(99,102,241,.3);
-    color: #818cf8; font-size: 11px; font-weight: 700;
-    letter-spacing: 1.5px; text-transform: uppercase;
-    padding: 5px 14px; border-radius: 99px; margin-bottom: 14px;
+    color: #818cf8; font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; padding: 5px 14px; border-radius: 99px; margin-bottom: 14px;
 }
-.login-title {
-    font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800;
-    color: #f1f5f9; margin-bottom: 6px;
-}
-.login-sub {
-    color: #3d4f6e; font-size: 14px; margin-bottom: 22px; line-height: 1.6;
-}
-.divider-line {
-    height: 1px;
-    background: linear-gradient(90deg,transparent,rgba(99,102,241,.35),transparent);
-    margin: 22px 0;
-}
+.login-title { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; color: #f1f5f9; margin-bottom: 6px; }
+.login-sub { color: #3d4f6e; font-size: 14px; margin-bottom: 22px; line-height: 1.6; }
+.divider-line { height: 1px; background: linear-gradient(90deg,transparent,rgba(99,102,241,.35),transparent); margin: 22px 0; }
 
 /* ─── Inputs ─────────────────────────────────────────────────────────── */
-div[data-testid="stTextInput"] label,
-div[data-testid="stPasswordInput"] label {
-    font-size: 11px !important; font-weight: 700 !important;
-    letter-spacing: 2px; text-transform: uppercase;
-    color: #3d5070 !important; margin-bottom: 6px;
+div[data-testid="stTextInput"] label, div[data-testid="stPasswordInput"] label {
+    font-size: 11px !important; font-weight: 700 !important; letter-spacing: 2px;
+    text-transform: uppercase; color: #3d5070 !important; margin-bottom: 6px;
 }
-div[data-testid="stTextInput"] input,
-div[data-testid="stPasswordInput"] input {
-    background: rgba(255,255,255,.04) !important;
-    border: 1.5px solid rgba(255,255,255,.09) !important;
-    border-radius: 12px !important;
-    color: #dde3f0 !important;
-    font-size: 15px !important; padding: 13px 16px !important;
+div[data-testid="stTextInput"] input, div[data-testid="stPasswordInput"] input {
+    background: rgba(255,255,255,.04) !important; border: 1.5px solid rgba(255,255,255,.09) !important;
+    border-radius: 12px !important; color: #dde3f0 !important; font-size: 15px !important; padding: 13px 16px !important;
 }
-div[data-testid="stTextInput"] input:focus,
-div[data-testid="stPasswordInput"] input:focus {
-    border-color: rgba(99,102,241,.7) !important;
-    box-shadow: 0 0 0 3px rgba(99,102,241,.13) !important;
+div[data-testid="stTextInput"] input:focus, div[data-testid="stPasswordInput"] input:focus {
+    border-color: rgba(99,102,241,.7) !important; box-shadow: 0 0 0 3px rgba(99,102,241,.13) !important;
     background: rgba(99,102,241,.04) !important;
 }
 
 /* ─── ALL Buttons ─────────────────────────────────────── */
 div[data-testid="stButton"] > button {
-    width: 100%;
-    background: linear-gradient(135deg, #5a5fdb 0%, #9b44e8 100%);
-    color: white; font-family: 'Syne', sans-serif;
-    font-size: 15px; font-weight: 700; letter-spacing: .8px;
-    border: none; border-radius: 14px;
-    padding: 14px 28px; height: auto;
-    box-shadow: 0 4px 24px rgba(99,102,241,.38);
-    transition: all .2s ease;
+    width: 100%; background: linear-gradient(135deg, #5a5fdb 0%, #9b44e8 100%);
+    color: white; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700;
+    letter-spacing: .8px; border: none; border-radius: 14px; padding: 14px 28px; height: auto;
+    box-shadow: 0 4px 24px rgba(99,102,241,.38); transition: all .2s ease;
 }
 div[data-testid="stButton"] > button:hover {
     background: linear-gradient(135deg, #4548c7 0%, #8226d4 100%);
-    box-shadow: 0 8px 32px rgba(99,102,241,.55);
-    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(99,102,241,.55); transform: translateY(-2px);
 }
 div[data-testid="stButton"] > button:active { transform: translateY(0); }
 
 .logout-area div[data-testid="stButton"] > button {
-    background: rgba(255,255,255,.05) !important;
-    border: 1px solid rgba(255,255,255,.1) !important;
-    color: #4a5878 !important; font-size: 13px !important;
-    box-shadow: none !important; letter-spacing: 0 !important;
-    width: auto !important; padding: 8px 20px !important;
+    background: rgba(255,255,255,.05) !important; border: 1px solid rgba(255,255,255,.1) !important;
+    color: #4a5878 !important; font-size: 13px !important; box-shadow: none !important;
+    letter-spacing: 0 !important; width: auto !important; padding: 8px 20px !important;
 }
 
 /* ─── Subject cards & Difficulty Panel ────────────────────────────────── */
@@ -199,8 +168,7 @@ div[data-testid="stButton"] > button:active { transform: translateY(0); }
 .diff-panel {
     background: linear-gradient(145deg, rgba(18,26,48,.6), rgba(8,12,22,.8));
     border: 1px solid rgba(168,85,247,.3); border-radius: 16px;
-    padding: 24px; margin-top: 16px; text-align: center;
-    animation: fadeIn .4s ease;
+    padding: 24px; margin-top: 16px; text-align: center; animation: fadeIn .4s ease;
 }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 .diff-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: #f0f4ff; margin-bottom: 16px; }
@@ -217,6 +185,7 @@ div[data-testid="stButton"] > button:active { transform: translateY(0); }
 }
 .uname  { font-weight: 600; font-size: 14px; color: #dde3f0; }
 .uemail { font-size: 12px; color: #2d3e5a; }
+.uxp    { color: #fbbf24; font-weight: 700; font-size: 11px; letter-spacing: 0.5px; }
 
 /* ─── Timer & Progress ────────────────────────────────────────────────── */
 .stProgress > div > div { background: rgba(255,255,255,.05) !important; border-radius: 99px !important; height: 5px !important; }
@@ -267,20 +236,25 @@ div[data-testid="stRadio"] > div > label[data-checked="true"] {
 .mk-c  { color:#86efac; font-size:13px; font-weight:700; margin-bottom: 8px;}
 .mk-e  { color:#94a3b8; font-size:13px; margin-top:8px; line-height: 1.6; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px;}
 
-/* ─── Expander overrides ────────────────────────────────────────────── */
-details { background: rgba(255,255,255,.02) !important; border: 1px solid rgba(255,255,255,.07) !important; border-radius: 14px !important; margin-bottom: 20px; }
-details summary { color: #4a5878 !important; font-weight: 600 !important; padding: 12px 16px !important; font-size: 14px !important; }
-.res-hero { text-align:center; padding:28px 0 12px; }
+/* ─── Result UI & Badges ────────────────────────────────────────────── */
+.res-hero { text-align:center; padding:16px 0 12px; }
 .res-emoji { font-size:72px; line-height:1; margin-bottom:10px; }
 .res-grade { font-family:'Syne',sans-serif; font-size:34px; font-weight:900; margin-bottom:6px; }
-.res-msg { color:#2d3e5a; font-size:15px; }
+.res-msg { color:#8899b8; font-size:16px; margin-bottom: 24px;}
+.badge-card {
+    display: inline-block; background: rgba(0,0,0,.3); border: 1px solid;
+    border-radius: 18px; padding: 14px 28px; font-family: 'Syne', sans-serif;
+    font-size: 22px; font-weight: 800; margin-bottom: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.5);
+}
+.xp-tally { font-size: 15px; color: #fbbf24; font-weight: 700; }
 </style>
 <div class="orb-a"></div>
 <div class="orb-b"></div>
-""", unsafe_allow_html=True)
+''', unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
-# MULTI-TIER QUESTION BANK (India Focus + World)
+# MULTI-TIER QUESTION BANK
 # ══════════════════════════════════════════════════════════════════════════════
 QUESTION_BANK = {
     "History": {
@@ -386,30 +360,106 @@ QUESTION_BANK = {
                 {"question": "Which hormone, produced by the pancreas, regulates blood sugar levels?", "options": {"A": "Glucagon", "B": "Insulin", "C": "Thyroxine", "D": "Adrenaline"}, "answer": "B", "explanation": "Insulin lowers blood glucose, and its deficiency causes Diabetes."}
             ]
         }
-    },
+    }
+    ,
     "English": {
-        "icon": "✍️", "color": "#f472b6", "desc": "Comprehension & Grammar",
+        "icon": "📖", "color": "#38bdf8", "desc": "Comprehension, synonyms & idioms",
         "questions": {
             "Easy": [
-                {"question": "Choose the correct spelling:", "options": {"A": "Grammer", "B": "Grammar", "C": "Grammer", "D": "Gramer"}, "answer": "B", "explanation": "Grammar is spelled with an 'ar' at the end."},
-                {"question": "Which word is a synonym for 'Beautiful'?", "options": {"A": "Ugly", "B": "Hideous", "C": "Gorgeous", "D": "Angry"}, "answer": "C", "explanation": "Gorgeous means very beautiful or attractive."},
-                {"question": "[World] 'To let the cat out of the bag' is a common idiom meaning:", "options": {"A": "To free an animal", "B": "To reveal a secret", "C": "To buy a pet", "D": "To hide something"}, "answer": "B", "explanation": "This idiom means to accidentally reveal a hidden truth or secret."},
-                {"question": "Fill in the blank: 'He went ___ the market.'", "options": {"A": "at", "B": "in", "C": "to", "D": "for"}, "answer": "C", "explanation": "'To' is the correct preposition showing direction toward a destination."},
-                {"question": "Which of these is a noun?", "options": {"A": "Run", "B": "Quickly", "C": "Happy", "D": "Tiger"}, "answer": "D", "explanation": "A noun is a person, place, or thing. 'Tiger' is a thing (animal)."}
+                {
+                    "question": "Read the passage and answer:\n\n\"Riya loved reading books every evening. One day she found an old, dusty book in the attic. As she opened it, she discovered it was her grandmother's diary. She read it eagerly and felt a deep connection with her past.\"\n\nWhat did Riya find in the attic?",
+                    "options": {"A": "A treasure box", "B": "Her grandmother's diary", "C": "An old photograph", "D": "A letter from a friend"},
+                    "answer": "B",
+                    "explanation": "The passage clearly states she found her grandmother's diary inside the old dusty book."
+                },
+                {
+                    "question": "Based on the same passage about Riya:\n\nHow did Riya feel after reading the diary?",
+                    "options": {"A": "Sad and lonely", "B": "Bored and uninterested", "C": "A deep connection with her past", "D": "Confused and puzzled"},
+                    "answer": "C",
+                    "explanation": "The passage says 'she felt a deep connection with her past' after reading the diary."
+                },
+                {
+                    "question": "Based on the same passage about Riya:\n\nWhere was the old book found?",
+                    "options": {"A": "In the library", "B": "In the garden", "C": "In the attic", "D": "Under her bed"},
+                    "answer": "C",
+                    "explanation": "The passage says Riya found the old dusty book in the attic."
+                },
+                {
+                    "question": "[Synonym] Choose the word closest in meaning to 'HAPPY':",
+                    "options": {"A": "Gloomy", "B": "Joyful", "C": "Angry", "D": "Tired"},
+                    "answer": "B",
+                    "explanation": "'Joyful' means full of joy and happiness, making it the closest synonym to 'happy'."
+                },
+                {
+                    "question": "[Idiom] What does the idiom 'Break the ice' mean?",
+                    "options": {"A": "To smash frozen water", "B": "To start a conversation in an awkward situation", "C": "To end a friendship", "D": "To cause trouble"},
+                    "answer": "B",
+                    "explanation": "'Break the ice' means to do or say something to make people feel comfortable and start talking in an awkward or tense situation."
+                }
             ],
             "Medium": [
-                {"question": "Find the antonym for 'Abundant':", "options": {"A": "Plentiful", "B": "Scarce", "C": "Heavy", "D": "Rich"}, "answer": "B", "explanation": "Abundant means having plenty; scarce means very little."},
-                {"question": "Identify the error in this sentence: 'She don't like playing cricket.'", "options": {"A": "She", "B": "don't", "C": "playing", "D": "cricket"}, "answer": "B", "explanation": "The singular pronoun 'She' requires the verb 'doesn't', not 'don't'."},
-                {"question": "[World] 'Bite the bullet' means:", "options": {"A": "To eat fast", "B": "To endure a painful situation bravely", "C": "To get angry", "D": "To shoot a gun"}, "answer": "B", "explanation": "Originating from historical battlefields, it means facing hardship with courage."},
-                {"question": "What is the plural of 'Syllabus'?", "options": {"A": "Syllabuses", "B": "Syllabi", "C": "Both A and B", "D": "Syllabise"}, "answer": "C", "explanation": "Both 'Syllabuses' and 'Syllabi' are accepted plural forms in English."},
-                {"question": "Choose the correct sentence:", "options": {"A": "I have visited Delhi yesterday.", "B": "I visited Delhi yesterday.", "C": "I had visit Delhi yesterday.", "D": "I was visited Delhi yesterday."}, "answer": "B", "explanation": "For a specific past time ('yesterday'), use the simple past tense ('visited')."}
+                {
+                    "question": "Read the passage and answer:\n\n\"The Industrial Revolution, which began in Britain in the late 18th century, transformed society drastically. Machines replaced manual labour, cities grew rapidly, and goods were produced at an unprecedented scale. However, this came at a cost — workers, including children, toiled in dangerous conditions for long hours with little pay.\"\n\nWhen did the Industrial Revolution begin?",
+                    "options": {"A": "Early 17th century", "B": "Late 18th century", "C": "Early 19th century", "D": "Mid 20th century"},
+                    "answer": "B",
+                    "explanation": "The passage explicitly states it began in Britain in the late 18th century."
+                },
+                {
+                    "question": "Based on the same passage about the Industrial Revolution:\n\nWhich of these was a negative consequence mentioned in the passage?",
+                    "options": {"A": "Decrease in population", "B": "Reduction in goods", "C": "Children working in dangerous conditions", "D": "Cities becoming smaller"},
+                    "answer": "C",
+                    "explanation": "The passage mentions workers including children toiled in dangerous conditions — a direct negative consequence."
+                },
+                {
+                    "question": "Based on the same passage about the Industrial Revolution:\n\nWhat replaced manual labour during this period?",
+                    "options": {"A": "Animals", "B": "Machines", "C": "Slaves", "D": "Foreign workers"},
+                    "answer": "B",
+                    "explanation": "The passage clearly states 'Machines replaced manual labour' during the Industrial Revolution."
+                },
+                {
+                    "question": "[Synonym] Choose the word closest in meaning to 'ABUNDANT':",
+                    "options": {"A": "Scarce", "B": "Plentiful", "C": "Dull", "D": "Narrow"},
+                    "answer": "B",
+                    "explanation": "'Plentiful' means existing in large quantities, making it the best synonym for 'abundant'."
+                },
+                {
+                    "question": "[Idiom] What does 'Bite the bullet' mean?",
+                    "options": {"A": "To eat something hard", "B": "To shoot a gun", "C": "To endure a painful situation with courage", "D": "To avoid a problem"},
+                    "answer": "C",
+                    "explanation": "'Bite the bullet' means to endure a painful or difficult situation stoically, accepting it as unavoidable."
+                }
             ],
             "Hard": [
-                {"question": "In Indian political English history, the term 'Himalayan blunder' was coined by:", "options": {"A": "Jawaharlal Nehru", "B": "Mahatma Gandhi", "C": "Sardar Patel", "D": "Subhas Chandra Bose"}, "answer": "B", "explanation": "Gandhi used this term in 1919 to describe a severe mistake he made regarding satyagraha."},
-                {"question": "What is the meaning of the word 'Ephemeral'?", "options": {"A": "Everlasting", "B": "Short-lived", "C": "Dangerous", "D": "Glowing"}, "answer": "B", "explanation": "Ephemeral refers to things that exist only for a very short time."},
-                {"question": "[World] What is a 'Pyrrhic victory'?", "options": {"A": "A victory won at too great a cost", "B": "A victory achieved easily", "C": "A naval victory", "D": "A fake victory"}, "answer": "A", "explanation": "Named after King Pyrrhus, it's a win that takes such a heavy toll it's basically a defeat."},
-                {"question": "Identify the figure of speech: 'The camel is the ship of the desert.'", "options": {"A": "Simile", "B": "Metaphor", "C": "Personification", "D": "Hyperbole"}, "answer": "B", "explanation": "A metaphor makes a direct comparison without using 'like' or 'as'."},
-                {"question": "Which of these is grammatically correct?", "options": {"A": "Neither of the boys are here.", "B": "Neither of the boys is here.", "C": "Neither of boy is here.", "D": "Neither of the boys were here."}, "answer": "B", "explanation": "'Neither' is a singular pronoun and requires a singular verb ('is')."}
+                {
+                    "question": "Read the passage and answer:\n\n\"Existentialism, a philosophical movement that flourished in the 20th century, posits that individuals create their own meaning in an inherently meaningless universe. Thinkers like Sartre and Camus argued that humans are 'condemned to be free' — burdened with the responsibility of choice without a predetermined essence or divine blueprint. This radical freedom, they contended, inevitably produces anxiety, yet it is precisely this anxiety that compels authentic self-definition.\"\n\nAccording to the passage, what produces anxiety in humans according to existentialists?",
+                    "options": {"A": "Lack of freedom", "B": "Divine intervention", "C": "Radical freedom and the burden of choice", "D": "Predetermined essence"},
+                    "answer": "C",
+                    "explanation": "The passage states that 'radical freedom inevitably produces anxiety' — it is the burden of unconstrained choice that causes it."
+                },
+                {
+                    "question": "Based on the same passage about Existentialism:\n\nWhat does the phrase 'condemned to be free' imply in the context of the passage?",
+                    "options": {"A": "Humans are imprisoned by freedom", "B": "Freedom is a punishment as it comes with unavoidable responsibility", "C": "Humans have no freedom at all", "D": "Freedom is a divine blessing"},
+                    "answer": "B",
+                    "explanation": "Sartre's phrase means freedom is not purely liberating — it burdens individuals with inescapable responsibility for their choices."
+                },
+                {
+                    "question": "Based on the same passage about Existentialism:\n\nWhat is the role of anxiety, according to the existentialist view in the passage?",
+                    "options": {"A": "It is a disease to be cured", "B": "It is irrelevant to human life", "C": "It compels authentic self-definition", "D": "It is caused by lack of choice"},
+                    "answer": "C",
+                    "explanation": "The passage says it is 'precisely this anxiety that compels authentic self-definition' — anxiety drives genuine personal identity."
+                },
+                {
+                    "question": "[Synonym] Choose the word closest in meaning to 'LOQUACIOUS':",
+                    "options": {"A": "Silent", "B": "Talkative", "C": "Aggressive", "D": "Secretive"},
+                    "answer": "B",
+                    "explanation": "'Loquacious' means tending to talk a great deal — an advanced synonym for talkative or verbose."
+                },
+                {
+                    "question": "[Idiom] What does 'Burn the midnight oil' mean?",
+                    "options": {"A": "To light candles at night", "B": "To waste resources", "C": "To work late into the night", "D": "To cause a fire"},
+                    "answer": "C",
+                    "explanation": "'Burn the midnight oil' means to work or study until very late at night, historically when people used oil lamps."
+                }
             ]
         }
     }
@@ -422,16 +472,25 @@ SUBJECTS = list(QUESTION_BANK.keys())
 # ══════════════════════════════════════════════════════════════════════════════
 def valid_email(e): return bool(re.match(r"^[\w\.\+\-]+@[\w\-]+\.[a-zA-Z]{2,}$", e.strip()))
 def valid_pw(p): return len(p) >= 6
-def initials(email):
-    parts = re.split(r"[.\-_]", email.split("@")[0])
+
+def initials(name):
+    parts = re.split(r"[.\-_ ]", name.strip())
     return "".join(p[0].upper() for p in parts if p)[:2] or "U"
+
+def get_badge_info(xp):
+    if xp >= 50: return "👑 Master Badge", "#8b5cf6", "You are an elite intellect! A true BrainBlitz legend."
+    elif xp >= 40: return "🦸 Heroic Badge", "#ef4444", "A spectacular and brave performance!"
+    elif xp >= 30: return "🥇 Gold Badge", "#eab308", "You're shining brightly at the top!"
+    elif xp >= 20: return "🥈 Silver Badge", "#94a3b8", "Solid, consistent, and highly impressive!"
+    elif xp >= 10: return "🥉 Bronze Badge", "#d97706", "A great start, keep climbing the ranks!"
+    else: return "🌱 Beginner Badge", "#10b981", "Every master was once a beginner. Keep learning!"
 
 def full_reset():
     for k in list(st.session_state.keys()):
         del st.session_state[k]
 
 def quiz_reset():
-    for k in ["question_index", "score", "wrong_answers", "start_time", "answered"]:
+    for k in ["question_index", "score", "wrong_answers", "start_time", "answered", "current_xp"]:
         st.session_state.pop(k, None)
     for k in [k for k in st.session_state if isinstance(k, str) and k.startswith("q_")]:
         del st.session_state[k]
@@ -443,6 +502,7 @@ def start_quiz(subj, difficulty, timer_sec):
     quiz_reset()
     st.session_state.question_index = 0
     st.session_state.score = 0
+    st.session_state.current_xp = 0
     st.session_state.wrong_answers = []
     st.session_state.start_time = time.time()
     st.session_state.page = "quiz"
@@ -467,9 +527,13 @@ def render_steps(current):
     st.markdown(html, unsafe_allow_html=True)
 
 def render_badge():
+    name = st.session_state.get("user_name", "User")
     email = st.session_state.get("email", "")
-    av = initials(email)
-    name = email.split("@")[0].replace(".", " ").replace("_", " ").title()
+    xp = st.session_state.get("total_xp", 0)
+    av = initials(name)
+    
+    badge_name, badge_col, _ = get_badge_info(xp)
+    
     subj = st.session_state.get("subject", "")
     diff = st.session_state.get("difficulty", "")
     
@@ -478,17 +542,24 @@ def render_badge():
         icon = QUESTION_BANK[subj]["icon"]
         subj_tag = f'&nbsp;·&nbsp;<span style="color:#a855f7;font-size:11px;font-weight:700">{icon} {subj} ({diff})</span>'
         
-    st.markdown(f"""
+    st.markdown(f'''
     <div class="ubadge">
         <div class="uavatar">{av}</div>
         <div style="flex:1">
             <div class="uname">{name}{subj_tag}</div>
             <div class="uemail">{email}</div>
         </div>
-    </div>""", unsafe_allow_html=True)
+        <div style="text-align:right">
+            <div class="uxp" style="color:{badge_col};">{badge_name}</div>
+            <div class="uxp">{xp} Total XP</div>
+        </div>
+    </div>''', unsafe_allow_html=True)
 
 # ── Init ───────────────────────────────────────────────────────────────────
-if "page" not in st.session_state: st.session_state.page = "login"
+if "page" not in st.session_state: 
+    st.session_state.page = "login"
+if "total_xp" not in st.session_state:
+    st.session_state.total_xp = 0
 
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE — LOGIN
@@ -497,7 +568,7 @@ if st.session_state.page == "login":
     render_brand()
     render_steps(0)
 
-    st.markdown("""
+    st.markdown('''
     <div style="
         background: linear-gradient(135deg, rgba(99,102,241,.15) 0%, rgba(168,85,247,.12) 50%, rgba(236,72,153,.10) 100%);
         border: 1px solid rgba(99,102,241,.25); border-radius: 20px; padding: 22px 28px; margin-bottom: 24px;
@@ -509,7 +580,7 @@ if st.session_state.page == "login":
                 Ready to challenge your mind?
             </div>
             <div style="font-size:13px;color:#3d5070;line-height:1.6;">
-                Sign in · Pick a subject · Choose Difficulty · Answer 5 timed MCQs
+                Sign in · Pick a subject · Build your XP · Earn the Master Badge!
             </div>
         </div>
     </div>
@@ -517,10 +588,11 @@ if st.session_state.page == "login":
     <div class="login-header">
         <div class="section-chip">🔐 Sign In</div>
         <div class="login-title">Welcome, challenger!</div>
-        <div class="login-sub">Enter your email and password to begin your personalised quiz journey.</div>
+        <div class="login-sub">Enter your details to begin your personalised quiz journey and save your XP.</div>
     </div>
-    """, unsafe_allow_html=True)
+    ''', unsafe_allow_html=True)
 
+    user_name = st.text_input("Display Name", placeholder="e.g. Karanveer", key="li_name")
     email = st.text_input("Email Address", placeholder="yourname@example.com", key="li_email")
     password = st.text_input("Password", type="password", placeholder="Minimum 6 characters", key="li_pw")
 
@@ -528,10 +600,12 @@ if st.session_state.page == "login":
 
     if st.button("Continue to Subject →", use_container_width=True):
         e = email.strip()
-        if not e or not password: st.error("⚠️ Both fields are required.")
+        n = user_name.strip()
+        if not n or not e or not password: st.error("⚠️ All fields are required.")
         elif not valid_email(e): st.error("⚠️ Enter a valid email — e.g. name@gmail.com")
         elif not valid_pw(password): st.error("⚠️ Password must be at least 6 characters.")
         else:
+            st.session_state.user_name = n.title()
             st.session_state.email = e
             st.session_state.page = "subject"
             st.rerun()
@@ -544,33 +618,33 @@ elif st.session_state.page == "subject":
     render_steps(1)
     render_badge()
 
-    st.markdown("""
+    st.markdown('''
     <div style="margin-bottom:6px;"><div class="section-chip">📚 Pick Your Subject</div></div>
     <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#f0f4ff;margin-bottom:6px;">
         What do you want to be tested on?
     </div>
     <div style="color:#2d3e5a;font-size:14px;margin-bottom:20px;">
-        Choose a subject, then pick your difficulty level to start the timer.
+        Harder difficulties reward more XP! Choose wisely to level up faster.
     </div>
-    """, unsafe_allow_html=True)
+    ''', unsafe_allow_html=True)
 
     chosen = st.session_state.get("subject_pick", None)
 
     row1 = st.columns(3)
-    row2 = st.columns(2)
+    row2 = st.columns(3)
     grid = list(zip([*row1, *row2], SUBJECTS))
 
     for col, subj in grid:
         info = QUESTION_BANK[subj]
         sel_c = "sel" if chosen == subj else ""
         with col:
-            st.markdown(f"""
+            st.markdown(f'''
             <div class="s-card {sel_c}">
                 <div class="s-icon">{info['icon']}</div>
                 <div class="s-name">{subj}</div>
                 <div class="s-desc">{info['desc']}</div>
             </div>
-            """, unsafe_allow_html=True)
+            ''', unsafe_allow_html=True)
             if st.button(f"{'✓ ' if chosen == subj else ''}{subj}", key=f"pick_{subj}", use_container_width=True):
                 st.session_state.subject_pick = subj
                 st.rerun()
@@ -578,21 +652,21 @@ elif st.session_state.page == "subject":
     # ── Difficulty Selection Panel ─────────────────────────────────────────
     if chosen:
         info = QUESTION_BANK[chosen]
-        st.markdown(f"""
+        st.markdown(f'''
         <div class="diff-panel">
             <div class="diff-title">You selected {info['icon']} {chosen}. Now choose your difficulty:</div>
         </div>
-        """, unsafe_allow_html=True)
+        ''', unsafe_allow_html=True)
         
         c1, c2, c3 = st.columns(3)
         with c1:
-            if st.button("🌱 Easy Mode\n30s / Question", key="btn_easy", use_container_width=True):
+            if st.button("🌱 Easy Mode\n30s | 1 XP/Q", key="btn_easy", use_container_width=True):
                 start_quiz(chosen, "Easy", 30)
         with c2:
-            if st.button("⚖️ Medium Mode\n20s / Question", key="btn_med", use_container_width=True):
+            if st.button("⚖️ Medium Mode\n20s | 2 XP/Q", key="btn_med", use_container_width=True):
                 start_quiz(chosen, "Medium", 20)
         with c3:
-            if st.button("🔥 Hard Mode\n15s / Question", key="btn_hard", use_container_width=True):
+            if st.button("🔥 Hard Mode\n15s | 3 XP/Q", key="btn_hard", use_container_width=True):
                 start_quiz(chosen, "Hard", 15)
 
     st.markdown("<br>", unsafe_allow_html=True)
@@ -609,6 +683,9 @@ elif st.session_state.page == "quiz":
     subj = st.session_state.subject
     diff = st.session_state.difficulty
     timer = st.session_state.timer_seconds
+    
+    # XP per question based on difficulty
+    xp_multiplier = {"Easy": 1, "Medium": 2, "Hard": 3}[diff]
     
     info = QUESTION_BANK[subj]
     qs = info["questions"][diff]
@@ -627,7 +704,7 @@ elif st.session_state.page == "quiz":
 
     pc, sc = st.columns([5, 1])
     with pc: st.progress(idx / total)
-    with sc: st.markdown(f'<div class="spill">⚡{st.session_state.score}</div>', unsafe_allow_html=True)
+    with sc: st.markdown(f'<div class="spill">⚡{st.session_state.score}/{total}</div>', unsafe_allow_html=True)
 
     @st.fragment(run_every=1)
     def live_timer():
@@ -656,14 +733,14 @@ elif st.session_state.page == "quiz":
 
     live_timer()
 
-    st.markdown(f'<div class="subj-pill">{info["icon"]} {subj} — {diff} Mode</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="subj-pill">{info["icon"]} {subj} — {diff} Mode (+{xp_multiplier} XP)</div>', unsafe_allow_html=True)
 
-    st.markdown(f"""
+    st.markdown(f'''
     <div class="qcard">
         <div class="qnum">Question {idx+1} of {total}</div>
         <div class="qtxt">{q['question']}</div>
     </div>
-    """, unsafe_allow_html=True)
+    ''', unsafe_allow_html=True)
 
     selected = st.radio(
         "Your answer", list(q["options"].keys()),
@@ -680,6 +757,9 @@ elif st.session_state.page == "quiz":
             else:
                 if selected == q["answer"]:
                     st.session_state.score = st.session_state.get("score", 0) + 1
+                    # Grant XP instantly
+                    st.session_state.current_xp += xp_multiplier
+                    st.session_state.total_xp += xp_multiplier
                 else:
                     ca = q["answer"]
                     st.session_state.wrong_answers.append({
@@ -696,6 +776,7 @@ elif st.session_state.page == "quiz":
 # PAGE — RESULT
 # ══════════════════════════════════════════════════════════════════════════════
 elif st.session_state.page == "result":
+    user_name = st.session_state.get("user_name", "Challenger")
     subj = st.session_state.subject
     diff = st.session_state.difficulty
     info = QUESTION_BANK[subj]
@@ -703,24 +784,32 @@ elif st.session_state.page == "result":
     total = len(info["questions"][diff])
     pct = (fs / total) * 100
     wrongs = st.session_state.wrong_answers
+    
+    current_xp_earned = st.session_state.get("current_xp", 0)
+    total_xp = st.session_state.get("total_xp", 0)
+    badge_name, badge_col, badge_msg = get_badge_info(total_xp)
 
     render_brand()
     render_steps(3)
     render_badge()
     st.balloons()
 
-    if pct == 100: em, gr, ms, cl = "🏆", "Perfect Score!", "Absolutely flawless — you're a legend!", "#fbbf24"
-    elif pct >= 80: em, gr, ms, cl = "🌟", "Excellent!", "Outstanding performance!", "#34d399"
-    elif pct >= 60: em, gr, ms, cl = "👍", "Good Job!", "Solid effort — keep pushing.", "#60a5fa"
-    else: em, gr, ms, cl = "💪", "Keep Practising!", "Review & come back stronger!", "#f87171"
+    if pct == 100: em, gr = "🏆", "Perfect Score!"
+    elif pct >= 80: em, gr = "🌟", "Excellent Work!"
+    elif pct >= 60: em, gr = "👍", "Good Job!"
+    else: em, gr = "💪", "Keep Practising!"
 
-    st.markdown(f"""
-    <div class="res-hero">
-        <div class="res-emoji">{em}</div>
-        <div class="res-grade" style="color:{cl};">{gr}</div>
-        <div class="res-msg">{ms}</div>
-    </div>
-    """, unsafe_allow_html=True)
+    hero_html = (
+        '<div class="res-hero">'
+        + '<div class="res-emoji">' + em + '</div>'
+        + '<div class="res-grade" style="color:' + badge_col + ';">' + gr + '</div>'
+        + '<div class="res-msg">Outstanding effort, <strong>' + user_name + '</strong>! Here is your performance overview.</div>'
+        + '<div class="badge-card" style="border-color:' + badge_col + '; color:' + badge_col + ';">' + badge_name + '</div>'
+        + '<div style="font-size:14px; color:#94a3b8; font-style:italic; margin-bottom:24px;">'
+        + '&#8220;' + badge_msg + '&#8221;'
+        + '</div></div>'
+    )
+    st.markdown(hero_html, unsafe_allow_html=True)
 
     st.progress(fs / total)
     st.markdown("<br>", unsafe_allow_html=True)
@@ -728,23 +817,23 @@ elif st.session_state.page == "result":
     c1, c2, c3, c4 = st.columns(4)
     with c1: st.metric("✅ Correct", fs)
     with c2: st.metric("❌ Wrong", total - fs)
-    with c3: st.metric("📊 Score", f"{pct:.0f}%")
-    with c4: st.metric("❓ Total", total)
+    with c3: st.metric("📊 Accuracy", f"{pct:.0f}%")
+    with c4: st.metric("⚡ XP Earned", f"+{current_xp_earned}")
 
     st.markdown('<div class="h-divider"></div>', unsafe_allow_html=True)
 
     if wrongs:
         with st.expander(f"📋 Review mistakes ({len(wrongs)} wrong)"):
             for i, w in enumerate(wrongs, 1):
-                st.markdown(f"""
+                st.markdown(f'''
                 <div class="mk">
                     <div class="mk-q">Q{i}: {w['question']}</div>
                     <div class="mk-u">Your answer: {w['your_answer']}</div>
                     <div class="mk-c">✓ Correct: {w['correct']}</div>
                     <div class="mk-e">💡 <strong>Explanation:</strong> {w['explanation']}</div>
-                </div>""", unsafe_allow_html=True)
+                </div>''', unsafe_allow_html=True)
     else:
-        st.success("🔥 Zero mistakes — you aced every question!")
+        st.success(f"🔥 Zero mistakes! Flawless victory for {user_name}!")
 
     st.markdown("<br>", unsafe_allow_html=True)
     a, b, c = st.columns(3)
@@ -752,7 +841,7 @@ elif st.session_state.page == "result":
         if st.button("🔄 Retry Same", use_container_width=True):
             start_quiz(subj, diff, st.session_state.timer_seconds)
     with b:
-        if st.button("📚 New Subject", use_container_width=True):
+        if st.button("📚 Play Again", use_container_width=True):
             quiz_reset()
             st.session_state.pop("subject_pick", None)
             st.session_state.pop("subject", None)
