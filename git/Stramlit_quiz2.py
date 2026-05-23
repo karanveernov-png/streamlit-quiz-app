@@ -29,24 +29,19 @@ if not xai_api_key and not gemini_api_key:
     st.stop()
 
 # ── CLIENTS ──────────────────────────────────────────────────
-xai_client = None
+groq_client = None
 gemini_client = None
 
-# XAI CLIENT
 if xai_api_key:
-    xai_client = OpenAI(
-        api_key=xai_api_key,
-        base_url="https://api.x.ai/v1"
-    )
+    groq_client = OpenAI(api_key=xai_api_key, base_url="https://api.groq.com/openai/v1")
 
-# GEMINI CLIENT
 if gemini_api_key:
     gemini_client = OpenAI(
         api_key=gemini_api_key,
         base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
     )
 
-XAI_MODEL = "grok-3-mini"
+GROK_MODEL    = "llama-3.1-8b-instant"
 GEMINI_MODEL  = "gemini-2.0-flash"
 NUM_QUESTIONS = 5
 MAX_TOKENS    = 900
@@ -54,16 +49,16 @@ MAX_TOKENS    = 900
 # ── TEST BUTTON ─────────────────────────────────────────────
 if st.button("Test API Connection"):
     tested = False
-    if xai_client:
-        with st.spinner(f"Connecting to xAI ({XAI_MODEL})..."):
+    if groq_client:
+        with st.spinner(f"Connecting to Groq ({GROK_MODEL})..."):
             try:
-                response = xai_client.chat.completions.create(
-                    model=XAI_MODEL,
+                response = groq_client.chat.completions.create(
+                    model=GROK_MODEL,
                     messages=[{"role": "user", "content": "Hi"}],
                     max_tokens=10,
                     temperature=0
                 )
-                st.success(f"✅ xAI Connected — {XAI_MODEL}")
+                st.success(f"✅ Groq API Connected — {GROK_MODEL}")
                 st.write(response.choices[0].message.content)
                 tested = True
             except Exception as e:
@@ -378,12 +373,7 @@ def _call_api(api_client, model, prompt):
     text = chat_completion.choices[0].message.content.strip()
     text = re.sub(r"^```(?:json)?\s*", "", text)
     text = re.sub(r"\s*```$", "", text)
-
-    try:
-        return json.loads(text.strip())
-    except json.JSONDecodeError:
-        st.error("AI returned invalid JSON.")
-        return None
+    return json.loads(text.strip())
 
 def generate_questions(subject, difficulty, num_questions=NUM_QUESTIONS):
     prompt = (
@@ -392,12 +382,12 @@ def generate_questions(subject, difficulty, num_questions=NUM_QUESTIONS):
         "{\"question\":\"...\",\"options\":{\"A\":\"...\",\"B\":\"...\",\"C\":\"...\",\"D\":\"...\"},\"answer\":\"A\",\"explanation\":\"2 sentences max.\"}"
     )
 
-    # ── Try xAI first ────────────────────────────────────────
-    if xai_client:
+    # ── Try Groq first ────────────────────────────────────────
+    if groq_client:
         try:
-            return _call_api(xai_client, XAI_MODEL, prompt)
-        except Exception as xai_err:
-            st.warning(f"⚠️ xAI unavailable ({xai_err}). Switching to Gemini backup...")
+            return _call_api(groq_client, GROK_MODEL, prompt)
+        except Exception as groq_err:
+            st.warning(f"⚠️ Groq unavailable ({groq_err}). Switching to Gemini backup...")
 
     # ── Fallback: Gemini ──────────────────────────────────────
     if gemini_client:
