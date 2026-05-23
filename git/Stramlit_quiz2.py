@@ -55,7 +55,7 @@ MAX_TOKENS    = 900
 if st.button("Test API Connection"):
     tested = False
     if xai_client:
-        with st.spinner(f"Connecting to Groq ({GROK_MODEL})..."):
+        with st.spinner(f"Connecting to xAI ({XAI_MODEL})..."):
             try:
                 response = xai_client.chat.completions.create(
                     model=XAI_MODEL,
