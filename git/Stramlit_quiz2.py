@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 try:
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModel("gemini-2.0-flash")
     response = model.generate_content("Hello")
     st.write(response.text)
 except Exception as e:
