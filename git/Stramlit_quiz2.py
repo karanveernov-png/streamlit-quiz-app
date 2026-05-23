@@ -19,32 +19,32 @@ xai_api_key = (
     os.getenv("XAI_API_KEY")
     or st.secrets.get("XAI_API_KEY", None)
 )
-gemini_api_key = (
-    os.getenv("GEMINI_API_KEY")
-    or st.secrets.get("GEMINI_API_KEY", None)
+openrouter_api_key = (
+    os.getenv("OPENROUTER_API_KEY")
+    or st.secrets.get("OPENROUTER_API_KEY", None)
 )
 
-if not xai_api_key and not gemini_api_key:
-    st.error("No API keys found. Add XAI_API_KEY and/or GEMINI_API_KEY to .env or Streamlit secrets.")
+if not xai_api_key and not openrouter_api_key:
+    st.error("No API keys found. Add XAI_API_KEY and/or OPENROUTER_API_KEY to .env or Streamlit secrets.")
     st.stop()
 
 # ── CLIENTS ──────────────────────────────────────────────────
 groq_client = None
-gemini_client = None
+openrouter_client = None
 
 if xai_api_key:
     groq_client = OpenAI(api_key=xai_api_key, base_url="https://api.groq.com/openai/v1")
 
-if gemini_api_key:
-    gemini_client = OpenAI(
-        api_key=gemini_api_key,
-        base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+if openrouter_api_key:
+    openrouter_client = OpenAI(
+        api_key=openrouter_api_key,
+        base_url="https://openrouter.ai/api/v1",
     )
 
-GROK_MODEL    = "llama-3.1-8b-instant"
-GEMINI_MODEL  = "gemini-2.0-flash"
-NUM_QUESTIONS = 5
-MAX_TOKENS    = 900
+GROK_MODEL        = "llama-3.1-8b-instant"
+OPENROUTER_MODEL  = "openai/gpt-4o-mini"
+NUM_QUESTIONS     = 5
+MAX_TOKENS        = 900
 
 # ── TEST BUTTON ─────────────────────────────────────────────
 if st.button("Test API Connection"):
@@ -64,19 +64,19 @@ if st.button("Test API Connection"):
             except Exception as e:
                 st.warning(f"⚠️ Groq failed: {e}")
 
-    if not tested and gemini_client:
-        with st.spinner(f"Connecting to Gemini ({GEMINI_MODEL})..."):
+    if not tested and openrouter_client:
+        with st.spinner(f"Connecting to OpenRouter ({OPENROUTER_MODEL})..."):
             try:
-                response = gemini_client.chat.completions.create(
-                    model=GEMINI_MODEL,
+                response = openrouter_client.chat.completions.create(
+                    model=OPENROUTER_MODEL,
                     messages=[{"role": "user", "content": "Hi"}],
                     max_tokens=10,
                     temperature=0
                 )
-                st.success(f"✅ Gemini API Connected — {GEMINI_MODEL}")
+                st.success(f"✅ OpenRouter API Connected — {OPENROUTER_MODEL}")
                 st.write(response.choices[0].message.content)
             except Exception as e:
-                st.error(f"❌ Gemini also failed: {e}")
+                st.error(f"❌ OpenRouter also failed: {e}")
 # ══════════════════════════════════════════════════════════════════════════════
 # GLOBAL CSS
 # ══════════════════════════════════════════════════════════════════════════════
@@ -387,14 +387,14 @@ def generate_questions(subject, difficulty, num_questions=NUM_QUESTIONS):
         try:
             return _call_api(groq_client, GROK_MODEL, prompt)
         except Exception as groq_err:
-            st.warning(f"⚠️ Groq unavailable ({groq_err}). Switching to Gemini backup...")
+            st.warning(f"⚠️ Groq unavailable ({groq_err}). Switching to OpenRouter backup...")
 
-    # ── Fallback: Gemini ──────────────────────────────────────
-    if gemini_client:
+    # ── Fallback: OpenRouter (GPT-4o-mini) ───────────────────
+    if openrouter_client:
         try:
-            return _call_api(gemini_client, GEMINI_MODEL, prompt)
-        except Exception as gemini_err:
-            st.error(f"❌ Gemini also failed: {gemini_err}")
+            return _call_api(openrouter_client, OPENROUTER_MODEL, prompt)
+        except Exception as openrouter_err:
+            st.error(f"❌ OpenRouter also failed: {openrouter_err}")
             return None
 
     st.error("❌ No working API available. Please check your API keys.")
