@@ -331,7 +331,7 @@ def generate_questions(subject, difficulty, num_questions=NUM_QUESTIONS):
     prompt = (
         f"Make {num_questions} MCQs on {subject} ({difficulty}). "
         "JSON array only, no markdown. Each: "
-        "{\"question\":\"...\",\"options\":{\"A\":\"...\",\"B\":\"...\",\"C\":\"...\",\"D\":\"...\"},\"answer\":\"A\",\"explanation\":\"1 sentence.\"}"
+        "{\"question\":\"...\",\"options\":{\"A\":\"...\",\"B\":\"...\",\"C\":\"...\",\"D\":\"...\"},\"answer\":\"A\",\"explanation\":\"2 sentences max.\"}"
     )
     try:
         chat_completion = client.chat.completions.create(
