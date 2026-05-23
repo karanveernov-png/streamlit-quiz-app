@@ -47,36 +47,30 @@ NUM_QUESTIONS     = 5
 MAX_TOKENS        = 900
 
 # ── TEST BUTTON ─────────────────────────────────────────────
-if st.button("Test API Connection"):
-    tested = False
-    if groq_client:
-        with st.spinner(f"Connecting to Groq ({GROK_MODEL})..."):
+if st.button("🔌 Test Both APIs", use_container_width=True):
+    col1, col2 = st.columns(2)
+    with col1:
+        with st.spinner("Testing Groq..."):
             try:
-                response = groq_client.chat.completions.create(
+                groq_client.chat.completions.create(
                     model=GROK_MODEL,
                     messages=[{"role": "user", "content": "Hi"}],
-                    max_tokens=10,
-                    temperature=0
+                    max_tokens=10, temperature=0
                 )
-                st.success(f"✅ Groq API Connected — {GROK_MODEL}")
-                st.write(response.choices[0].message.content)
-                tested = True
+                st.success("✅ Groq — Done")
             except Exception as e:
-                st.warning(f"⚠️ Groq failed: {e}")
-
-    if not tested and openrouter_client:
-        with st.spinner(f"Connecting to OpenRouter ({OPENROUTER_MODEL})..."):
+                st.error("❌ Groq — Failed")
+    with col2:
+        with st.spinner("Testing OpenRouter..."):
             try:
-                response = openrouter_client.chat.completions.create(
+                openrouter_client.chat.completions.create(
                     model=OPENROUTER_MODEL,
                     messages=[{"role": "user", "content": "Hi"}],
-                    max_tokens=10,
-                    temperature=0
+                    max_tokens=10, temperature=0
                 )
-                st.success(f"✅ OpenRouter API Connected — {OPENROUTER_MODEL}")
-                st.write(response.choices[0].message.content)
+                st.success("✅ OpenRouter — Done")
             except Exception as e:
-                st.error(f"❌ OpenRouter also failed: {e}")
+                st.error("❌ OpenRouter — Failed")
 # ══════════════════════════════════════════════════════════════════════════════
 # GLOBAL CSS
 # ══════════════════════════════════════════════════════════════════════════════
