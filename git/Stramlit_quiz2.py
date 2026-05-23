@@ -11,13 +11,12 @@ st.set_page_config(
     layout="centered"
 )
 
-# ── GEMINI CONFIG ──────────────────────────────────────────────────────────────
-# Fetch the API key from Streamlit secrets
 try:
-    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-except KeyError:
-    st.error("⚠️ GEMINI_API_KEY is missing. Please add it to your .streamlit/secrets.toml file.")
-    st.stop()
+    model = genai.GenerativeModel("gemini-1.5-flash")
+    response = model.generate_content("Hello")
+    st.write(response.text)
+except Exception as e:
+    st.error(e)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # GLOBAL CSS
