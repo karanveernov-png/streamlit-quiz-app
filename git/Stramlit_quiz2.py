@@ -47,30 +47,37 @@ NUM_QUESTIONS     = 5
 MAX_TOKENS        = 900
 
 # ── TEST BUTTON ─────────────────────────────────────────────
+# ── TEST BUTTON ─────────────────────────────────────────────
 if st.button("🔌 Test Both APIs", use_container_width=True):
     col1, col2 = st.columns(2)
     with col1:
         with st.spinner("Testing Groq..."):
-            try:
-                groq_client.chat.completions.create(
-                    model=GROK_MODEL,
-                    messages=[{"role": "user", "content": "Hi"}],
-                    max_tokens=10, temperature=0
-                )
-                st.success("✅ Groq — Done")
-            except Exception as e:
-                st.error("❌ Groq — Failed")
+            if groq_client is None:
+                st.error("❌ Groq — Failed: Missing API Key Setup")
+            else:
+                try:
+                    groq_client.chat.completions.create(
+                        model=GROK_MODEL,
+                        messages=[{"role": "user", "content": "Hi"}],
+                        max_tokens=10, temperature=0
+                    )
+                    st.success("✅ Groq — Done")
+                except Exception as e:
+                    st.error(f"❌ Groq — Failed: {e}")
     with col2:
         with st.spinner("Testing OpenRouter..."):
-            try:
-                openrouter_client.chat.completions.create(
-                    model=OPENROUTER_MODEL,
-                    messages=[{"role": "user", "content": "Hi"}],
-                    max_tokens=10, temperature=0
-                )
-                st.success("✅ OpenRouter — Done")
-            except Exception as e:
-                st.error(f"❌ OpenRouter — Failed: {e}")
+            if openrouter_client is None:
+                st.error("❌ OpenRouter — Failed: Missing API Key Setup")
+            else:
+                try:
+                    openrouter_client.chat.completions.create(
+                        model=OPENROUTER_MODEL,
+                        messages=[{"role": "user", "content": "Hi"}],
+                        max_tokens=10, temperature=0
+                    )
+                    st.success("✅ OpenRouter — Done")
+                except Exception as e:
+                    st.error(f"❌ OpenRouter — Failed: {e}")
 # ══════════════════════════════════════════════════════════════════════════════
 # GLOBAL CSS
 # ══════════════════════════════════════════════════════════════════════════════
