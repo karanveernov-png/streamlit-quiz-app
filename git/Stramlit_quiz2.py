@@ -4,46 +4,84 @@ import re
 import json
 import os
 from openai import OpenAI
- 
+
 ## ── PAGE CONFIG ─────────────────────────────────────────────
 st.set_page_config(
     page_title="BrainBlitz · Quiz App",
     page_icon="🧠",
     layout="centered"
 )
- 
+
 st.title("🧠 BrainBlitz AI Test")
- 
-# ── API KEY ─────────────────────────────────────────────────
+
+# ── API KEYS ─────────────────────────────────────────────────
 xai_api_key = (
     os.getenv("XAI_API_KEY")
     or st.secrets.get("XAI_API_KEY", None)
 )
-if not xai_api_key:
-    st.error("XAI_API_KEY not found. Add it to .env or Streamlit secrets.")
-    st.stop()
- 
-# ── GROK (Now Groq!) CLIENT ───────────────────────────────────────
-client = OpenAI(api_key=xai_api_key, base_url="https://api.groq.com/openai/v1")
+gemini_api_key = (
+    os.getenv("GEMINI_API_KEY")
+    or st.secrets.get("GEMINI_API_KEY", None)
+)
 
-# UPDATE: Changed to Groq's active 3.1 model because the old one was decommissioned
-GROK_MODEL    = "llama-3.1-8b-instant"  
-NUM_QUESTIONS = 5              # token saver: fewer questions
-MAX_TOKENS    = 900            # cap per API response
+if not xai_api_key and not gemini_api_key:
+    st.error("No API keys found. Add XAI_API_KEY and/or GEMINI_API_KEY to .env or Streamlit secrets.")
+    st.stop()
+
+# ── CLIENTS ──────────────────────────────────────────────────
+xai_client = None
+gemini_client = None
+
+# XAI CLIENT
+if xai_api_key:
+    xai_client = OpenAI(
+        api_key=xai_api_key,
+        base_url="https://api.x.ai/v1"
+    )
+
+# GEMINI CLIENT
+if gemini_api_key:
+    gemini_client = OpenAI(
+        api_key=gemini_api_key,
+        base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+    )
+
+XAI_MODEL = "grok-3-mini"
+GEMINI_MODEL  = "gemini-2.0-flash"
+NUM_QUESTIONS = 5
+MAX_TOKENS    = 900
+
 # ── TEST BUTTON ─────────────────────────────────────────────
-if st.button("Test Grok API"):
-    with st.spinner(f"Connecting to {GROK_MODEL}..."):
-        try:
-            response = client.chat.completions.create(
-                model=GROK_MODEL,
-                messages=[{"role": "user", "content": "Hi"}],
-                max_tokens=10,
-                temperature=0
-            )
-            st.success(f"✅ Grok API Connected — {GROK_MODEL}")
-            st.write(response.choices[0].message.content)
-        except Exception as e:
-            st.error(f"❌ Error: {e}")
+if st.button("Test API Connection"):
+    tested = False
+    if xai_client:
+        with st.spinner(f"Connecting to Groq ({GROK_MODEL})..."):
+            try:
+                response = xai_client.chat.completions.create(
+                    model=XAI_MODEL,
+                    messages=[{"role": "user", "content": "Hi"}],
+                    max_tokens=10,
+                    temperature=0
+                )
+                st.success(f"✅ xAI Connected — {XAI_MODEL}")
+                st.write(response.choices[0].message.content)
+                tested = True
+            except Exception as e:
+                st.warning(f"⚠️ Groq failed: {e}")
+
+    if not tested and gemini_client:
+        with st.spinner(f"Connecting to Gemini ({GEMINI_MODEL})..."):
+            try:
+                response = gemini_client.chat.completions.create(
+                    model=GEMINI_MODEL,
+                    messages=[{"role": "user", "content": "Hi"}],
+                    max_tokens=10,
+                    temperature=0
+                )
+                st.success(f"✅ Gemini API Connected — {GEMINI_MODEL}")
+                st.write(response.choices[0].message.content)
+            except Exception as e:
+                st.error(f"❌ Gemini also failed: {e}")
 # ══════════════════════════════════════════════════════════════════════════════
 # GLOBAL CSS
 # ══════════════════════════════════════════════════════════════════════════════
@@ -326,30 +364,51 @@ def quiz_reset():
         del st.session_state[k]
  
 # ── AI Generation Logic ────────────────────────────────────────────────────
+def _call_api(api_client, model, prompt):
+    """Call a single API client and return parsed JSON questions, or raise on failure."""
+    chat_completion = api_client.chat.completions.create(
+        model=model,
+        messages=[
+            {"role": "system", "content": "Reply with raw JSON array only. No extra text."},
+            {"role": "user",   "content": prompt},
+        ],
+        max_tokens=MAX_TOKENS,
+        temperature=0.5,
+    )
+    text = chat_completion.choices[0].message.content.strip()
+    text = re.sub(r"^```(?:json)?\s*", "", text)
+    text = re.sub(r"\s*```$", "", text)
+
+    try:
+        return json.loads(text.strip())
+    except json.JSONDecodeError:
+        st.error("AI returned invalid JSON.")
+        return None
+
 def generate_questions(subject, difficulty, num_questions=NUM_QUESTIONS):
-    # Short prompt = fewer input tokens consumed
     prompt = (
         f"Make {num_questions} MCQs on {subject} ({difficulty}). "
         "JSON array only, no markdown. Each: "
         "{\"question\":\"...\",\"options\":{\"A\":\"...\",\"B\":\"...\",\"C\":\"...\",\"D\":\"...\"},\"answer\":\"A\",\"explanation\":\"2 sentences max.\"}"
     )
-    try:
-        chat_completion = client.chat.completions.create(
-            model=GROK_MODEL,
-            messages=[
-                {"role": "system", "content": "Reply with raw JSON array only. No extra text."},
-                {"role": "user",   "content": prompt},
-            ],
-            max_tokens=MAX_TOKENS,
-            temperature=0.5,
-        )
-        text = chat_completion.choices[0].message.content.strip()
-        text = re.sub(r"^```(?:json)?\s*", "", text)
-        text = re.sub(r"\s*```$", "", text)
-        return json.loads(text.strip())
-    except Exception as e:
-        st.error(f"Failed to generate questions: {e}")
-        return None
+
+    # ── Try xAI first ────────────────────────────────────────
+    if xai_client:
+        try:
+            return _call_api(xai_client, XAI_MODEL, prompt)
+        except Exception as xai_err:
+            st.warning(f"⚠️ xAI unavailable ({xai_err}). Switching to Gemini backup...")
+
+    # ── Fallback: Gemini ──────────────────────────────────────
+    if gemini_client:
+        try:
+            return _call_api(gemini_client, GEMINI_MODEL, prompt)
+        except Exception as gemini_err:
+            st.error(f"❌ Gemini also failed: {gemini_err}")
+            return None
+
+    st.error("❌ No working API available. Please check your API keys.")
+    return None
  
 def start_quiz(subj, difficulty, timer_sec):
     st.session_state.subject = subj
