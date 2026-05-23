@@ -23,12 +23,15 @@ if not xai_api_key:
     st.error("XAI_API_KEY not found. Add it to .env or Streamlit secrets.")
     st.stop()
  
-# ── GROK (xAI) CLIENT ───────────────────────────────────────
-client = OpenAI(api_key=xai_api_key, base_url="https://api.x.ai/v1")
-GROK_MODEL    = "grok-3-mini"  # change model here once
+# ── GROK (Now Groq!) CLIENT ───────────────────────────────────────
+# We updated the base_url to Groq's servers so your gsk_ key works!
+client = OpenAI(api_key=xai_api_key, base_url="https://api.groq.com/openai/v1")
+
+# We kept the variable name GROK_MODEL so we don't break the rest of the app,
+# but we changed the actual model to Llama 3, which is hosted by Groq!
+GROK_MODEL    = "llama3-8b-8192"  
 NUM_QUESTIONS = 3              # token saver: fewer questions
 MAX_TOKENS    = 900            # cap per API response
- 
 # ── TEST BUTTON ─────────────────────────────────────────────
 if st.button("Test Grok API"):
     with st.spinner(f"Connecting to {GROK_MODEL}..."):
