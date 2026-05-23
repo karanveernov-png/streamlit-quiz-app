@@ -28,7 +28,7 @@ client = OpenAI(api_key=xai_api_key, base_url="https://api.groq.com/openai/v1")
 
 # UPDATE: Changed to Groq's active 3.1 model because the old one was decommissioned
 GROK_MODEL    = "llama-3.1-8b-instant"  
-NUM_QUESTIONS = 3              # token saver: fewer questions
+NUM_QUESTIONS = 5              # token saver: fewer questions
 MAX_TOKENS    = 900            # cap per API response
 # ── TEST BUTTON ─────────────────────────────────────────────
 if st.button("Test Grok API"):
