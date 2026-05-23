@@ -765,3 +765,4 @@ elif st.session_state.page == "result":
         if st.button("🚪 Log Out", use_container_width=True):
             full_reset()
             st.rerun()
+            # Testing to see if Git tracks this change
