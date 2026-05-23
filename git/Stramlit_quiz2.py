@@ -15,22 +15,34 @@ st.set_page_config(
 st.title("🧠 BrainBlitz AI Test")
  
 # ── API KEY ─────────────────────────────────────────────────
-# ── API KEY ─────────────────────────────────────────────────
-# Check OS Environment first, then try explicit Streamlit dict lookup
-xai_api_key = os.getenv("XAI_API_KEY")
-
-if not xai_api_key:
-    try:
-        # Explicitly fetching from Streamlit's secrets dictionary
-        xai_api_key = st.secrets["XAI_API_KEY"]
-    except KeyError:
-        xai_api_key = None
-
-# If still not found, show the error
+xai_api_key = (
+    os.getenv("XAI_API_KEY")
+    or st.secrets.get("XAI_API_KEY", None)
+)
 if not xai_api_key:
     st.error("XAI_API_KEY not found. Add it to .env or Streamlit secrets.")
-    st.info(f"Current working directory: {os.getcwd()}") # Debug helper
     st.stop()
+ 
+# ── GROK (xAI) CLIENT ───────────────────────────────────────
+client = OpenAI(api_key=xai_api_key, base_url="https://api.x.ai/v1")
+GROK_MODEL    = "grok-3-mini"  # change model here once
+NUM_QUESTIONS = 3              # token saver: fewer questions
+MAX_TOKENS    = 900            # cap per API response
+ 
+# ── TEST BUTTON ─────────────────────────────────────────────
+if st.button("Test Grok API"):
+    with st.spinner(f"Connecting to {GROK_MODEL}..."):
+        try:
+            response = client.chat.completions.create(
+                model=GROK_MODEL,
+                messages=[{"role": "user", "content": "Hi"}],
+                max_tokens=10,
+                temperature=0
+            )
+            st.success(f"✅ Grok API Connected — {GROK_MODEL}")
+            st.write(response.choices[0].message.content)
+        except Exception as e:
+            st.error(f"❌ Error: {e}")
 # ══════════════════════════════════════════════════════════════════════════════
 # GLOBAL CSS
 # ══════════════════════════════════════════════════════════════════════════════
