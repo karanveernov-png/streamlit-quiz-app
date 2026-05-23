@@ -70,7 +70,7 @@ if st.button("🔌 Test Both APIs", use_container_width=True):
                 )
                 st.success("✅ OpenRouter — Done")
             except Exception as e:
-                st.error("❌ OpenRouter — Failed")
+                st.error(f"❌ OpenRouter — Failed: {e}")
 # ══════════════════════════════════════════════════════════════════════════════
 # GLOBAL CSS
 # ══════════════════════════════════════════════════════════════════════════════
