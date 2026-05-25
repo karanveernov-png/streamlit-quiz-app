@@ -346,6 +346,125 @@ div[data-testid="stRadio"] > div > label[data-checked="true"] {
     box-shadow: 0 10px 30px rgba(0,0,0,.5);
 }
 
+/* ─── YouTube Resources Section ──────────────────────────────────── */
+.yt-section-title {
+    font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800;
+    color: #f0f4ff; margin-bottom: 6px; display: flex; align-items: center; gap: 10px;
+}
+.yt-section-sub {
+    font-size: 13px; color: #3d5070; margin-bottom: 18px; line-height: 1.5;
+}
+.yt-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px; margin-bottom: 8px;
+}
+.yt-card {
+    background: linear-gradient(145deg, rgba(18,26,48,.9), rgba(8,12,22,.95));
+    border: 1.5px solid rgba(255,0,0,.2); border-radius: 14px; padding: 16px 14px;
+    text-decoration: none; transition: all .22s ease; display: block; position: relative;
+    overflow: hidden;
+}
+.yt-card::before {
+    content:""; position:absolute; top:0; left:0; right:0; height:2px;
+    background: linear-gradient(90deg, #ff0000, #ff6b6b);
+}
+.yt-card:hover {
+    border-color: rgba(255,0,0,.55); background: rgba(255,0,0,.07);
+    transform: translateY(-3px); box-shadow: 0 8px 24px rgba(255,0,0,.15);
+}
+.yt-icon { font-size: 28px; margin-bottom: 8px; line-height: 1; }
+.yt-title { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: #e2e8f0; margin-bottom: 4px; line-height: 1.4; }
+.yt-desc  { font-size: 11px; color: #3d5070; line-height: 1.4; }
+.yt-tag {
+    display: inline-block; background: rgba(255,0,0,.12); border: 1px solid rgba(255,0,0,.25);
+    color: #ff6b6b; font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+    border-radius: 6px; padding: 2px 8px; margin-top: 6px;
+}
+.ai-tip-box {
+    background: linear-gradient(135deg, rgba(99,102,241,.08) 0%, rgba(168,85,247,.06) 100%);
+    border: 1px solid rgba(99,102,241,.22); border-radius: 16px; padding: 18px 22px;
+    margin: 12px 0 20px; position: relative;
+}
+.ai-tip-box::before {
+    content:""; position:absolute; top:0; left:0; right:0; height:2px;
+    background: linear-gradient(90deg,#6366f1,#a855f7,#ec4899); border-radius:16px 16px 0 0;
+}
+.ai-tip-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: #6366f1; margin-bottom: 8px;
+}
+.ai-tip-text { font-size: 14px; color: #94a3b8; line-height: 1.7; }
+
+/* ─── Back button override ────────────────────────────────────────── */
+.back-btn-wrap div[data-testid="stButton"] > button {
+    background: rgba(255,255,255,.04) !important;
+    border: 1px solid rgba(255,255,255,.10) !important;
+    color: #5a6a88 !important;
+    box-shadow: none !important;
+    font-size: 12px !important;
+    padding: 9px 14px !important;
+    letter-spacing: 0 !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 500 !important;
+    border-radius: 10px !important;
+}
+.back-btn-wrap div[data-testid="stButton"] > button:hover {
+    background: rgba(99,102,241,.10) !important;
+    border-color: rgba(99,102,241,.35) !important;
+    color: #818cf8 !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+/* ─── Custom Subject Card & Panel ────────────────────────────────── */
+.s-card.custom-card {
+    border-color: rgba(236,72,153,.35);
+    background: rgba(236,72,153,.05);
+}
+.s-card.custom-card:hover {
+    border-color: rgba(236,72,153,.7);
+    background: rgba(236,72,153,.1);
+    box-shadow: 0 10px 32px rgba(236,72,153,.18);
+}
+.s-card.custom-card.sel {
+    border-color: rgba(236,72,153,.8);
+    background: rgba(236,72,153,.13);
+    box-shadow: 0 0 0 3px rgba(236,72,153,.2), 0 10px 32px rgba(236,72,153,.15);
+}
+.custom-panel {
+    background: linear-gradient(145deg, rgba(18,26,48,.95), rgba(8,12,22,.98));
+    border: 1.5px solid rgba(236,72,153,.3); border-radius: 18px;
+    padding: 26px 28px; margin-top: 16px; animation: fadeIn .35s ease;
+    position: relative; overflow: hidden;
+}
+.custom-panel::before {
+    content:""; position:absolute; top:0; left:0; right:0; height:3px;
+    background: linear-gradient(90deg,#ec4899,#a855f7,#6366f1); border-radius: 18px 18px 0 0;
+}
+.custom-panel-title {
+    font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800;
+    color: #f0f4ff; margin-bottom: 4px;
+}
+.custom-panel-sub {
+    font-size: 13px; color: #3d5070; margin-bottom: 20px; line-height: 1.5;
+}
+.gen-btn-wrap div[data-testid="stButton"] > button {
+    background: linear-gradient(135deg, #ec4899 0%, #a855f7 100%) !important;
+    box-shadow: 0 4px 24px rgba(236,72,153,.35) !important;
+}
+.gen-btn-wrap div[data-testid="stButton"] > button:hover {
+    background: linear-gradient(135deg, #db2777 0%, #9333ea 100%) !important;
+    box-shadow: 0 8px 32px rgba(236,72,153,.55) !important;
+}
+.custom-ready-panel {
+    background: linear-gradient(145deg, rgba(18,26,48,.9), rgba(8,12,22,.95));
+    border: 1px solid rgba(16,185,129,.3); border-radius: 14px;
+    padding: 14px 20px; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 12px;
+}
+.custom-ready-text { font-size: 13px; color: #34d399; font-weight: 600; }
+.custom-ready-sub  { font-size: 11px; color: #2d5a4a; margin-top: 2px; }
+
 /* ─── Performance: prevent layout thrash & reduce paint cost ─────── */
 .stApp { contain: layout style; }
 iframe { will-change: auto !important; }
@@ -370,6 +489,48 @@ SUBJECT_DATA = {
     "Biology":          {"icon": "🔬", "desc": "Life & living systems"},
     "Computer Science": {"icon": "💻", "desc": "Coding & technology"},
     "English":          {"icon": "📖", "desc": "Grammar & vocabulary"},
+}
+
+# ══════════════════════════════════════════════════════════════════════════════
+# YOUTUBE STUDY RESOURCES  (shown on result page)
+# ══════════════════════════════════════════════════════════════════════════════
+YOUTUBE_RESOURCES = {
+    "History": [
+        {"icon": "🏛️", "title": "India's Full History",         "desc": "Ancient to Modern India — complete playlist",           "url": "https://www.youtube.com/results?search_query=history+of+india+full+course+hindi+english",          "tag": "Full Course"},
+        {"icon": "🌍", "title": "World History Explained",       "desc": "Key world events & civilisations",                      "url": "https://www.youtube.com/results?search_query=world+history+documentary+explained",                   "tag": "World"},
+        {"icon": "⚔️",  "title": "Freedom Struggle",              "desc": "India's independence movement deep-dive",               "url": "https://www.youtube.com/results?search_query=india+freedom+struggle+independence+movement",           "tag": "India"},
+        {"icon": "📺", "title": "History GK for Exams",          "desc": "Quick-revision MCQs for competitive exams",             "url": "https://www.youtube.com/results?search_query=history+gk+questions+competitive+exam+preparation",      "tag": "Exam Prep"},
+    ],
+    "Geography": [
+        {"icon": "🗺️", "title": "Indian Geography Masterclass",  "desc": "Rivers, mountains, climate — full overview",            "url": "https://www.youtube.com/results?search_query=indian+geography+full+course+upsc",                      "tag": "India"},
+        {"icon": "🌐", "title": "World Geography in Hindi/Eng",   "desc": "Continents, oceans & physical geography",               "url": "https://www.youtube.com/results?search_query=world+geography+full+course+explained",                   "tag": "World"},
+        {"icon": "🪐", "title": "Solar System & Space",           "desc": "Planets, orbits and our universe",                     "url": "https://www.youtube.com/results?search_query=solar+system+planets+explained+for+students",             "tag": "Space"},
+        {"icon": "📊", "title": "Geography MCQs",                 "desc": "Practice questions for exams",                         "url": "https://www.youtube.com/results?search_query=geography+mcq+quiz+exam+preparation",                     "tag": "Exam Prep"},
+    ],
+    "Politics": [
+        {"icon": "📜", "title": "Indian Polity by Laxmikant",    "desc": "Constitution, Parliament & governance explained",       "url": "https://www.youtube.com/results?search_query=indian+polity+laxmikant+upsc+complete+course",            "tag": "Full Course"},
+        {"icon": "⚖️",  "title": "Fundamental Rights & Duties",   "desc": "Articles, amendments & judgements",                    "url": "https://www.youtube.com/results?search_query=fundamental+rights+duties+indian+constitution+explained",  "tag": "Constitution"},
+        {"icon": "🏛️", "title": "Parliament & Elections",         "desc": "How Indian democracy works",                           "url": "https://www.youtube.com/results?search_query=indian+parliament+election+commission+explained",           "tag": "Democracy"},
+        {"icon": "🎯", "title": "Polity MCQs for Exams",          "desc": "Quick revision with practice questions",               "url": "https://www.youtube.com/results?search_query=indian+polity+mcq+exam+preparation+quiz",                 "tag": "Exam Prep"},
+    ],
+    "Biology": [
+        {"icon": "🔬", "title": "Cell Biology Full Course",       "desc": "Cell structure, organelles & processes",               "url": "https://www.youtube.com/results?search_query=cell+biology+full+course+for+students",                   "tag": "Full Course"},
+        {"icon": "🧬", "title": "Genetics & DNA Explained",       "desc": "Heredity, genes, DNA replication",                     "url": "https://www.youtube.com/results?search_query=genetics+DNA+replication+explained+biology",              "tag": "Genetics"},
+        {"icon": "🫀", "title": "Human Body Systems",             "desc": "Digestive, respiratory, circulatory & more",           "url": "https://www.youtube.com/results?search_query=human+body+systems+biology+explained+for+students",       "tag": "Human Body"},
+        {"icon": "🌿", "title": "Photosynthesis & Respiration",   "desc": "Plant biology & metabolic pathways",                   "url": "https://www.youtube.com/results?search_query=photosynthesis+cellular+respiration+explained+biology",    "tag": "Plants"},
+    ],
+    "Computer Science": [
+        {"icon": "💻", "title": "Python for Beginners",           "desc": "Complete Python programming from scratch",             "url": "https://www.youtube.com/results?search_query=python+programming+full+course+beginners",                 "tag": "Programming"},
+        {"icon": "🌐", "title": "Data Structures & Algorithms",   "desc": "Arrays, trees, sorting — with examples",               "url": "https://www.youtube.com/results?search_query=data+structures+algorithms+full+course",                  "tag": "DSA"},
+        {"icon": "🖥️", "title": "How Computers Work",             "desc": "CPU, memory, OS fundamentals explained",               "url": "https://www.youtube.com/results?search_query=how+computers+work+CPU+memory+operating+system",           "tag": "Fundamentals"},
+        {"icon": "🔐", "title": "Cybersecurity Basics",           "desc": "Networks, security & the internet",                    "url": "https://www.youtube.com/results?search_query=cybersecurity+basics+networking+fundamentals+explained",    "tag": "Security"},
+    ],
+    "English": [
+        {"icon": "📝", "title": "English Grammar Mastery",        "desc": "Tenses, parts of speech, sentence structure",          "url": "https://www.youtube.com/results?search_query=english+grammar+full+course+beginners",                   "tag": "Grammar"},
+        {"icon": "📚", "title": "Vocabulary Builder",             "desc": "1000+ words with meaning & usage",                    "url": "https://www.youtube.com/results?search_query=english+vocabulary+building+words+meaning+usage",          "tag": "Vocabulary"},
+        {"icon": "🗣️", "title": "Spoken English Fluency",         "desc": "Speaking naturally with confidence",                   "url": "https://www.youtube.com/results?search_query=spoken+english+fluency+course+for+beginners",             "tag": "Speaking"},
+        {"icon": "✍️",  "title": "Essay & Writing Skills",         "desc": "Writing structured essays & paragraphs",               "url": "https://www.youtube.com/results?search_query=english+essay+writing+skills+for+students",              "tag": "Writing"},
+    ],
 }
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -602,6 +763,243 @@ def refresh_subject_questions(subj):
     return stored > 0
 
 
+def get_ai_study_tip(subj, diff, score, total):
+    """Use the AI API to generate a personalised study tip for the result page."""
+    pct = int((score / total) * 100) if total > 0 else 0
+    prompt = (
+        f"A student just completed a {diff}-difficulty quiz on {subj} and scored {score}/{total} ({pct}%).\n"
+        "Write a SHORT, encouraging, personalised study tip (3-4 sentences max). "
+        "Mention one specific concept or area from this subject they should focus on next. "
+        "Keep it warm, motivating, and actionable. No bullet points, just flowing text."
+    )
+    client = groq_client or openrouter_client
+    model  = GROK_MODEL if groq_client else OPENROUTER_MODEL
+    if client is None:
+        return None
+    try:
+        resp = client.chat.completions.create(
+            model=model,
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=200,
+            temperature=0.8,
+        )
+        return resp.choices[0].message.content.strip()
+    except Exception:
+        return None
+
+
+def _validate_questions(questions):
+    """
+    Validate MCQ questions structurally (A-D options present, answer letter valid).
+    Also runs _repair_question on each to fix answer/explanation mismatches.
+    """
+    valid = []
+    for q in questions:
+        try:
+            opts = q.get("options", {})
+            ans  = q.get("answer", "").strip().upper()
+            if ans not in ("A", "B", "C", "D"):
+                continue
+            if not all(k in opts for k in ("A", "B", "C", "D")):
+                continue
+            q["answer"] = ans
+            q = _repair_question(q)
+            valid.append(q)
+        except Exception:
+            continue
+    return valid
+
+
+def _repair_question(q):
+    """
+    Detect and fix the AI bug where options[answer] does not match the correct
+    value described in the explanation.
+
+    Strategy:
+      1. Look for the numeric result in the explanation (e.g. '= 9').
+      2. If options[answer] != that result but another option == that result,
+         swap the answer letter to the correct one.
+      3. Also search explanation text for 'answer is X -- VALUE' patterns.
+    """
+    import re as _re2
+
+    ans  = q["answer"]
+    opts = q["options"]
+    expl = q.get("explanation", "")
+
+    # --- Strategy A: numeric equality (handles math questions perfectly) ---
+    num_match = _re2.search(r"=\s*(-?\d+(?:\.\d+)?)", expl)
+    if num_match:
+        stated_num = num_match.group(1).strip()
+        current_val = opts.get(ans, "").strip()
+        if current_val != stated_num:
+            # Find which letter holds the stated correct value
+            for letter, opt_val in opts.items():
+                if opt_val.strip() == stated_num:
+                    q["answer"] = letter
+                    # Fix the letter reference in explanation
+                    q["explanation"] = _re2.sub(
+                        r"((?:correct )?answer is\s+)[A-D]",
+                        lambda m: m.group(1) + letter,
+                        expl, flags=_re2.IGNORECASE
+                    )
+                    return q
+
+    # --- Strategy B: stated value after dash/colon in explanation ---
+    # Matches: "correct answer is C - 9" or "correct answer is C: 9"
+    m = _re2.search(
+        r"correct answer is\s+([A-D])\s*[\u2014\-:\u2013]\s*([^,\.]+)",
+        expl, _re2.IGNORECASE
+    )
+    if m:
+        stated_letter = m.group(1).upper()
+        stated_val    = m.group(2).strip().rstrip(".,;")
+        if stated_letter in opts:
+            if opts[stated_letter].strip().lower() == stated_val.lower():
+                # Explanation is internally consistent - trust it
+                if stated_letter != ans:
+                    q["answer"] = stated_letter
+                return q
+            else:
+                # Find which option actually has stated_val
+                for letter, opt_val in opts.items():
+                    if opt_val.strip().lower() == stated_val.lower():
+                        q["answer"] = letter
+                        q["explanation"] = _re2.sub(
+                            r"(correct answer is\s+)[A-D]",
+                            lambda m2: m2.group(1) + letter,
+                            expl, flags=_re2.IGNORECASE
+                        )
+                        return q
+
+    return q  # best-effort: unchanged
+
+
+def generate_custom_questions(subj_name, topic):
+    """
+    AI generates 5 Easy + 5 Medium + 5 Hard MCQs for a user-defined subject & topic.
+    Cache key: q_cache_CUSTOM_{subj_name}_{topic}
+    Returns True on success, False on failure.
+    """
+    cache_key_prefix = f"q_cache_CUSTOM_{subj_name}_{topic}"
+    prompt = (
+        f"Generate exactly 5 multiple-choice questions (MCQs) about '{topic}' "
+        f"in the subject '{subj_name}' at Easy difficulty, "
+        "5 at Medium difficulty, and 5 at Hard difficulty.\n\n"
+        "STEP-BY-STEP for each question (MANDATORY):\n"
+        "  1. Write the question.\n"
+        "  2. Compute the CORRECT answer value first.\n"
+        "  3. Assign that correct value to one letter (e.g. C).\n"
+        "  4. Fill the other 3 letters with WRONG values.\n"
+        "  5. Set 'answer' to the letter from step 3.\n"
+        "  6. Write explanation: 'The correct answer is [letter] - [correct value], because [reason].'\n\n"
+        "BEFORE finalising each question verify: options[answer] == the correct value you computed.\n\n"
+        "Return ONLY raw JSON (no markdown, no fences):\n"
+        "{\"Easy\": [...], \"Medium\": [...], \"Hard\": [...]}\n\n"
+        "Question format:\n"
+        "{\"question\": \"...\", \"options\": {\"A\": \"...\", \"B\": \"...\", \"C\": \"...\", \"D\": \"...\"}, "
+        "\"answer\": \"C\", \"explanation\": \"The correct answer is C - [value], because [reason].\"}\n\n"
+        "EXAMPLE (9+0):\n"
+        "{\"question\": \"What is 9 + 0?\", "
+        "\"options\": {\"A\": \"8\", \"B\": \"10\", \"C\": \"9\", \"D\": \"11\"}, "
+        "\"answer\": \"C\", \"explanation\": \"The correct answer is C - 9, because 9 + 0 = 9.\"}"
+    )
+
+    result = None
+    if groq_client:
+        try:
+            result = _call_api(groq_client, GROK_MODEL, prompt, max_tokens=2800)
+        except Exception:
+            pass
+
+    if result is None and openrouter_client:
+        try:
+            result = _call_api(openrouter_client, OPENROUTER_MODEL, prompt, max_tokens=2800)
+        except Exception:
+            return False
+
+    if result is None:
+        return False
+
+    stored = 0
+    for diff in ["Easy", "Medium", "Hard"]:
+        if diff in result and isinstance(result[diff], list) and len(result[diff]) > 0:
+            validated = _validate_questions(result[diff])
+            if validated:
+                st.session_state[f"{cache_key_prefix}_{diff}"] = validated
+                stored += 1
+
+    return stored > 0
+
+
+def generate_custom_yt_resources(subj_name, topic):
+    """
+    Use AI to generate 4 YouTube search resource cards for a custom subject+topic.
+    Returns a list of dicts matching the YOUTUBE_RESOURCES format, or [].
+    """
+    prompt = (
+        f"Generate exactly 4 YouTube study resource cards for the subject '{subj_name}' and topic '{topic}'.\n"
+        "Return ONLY a raw JSON array (no markdown, no code fences) like this:\n"
+        "[{\"icon\": \"📘\", \"title\": \"Short card title (max 5 words)\", "
+        "\"desc\": \"One sentence description\", "
+        "\"url\": \"https://www.youtube.com/results?search_query=relevant+search+terms\", "
+        "\"tag\": \"Short Tag\"}]\n"
+        "Make the search_query URL-encoded with + between words. "
+        "Use 4 different learning angles: full course, beginner tutorial, exam prep, and advanced deep-dive."
+    )
+    client = groq_client or openrouter_client
+    model  = GROK_MODEL if groq_client else OPENROUTER_MODEL
+    if client is None:
+        return []
+    try:
+        resp = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": "Reply with raw JSON only. No markdown, no code fences, no extra text."},
+                {"role": "user",   "content": prompt},
+            ],
+            max_tokens=600,
+            temperature=0.4,
+        )
+        text = resp.choices[0].message.content.strip()
+        text = re.sub(r"```[a-z]*", "", text).replace("```", "").strip()
+        cards = json.loads(text)
+        if isinstance(cards, list) and len(cards) > 0:
+            return cards[:4]
+    except Exception:
+        pass
+    return []
+
+
+def start_custom_quiz(subj_name, topic, difficulty, timer_sec):
+    """Start a quiz using custom AI-generated questions."""
+    cache_key = f"q_cache_CUSTOM_{subj_name}_{topic}_{difficulty}"
+    if cache_key not in st.session_state:
+        return False
+    questions = st.session_state[cache_key]
+    display_name = f"{subj_name} — {topic}"
+
+    # Register dynamically into SUBJECT_DATA AND persist in session_state so
+    # it survives Streamlit reruns (module-level dicts reset every run)
+    entry = {"icon": "✏️", "desc": f"Custom: {topic}"}
+    SUBJECT_DATA[display_name] = entry
+    st.session_state[f"custom_subj_entry_{display_name}"] = entry
+
+    st.session_state.subject      = display_name
+    st.session_state.difficulty   = difficulty
+    st.session_state.timer_seconds = timer_sec
+
+    quiz_reset()
+    st.session_state.current_questions = questions
+    st.session_state.question_index    = 0
+    st.session_state.score             = 0
+    st.session_state.current_xp        = 0
+    st.session_state.wrong_answers     = []
+    st.session_state.start_time        = time.time()
+    st.session_state.page              = "quiz"
+    st.rerun()
+
+
 def start_quiz(subj, difficulty, timer_sec):
     """Start the quiz — instant, no API call made here."""
     st.session_state.subject = subj
@@ -611,8 +1009,11 @@ def start_quiz(subj, difficulty, timer_sec):
     cache_key = f"q_cache_{subj}_{difficulty}"
     if cache_key in st.session_state:
         questions = st.session_state[cache_key]
-    else:
+    elif subj in PRESET_QUESTIONS:
         questions = PRESET_QUESTIONS[subj][difficulty]
+    else:
+        st.error("❌ No questions found for this subject. Please generate them first.")
+        return
 
     quiz_reset()
     st.session_state.current_questions = questions
@@ -656,7 +1057,7 @@ def render_badge():
 
     subj_tag = ""
     if subj and diff:
-        icon     = SUBJECT_DATA[subj]["icon"]
+        icon     = SUBJECT_DATA.get(subj, {"icon": "✏️", "desc": "Custom Quiz"})["icon"]
         subj_tag = f'&nbsp;·&nbsp;<span style="color:#a855f7;font-size:11px;font-weight:700">{icon} {subj} ({diff})</span>'
 
     st.markdown(f'''
@@ -678,6 +1079,14 @@ if "page" not in st.session_state:
     st.session_state.page = "login"
 if "total_xp" not in st.session_state:
     st.session_state.total_xp = 0
+
+# ── Restore any custom subjects into SUBJECT_DATA on every rerun ─────────────
+# (module-level dicts reset on each Streamlit rerun; session_state persists)
+for _key, _val in list(st.session_state.items()):
+    if isinstance(_key, str) and _key.startswith("custom_subj_entry_"):
+        _display_name = _key[len("custom_subj_entry_"):]
+        if _display_name not in SUBJECT_DATA:
+            SUBJECT_DATA[_display_name] = _val
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -809,12 +1218,14 @@ elif st.session_state.page == "subject":
     chosen = st.session_state.get("subject_pick", None)
 
     subjects_list = list(SUBJECT_DATA.keys())
+    # Only show the 6 preset subjects in the grid (filter out any dynamically added custom ones)
+    preset_subjects = [s for s in subjects_list if s in PRESET_QUESTIONS]
     row1 = st.columns(3)
     row2 = st.columns(3)
-    grid = list(zip([*row1, *row2], subjects_list))
+    grid = list(zip([*row1, *row2], preset_subjects))
 
     for col, subj in grid:
-        info = SUBJECT_DATA[subj]
+        info = SUBJECT_DATA.get(subj, {"icon": "✏️", "desc": "Custom Quiz"})
         sel_c = "sel" if chosen == subj else ""
         is_refreshed = f"q_cache_{subj}_Easy" in st.session_state
 
@@ -829,12 +1240,88 @@ elif st.session_state.page == "subject":
 
             if st.button(f"{'✓ ' if chosen == subj else ''}{subj}", key=f"pick_{subj}", use_container_width=True):
                 st.session_state.subject_pick = subj
+                st.session_state.pop("custom_pick", None)
                 st.rerun()
 
-    # ── Difficulty Selection Panel ─────────────────────────────────────────
-    if chosen:
-        info         = SUBJECT_DATA[chosen]
-        is_refreshed = f"q_cache_{chosen}_Easy" in st.session_state
+    # ── Custom Subject Card ────────────────────────────────────────────────
+    st.markdown("<br>", unsafe_allow_html=True)
+    custom_sel_c = "sel" if chosen == "__custom__" else ""
+    ccard_col1, ccard_col2, ccard_col3 = st.columns([1, 2, 1])
+    with ccard_col2:
+        st.markdown(f'''
+        <div class="s-card custom-card {custom_sel_c}">
+            <div class="s-icon">✏️</div>
+            <div class="s-name">Custom Subject</div>
+            <div class="s-desc">Type your own subject &amp; topic — AI generates the quiz!</div>
+        </div>
+        ''', unsafe_allow_html=True)
+        if st.button(f"{'✓ ' if chosen == '__custom__' else ''}+ Create Custom Quiz", key="pick_custom", use_container_width=True):
+            st.session_state.subject_pick = "__custom__"
+            st.session_state.pop("custom_ready", None)
+            st.rerun()
+
+    # ── Custom Subject Input Panel ─────────────────────────────────────────
+    if chosen == "__custom__":
+        st.markdown('''
+        <div class="custom-panel">
+            <div class="custom-panel-title">✏️ Create Your Own Quiz</div>
+            <div class="custom-panel-sub">Enter the subject and a specific topic — the AI will generate 15 fresh MCQs (Easy, Medium, Hard).</div>
+        </div>
+        ''', unsafe_allow_html=True)
+
+        c_subj  = st.text_input("📘 Subject Name",  placeholder="e.g.  Physics, Economics, Music Theory…",     key="custom_subj_input")
+        c_topic = st.text_input("🎯 Topic / Chapter", placeholder="e.g.  Newton's Laws,  Demand & Supply,  Scales…", key="custom_topic_input")
+
+        is_ready = st.session_state.get("custom_ready", False)
+        cready_subj  = st.session_state.get("custom_ready_subj", "")
+        cready_topic = st.session_state.get("custom_ready_topic", "")
+
+        if is_ready and cready_subj and cready_topic:
+            st.markdown(f'''
+            <div class="custom-ready-panel">
+                <div style="font-size:26px">✅</div>
+                <div>
+                    <div class="custom-ready-text">Questions ready for "{cready_subj} — {cready_topic}"</div>
+                    <div class="custom-ready-sub">Choose a difficulty mode below to start!</div>
+                </div>
+            </div>
+            ''', unsafe_allow_html=True)
+
+            cd1, cd2, cd3 = st.columns(3)
+            with cd1:
+                if st.button("🌱 Easy Mode\n30s | 1 XP/Q", key="cbtn_easy", use_container_width=True):
+                    start_custom_quiz(cready_subj, cready_topic, "Easy", 30)
+            with cd2:
+                if st.button("⚖️ Medium Mode\n20s | 2 XP/Q", key="cbtn_med", use_container_width=True):
+                    start_custom_quiz(cready_subj, cready_topic, "Medium", 20)
+            with cd3:
+                if st.button("🔥 Hard Mode\n15s | 3 XP/Q", key="cbtn_hard", use_container_width=True):
+                    start_custom_quiz(cready_subj, cready_topic, "Hard", 15)
+        else:
+            gcol1, gcol2, gcol3 = st.columns([1, 2, 1])
+            with gcol2:
+                st.markdown('<div class="gen-btn-wrap">', unsafe_allow_html=True)
+                if st.button("🤖 Generate Questions with AI", key="gen_custom_qs", use_container_width=True):
+                    sn = c_subj.strip()
+                    tn = c_topic.strip()
+                    if not sn or not tn:
+                        st.error("⚠️ Please fill in both Subject Name and Topic.")
+                    else:
+                        with st.spinner(f'🤖 Generating MCQs for "{sn} - {tn}"... this takes ~10 seconds'):
+                            ok = generate_custom_questions(sn, tn)
+                        if ok:
+                            st.session_state.custom_ready       = True
+                            st.session_state.custom_ready_subj  = sn
+                            st.session_state.custom_ready_topic = tn
+                            st.toast(f"✅ Questions ready for {sn} — {tn}!", icon="🤖")
+                            st.rerun()
+                        else:
+                            st.error("❌ Could not generate questions. Check your API keys and try again.")
+                st.markdown('</div>', unsafe_allow_html=True)
+
+
+    # ── Difficulty Selection Panel (preset subjects only) ─────────────────
+    if chosen and chosen != "__custom__":
         cache_status = "🤖 AI questions active!" if is_refreshed else "📝 Using preset questions"
         st.markdown(f'''
         <div class="diff-panel">
@@ -887,7 +1374,7 @@ elif st.session_state.page == "quiz":
     timer  = st.session_state.timer_seconds
 
     xp_multiplier = {"Easy": 1, "Medium": 2, "Hard": 3}[diff]
-    info          = SUBJECT_DATA[subj]
+    info          = SUBJECT_DATA.get(subj, {"icon": "✏️", "desc": "Custom Quiz"})
 
     qs    = st.session_state.current_questions
     total = len(qs)
@@ -952,8 +1439,20 @@ elif st.session_state.page == "quiz":
     )
 
     st.markdown("<br>", unsafe_allow_html=True)
-    _, bc, _ = st.columns([1, 3, 1])
-    with bc:
+    _, bc_left, bc_right, _ = st.columns([1, 2, 2, 1])
+
+    with bc_left:
+        st.markdown('<div class="back-btn-wrap">', unsafe_allow_html=True)
+        if st.button("← Back to Subjects", use_container_width=True, key=f"back_{idx}"):
+            quiz_reset()
+            st.session_state.pop("subject_pick", None)
+            st.session_state.pop("subject",      None)
+            st.session_state.pop("difficulty",   None)
+            st.session_state.page = "subject"
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    with bc_right:
         if st.button("Submit Answer →", use_container_width=True, key=f"submit_{idx}"):
             if selected is None:
                 st.warning("⚠️ Please select an option first.")
@@ -975,6 +1474,7 @@ elif st.session_state.page == "quiz":
                 st.rerun()
 
 
+
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE — RESULT
 # ══════════════════════════════════════════════════════════════════════════════
@@ -982,7 +1482,7 @@ elif st.session_state.page == "result":
     user_name = st.session_state.get("user_name", "Challenger")
     subj      = st.session_state.subject
     diff      = st.session_state.difficulty
-    info      = SUBJECT_DATA[subj]
+    info      = SUBJECT_DATA.get(subj, {"icon": "✏️", "desc": "Custom Quiz"})
     fs        = st.session_state.score
     total     = len(st.session_state.current_questions)
     pct       = (fs / total) * 100 if total > 0 else 0
@@ -1038,11 +1538,80 @@ elif st.session_state.page == "result":
     else:
         st.success(f"🔥 Zero mistakes! Flawless victory for {user_name}!")
 
+    # ── YouTube Study Resources ────────────────────────────────────────────
+    st.markdown('<div class="h-divider"></div>', unsafe_allow_html=True)
+
+    # AI-generated personalised study tip
+    tip_key = f"ai_tip_{subj}_{diff}_{fs}"
+    if tip_key not in st.session_state:
+        with st.spinner("🤖 Generating personalised study tip…"):
+            tip = get_ai_study_tip(subj, diff, fs, total)
+            st.session_state[tip_key] = tip
+    else:
+        tip = st.session_state[tip_key]
+
+    if tip:
+        st.markdown(f'''
+        <div class="ai-tip-box">
+            <div class="ai-tip-label">🤖 AI Study Coach · Personalised for You</div>
+            <div class="ai-tip-text">{tip}</div>
+        </div>
+        ''', unsafe_allow_html=True)
+
+    # YouTube resource cards — preset subjects use YOUTUBE_RESOURCES dict;
+    # custom subjects (subj contains " — ") use AI-generated cards cached in session_state.
+    is_custom_subj = " — " in subj
+    if is_custom_subj:
+        yt_cache_key = f"yt_resources_{subj}"
+        if yt_cache_key not in st.session_state:
+            # Parse subj_name and topic back from "SubjName — Topic"
+            parts = subj.split(" — ", 1)
+            c_subj_name = parts[0].strip()
+            c_topic     = parts[1].strip() if len(parts) > 1 else subj
+            with st.spinner("🤖 Generating YouTube study resources for your topic…"):
+                cards = generate_custom_yt_resources(c_subj_name, c_topic)
+            st.session_state[yt_cache_key] = cards
+        yt_resources = st.session_state.get(yt_cache_key, [])
+    else:
+        yt_resources = YOUTUBE_RESOURCES.get(subj, [])
+
+    if yt_resources:
+        subj_icon = SUBJECT_DATA.get(subj, {"icon": "✏️", "desc": "Custom Quiz"})["icon"]
+        yt_label  = "🤖 AI-Curated" if is_custom_subj else "Handpicked"
+        st.markdown(f'''
+        <div class="yt-section-title">▶️ YouTube Resources — {subj_icon} {subj}</div>
+        <div class="yt-section-sub">
+            {yt_label} YouTube topics to deepen your understanding of <strong style="color:#e2e8f0">{subj}</strong>.
+            Click any card to search on YouTube.
+        </div>
+        ''', unsafe_allow_html=True)
+
+        # Render cards as a 2×2 grid using columns
+        col_pairs = [yt_resources[i:i+2] for i in range(0, len(yt_resources), 2)]
+        for pair in col_pairs:
+            cols = st.columns(len(pair))
+            for col, res in zip(cols, pair):
+                with col:
+                    st.markdown(f'''
+                    <a href="{res['url']}" target="_blank" class="yt-card">
+                        <div class="yt-icon">{res['icon']}</div>
+                        <div class="yt-title">{res['title']}</div>
+                        <div class="yt-desc">{res['desc']}</div>
+                        <div class="yt-tag">{res['tag']}</div>
+                    </a>
+                    ''', unsafe_allow_html=True)
+
     st.markdown("<br>", unsafe_allow_html=True)
     a, b, c = st.columns(3)
     with a:
         if st.button("🔄 Retry Same", use_container_width=True):
-            start_quiz(subj, diff, st.session_state.timer_seconds)
+            if is_custom_subj:
+                parts = subj.split(" — ", 1)
+                c_subj_name = parts[0].strip()
+                c_topic     = parts[1].strip() if len(parts) > 1 else subj
+                start_custom_quiz(c_subj_name, c_topic, diff, st.session_state.timer_seconds)
+            else:
+                start_quiz(subj, diff, st.session_state.timer_seconds)
     with b:
         if st.button("📚 Play Again", use_container_width=True):
             quiz_reset()
@@ -1054,4 +1623,4 @@ elif st.session_state.page == "result":
     with c:
         if st.button("🚪 Log Out", use_container_width=True):
             full_reset()
-            st.rerun()        
+            st.rerun()
