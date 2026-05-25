@@ -788,10 +788,106 @@ def get_ai_study_tip(subj, diff, score, total):
         return None
 
 
+def _shuffle_options(q):
+    """
+    Randomly reassign A/B/C/D labels to the option values so the correct
+    answer is never biased to a particular letter.  Updates q["answer"] and
+    the letter reference in q["explanation"] to match the new assignment.
+    """
+    import random as _random, re as _re3
+
+    opts      = q["options"]
+    ans_letter = q["answer"]
+    ans_value  = opts[ans_letter]
+
+    values = list(opts.values())
+    _random.shuffle(values)
+
+    letters = ["A", "B", "C", "D"]
+    new_opts = dict(zip(letters, values))
+
+    # Find which letter now holds the correct value
+    new_ans = next(l for l, v in new_opts.items() if v == ans_value)
+
+    # Update explanation letter reference (e.g. "answer is C" → "answer is B")
+    expl = q.get("explanation", "")
+    expl = _re3.sub(
+        r"((?:correct )?answer is\s+)[A-D]",
+        lambda m: m.group(1) + new_ans,
+        expl, flags=_re3.IGNORECASE
+    )
+
+    q["options"]      = new_opts
+    q["answer"]       = new_ans
+    q["explanation"]  = expl
+    return q
+
+
+def _deduplicate_options(q):
+    """
+    Detect duplicate option values (the A==C bug) and replace them with
+    clearly distinct placeholders so the question is still usable.
+
+    Key rule: ALWAYS keep the answer letter's value intact.
+    Any other letter that duplicates the answer letter's value is replaced.
+    If two NON-answer letters duplicate each other, replace the later one.
+    Returns the fixed question, or None if it cannot be salvaged.
+    """
+    import random as _random2
+
+    opts = q["options"]
+    ans  = q["answer"]
+
+    placeholders = [
+        "None of the above", "All of the above",
+        "Cannot be determined", "Insufficient information",
+        "Not applicable", "Other"
+    ]
+    _random2.shuffle(placeholders)
+
+    # Build a canonical mapping: value → the ONE letter that should keep it.
+    # The answer letter always wins; for duplicates among wrong options,
+    # the first occurrence wins.
+    keep = {}   # normalised_value → letter to keep
+    replace = []  # letters that must be replaced
+
+    # Process answer letter first so it always wins
+    ans_val_norm = opts[ans].strip().lower()
+    keep[ans_val_norm] = ans
+
+    for letter in ["A", "B", "C", "D"]:
+        if letter == ans:
+            continue
+        val_norm = opts[letter].strip().lower()
+        if val_norm in keep:
+            replace.append(letter)   # duplicate — must be replaced
+        else:
+            keep[val_norm] = letter
+
+    if not replace:
+        return q   # no duplicates
+
+    # Collect values already legitimately used so placeholders are truly distinct
+    used_vals = {opts[l].strip().lower() for l in ["A", "B", "C", "D"] if l not in replace}
+    ph_iter = iter(p for p in placeholders if p.strip().lower() not in used_vals)
+
+    for letter in replace:
+        try:
+            opts[letter] = next(ph_iter)
+        except StopIteration:
+            return None   # ran out of placeholders — drop the question
+
+    q["options"] = opts
+    return q
+
+
 def _validate_questions(questions):
     """
-    Validate MCQ questions structurally (A-D options present, answer letter valid).
-    Also runs _repair_question on each to fix answer/explanation mismatches.
+    Full pipeline per question:
+      1. Structural check (A-D present, answer letter valid)
+      2. Deduplicate options  (fix A==C bug)
+      3. Repair answer/explanation mismatch
+      4. Shuffle option labels  (eliminate letter bias)
     """
     valid = []
     for q in questions:
@@ -803,7 +899,18 @@ def _validate_questions(questions):
             if not all(k in opts for k in ("A", "B", "C", "D")):
                 continue
             q["answer"] = ans
+
+            # Step 2 — remove duplicate option values
+            q = _deduplicate_options(q)
+            if q is None:
+                continue   # unsalvageable, skip
+
+            # Step 3 — fix answer/explanation letter mismatch
             q = _repair_question(q)
+
+            # Step 4 — shuffle labels so correct answer isn't always C
+            q = _shuffle_options(q)
+
             valid.append(q)
         except Exception:
             continue
@@ -815,11 +922,8 @@ def _repair_question(q):
     Detect and fix the AI bug where options[answer] does not match the correct
     value described in the explanation.
 
-    Strategy:
-      1. Look for the numeric result in the explanation (e.g. '= 9').
-      2. If options[answer] != that result but another option == that result,
-         swap the answer letter to the correct one.
-      3. Also search explanation text for 'answer is X -- VALUE' patterns.
+    Strategy A — numeric: scan explanation for '= 9', find which option holds 9.
+    Strategy B — text:    parse 'correct answer is C - VALUE', find VALUE in options.
     """
     import re as _re2
 
@@ -827,17 +931,15 @@ def _repair_question(q):
     opts = q["options"]
     expl = q.get("explanation", "")
 
-    # --- Strategy A: numeric equality (handles math questions perfectly) ---
+    # Strategy A: numeric equality  (e.g. "9 + 0 = 9")
     num_match = _re2.search(r"=\s*(-?\d+(?:\.\d+)?)", expl)
     if num_match:
-        stated_num = num_match.group(1).strip()
+        stated_num  = num_match.group(1).strip()
         current_val = opts.get(ans, "").strip()
         if current_val != stated_num:
-            # Find which letter holds the stated correct value
             for letter, opt_val in opts.items():
                 if opt_val.strip() == stated_num:
                     q["answer"] = letter
-                    # Fix the letter reference in explanation
                     q["explanation"] = _re2.sub(
                         r"((?:correct )?answer is\s+)[A-D]",
                         lambda m: m.group(1) + letter,
@@ -845,8 +947,7 @@ def _repair_question(q):
                     )
                     return q
 
-    # --- Strategy B: stated value after dash/colon in explanation ---
-    # Matches: "correct answer is C - 9" or "correct answer is C: 9"
+    # Strategy B: "correct answer is X - VALUE" or "correct answer is X — VALUE"
     m = _re2.search(
         r"correct answer is\s+([A-D])\s*[\u2014\-:\u2013]\s*([^,\.]+)",
         expl, _re2.IGNORECASE
@@ -856,12 +957,10 @@ def _repair_question(q):
         stated_val    = m.group(2).strip().rstrip(".,;")
         if stated_letter in opts:
             if opts[stated_letter].strip().lower() == stated_val.lower():
-                # Explanation is internally consistent - trust it
                 if stated_letter != ans:
                     q["answer"] = stated_letter
                 return q
             else:
-                # Find which option actually has stated_val
                 for letter, opt_val in opts.items():
                     if opt_val.strip().lower() == stated_val.lower():
                         q["answer"] = letter
@@ -886,23 +985,33 @@ def generate_custom_questions(subj_name, topic):
         f"Generate exactly 5 multiple-choice questions (MCQs) about '{topic}' "
         f"in the subject '{subj_name}' at Easy difficulty, "
         "5 at Medium difficulty, and 5 at Hard difficulty.\n\n"
-        "STEP-BY-STEP for each question (MANDATORY):\n"
-        "  1. Write the question.\n"
-        "  2. Compute the CORRECT answer value first.\n"
-        "  3. Assign that correct value to one letter (e.g. C).\n"
-        "  4. Fill the other 3 letters with WRONG values.\n"
-        "  5. Set 'answer' to the letter from step 3.\n"
-        "  6. Write explanation: 'The correct answer is [letter] - [correct value], because [reason].'\n\n"
-        "BEFORE finalising each question verify: options[answer] == the correct value you computed.\n\n"
+        "RULES (follow exactly):\n"
+        "  1. Every question must have exactly 4 options: A, B, C, D.\n"
+        "  2. ALL FOUR OPTION VALUES MUST BE DIFFERENT — never repeat a value.\n"
+        "  3. Decide the correct answer value first, place it under any letter.\n"
+        "  4. The other 3 letters get distinct WRONG values.\n"
+        "  5. Set 'answer' to whichever letter holds the correct value.\n"
+        "  6. Vary which letter is correct — use A, B, C, D roughly equally.\n"
+        "  7. Explanation: 'The correct answer is [letter] - [value], because [reason].'\n\n"
         "Return ONLY raw JSON (no markdown, no fences):\n"
         "{\"Easy\": [...], \"Medium\": [...], \"Hard\": [...]}\n\n"
         "Question format:\n"
-        "{\"question\": \"...\", \"options\": {\"A\": \"...\", \"B\": \"...\", \"C\": \"...\", \"D\": \"...\"}, "
-        "\"answer\": \"C\", \"explanation\": \"The correct answer is C - [value], because [reason].\"}\n\n"
-        "EXAMPLE (9+0):\n"
-        "{\"question\": \"What is 9 + 0?\", "
-        "\"options\": {\"A\": \"8\", \"B\": \"10\", \"C\": \"9\", \"D\": \"11\"}, "
-        "\"answer\": \"C\", \"explanation\": \"The correct answer is C - 9, because 9 + 0 = 9.\"}"
+        "{\"question\": \"...\", \"options\": {\"A\": \"...\", \"B\": \"...\", "
+        "\"C\": \"...\", \"D\": \"...\"}, \"answer\": \"A_OR_B_OR_C_OR_D\", "
+        "\"explanation\": \"The correct answer is [letter] - [value], because [reason].\"}\n\n"
+        "EXAMPLES showing variety of correct-answer letters:\n"
+        "{\"question\": \"What is 3+1?\", "
+        "\"options\": {\"A\": \"3\", \"B\": \"4\", \"C\": \"5\", \"D\": \"6\"}, "
+        "\"answer\": \"B\", "
+        "\"explanation\": \"The correct answer is B - 4, because 3+1=4.\"}\n"
+        "{\"question\": \"Capital of France?\", "
+        "\"options\": {\"A\": \"Paris\", \"B\": \"Berlin\", \"C\": \"Rome\", \"D\": \"Madrid\"}, "
+        "\"answer\": \"A\", "
+        "\"explanation\": \"The correct answer is A - Paris, because Paris is France's capital.\"}\n"
+        "{\"question\": \"What is 10-3?\", "
+        "\"options\": {\"A\": \"6\", \"B\": \"8\", \"C\": \"9\", \"D\": \"7\"}, "
+        "\"answer\": \"D\", "
+        "\"explanation\": \"The correct answer is D - 7, because 10-3=7.\"}"
     )
 
     result = None
