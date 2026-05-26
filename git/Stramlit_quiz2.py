@@ -63,9 +63,134 @@ html, body, .stApp {
     font-family: 'Inter', sans-serif;
     color: #dde3f0;
 }
+
+/* ─── Fix Streamlit's asymmetric mobile padding ──────────────────────── */
 .block-container {
     max-width: 740px !important;
     padding: 2.5rem 1.5rem 5rem !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: 100% !important;
+}
+
+/* Streamlit inner wrapper — force symmetric padding on all screen sizes */
+section[data-testid="stAppViewContainer"] > div:first-child,
+section.main > div,
+div[data-testid="stAppViewBlockContainer"] {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+/* ─── Mobile overrides (≤ 640px) ─────────────────────────────────────── */
+@media (max-width: 640px) {
+    .block-container {
+        padding: 1.2rem 0.9rem 4rem !important;
+        max-width: 100% !important;
+    }
+
+    /* Brand */
+    .brand-logo { font-size: 36px !important; letter-spacing: -1px !important; }
+    .brand-tag  { font-size: 9px !important; letter-spacing: 2px !important; margin-bottom: 18px !important; }
+
+    /* Step bar */
+    .stepbar { max-width: 100% !important; gap: 0 !important; margin-bottom: 20px !important; }
+    .step-circle { width: 26px !important; height: 26px !important; font-size: 11px !important; }
+    .step-label  { font-size: 8px !important; letter-spacing: 0.5px !important; }
+
+    /* Login card */
+    .login-header { padding: 22px 16px 8px !important; border-radius: 16px !important; }
+    .login-footer { padding: 8px 16px 22px !important; border-radius: 0 0 16px 16px !important; }
+    .login-title  { font-size: 20px !important; }
+    .login-sub    { font-size: 13px !important; }
+
+    /* Inputs */
+    div[data-testid="stTextInput"] input,
+    div[data-testid="stPasswordInput"] input {
+        font-size: 16px !important;  /* prevents iOS zoom-in on focus */
+        padding: 12px 14px !important;
+    }
+
+    /* Buttons */
+    div[data-testid="stButton"] > button {
+        font-size: 14px !important;
+        padding: 12px 16px !important;
+        border-radius: 12px !important;
+    }
+
+    /* User badge */
+    .ubadge { padding: 9px 12px !important; border-radius: 12px !important; gap: 8px !important; }
+    .uname  { font-size: 13px !important; }
+    .uemail { font-size: 11px !important; }
+    .uxp    { font-size: 10px !important; }
+    .uavatar { width: 30px !important; height: 30px !important; font-size: 12px !important; }
+
+    /* Subject cards */
+    .s-card { padding: 16px 10px !important; border-radius: 14px !important; }
+    .s-icon { font-size: 28px !important; }
+    .s-name { font-size: 13px !important; }
+    .s-desc { font-size: 10px !important; }
+
+    /* Diff panel */
+    .diff-panel { padding: 16px !important; border-radius: 12px !important; }
+    .diff-title { font-size: 15px !important; }
+
+    /* Question card */
+    .qcard { padding: 18px 16px !important; border-radius: 16px !important; margin: 8px 0 14px !important; }
+    .qtxt  { font-size: 16px !important; }
+    .qnum  { font-size: 9px !important; margin-bottom: 8px !important; }
+
+    /* Timer */
+    .tmr { font-size: 16px !important; padding: 9px 14px !important; border-radius: 12px !important; }
+
+    /* Radio options */
+    div[data-testid="stRadio"] > div > label {
+        padding: 11px 14px !important;
+        font-size: 13px !important;
+        border-radius: 11px !important;
+    }
+    div[data-testid="stRadio"] > div > label:hover { transform: none !important; }
+
+    /* Result page */
+    .res-emoji { font-size: 52px !important; }
+    .res-grade { font-size: 26px !important; }
+    .res-msg   { font-size: 14px !important; }
+    .badge-card { font-size: 16px !important; padding: 10px 18px !important; }
+
+    /* YouTube grid */
+    .yt-grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+    .yt-card { padding: 12px 10px !important; border-radius: 12px !important; }
+    .yt-title { font-size: 12px !important; }
+    .yt-desc  { font-size: 10px !important; }
+    .yt-icon  { font-size: 22px !important; }
+
+    /* Mistake cards */
+    .mk   { padding: 12px 14px !important; border-radius: 10px !important; }
+    .mk-q { font-size: 13px !important; }
+    .mk-u, .mk-c, .mk-e { font-size: 12px !important; }
+
+    /* Custom panel */
+    .custom-panel { padding: 18px 16px !important; border-radius: 14px !important; }
+    .custom-panel-title { font-size: 16px !important; }
+
+    /* AI tip box */
+    .ai-tip-box  { padding: 14px 16px !important; border-radius: 12px !important; }
+    .ai-tip-text { font-size: 13px !important; }
+
+    /* Subject pill */
+    .subj-pill { font-size: 11px !important; padding: 4px 12px !important; }
+
+    /* Metrics row — let Streamlit stack them 2x2 naturally */
+    div[data-testid="metric-container"] { padding: 8px !important; }
+    div[data-testid="metric-container"] label { font-size: 11px !important; }
+    div[data-testid="metric-container"] div[data-testid="stMetricValue"] { font-size: 22px !important; }
+}
+
+/* ─── Tablet overrides (641px – 768px) ───────────────────────────────── */
+@media (min-width: 641px) and (max-width: 768px) {
+    .block-container { padding: 2rem 1.2rem 4rem !important; }
+    .brand-logo { font-size: 42px !important; }
+    .qcard { padding: 22px 22px !important; }
+    .yt-grid { grid-template-columns: repeat(2, 1fr) !important; }
 }
 
 /* ─── Orbs ───────────────────────────────────────────────────────────── */
@@ -922,8 +1047,16 @@ def _repair_question(q):
     Detect and fix the AI bug where options[answer] does not match the correct
     value described in the explanation.
 
-    Strategy A — numeric: scan explanation for '= 9', find which option holds 9.
-    Strategy B — text:    parse 'correct answer is C - VALUE', find VALUE in options.
+    Uses ONE reliable strategy:
+      Parse 'correct answer is X - VALUE' from the explanation, then find
+      whichever option letter *actually holds that VALUE* in options{}.
+      Update q["answer"] to that letter (and sync the letter in the explanation).
+
+    Strategy A (numeric regex) is intentionally absent — it misreads fractions
+    such as 1/4 as the integer 1, corrupting math questions.
+
+    Double-check rule: if stated_val is not found in ANY option we leave the
+    question untouched rather than guessing.
     """
     import re as _re2
 
@@ -931,47 +1064,39 @@ def _repair_question(q):
     opts = q["options"]
     expl = q.get("explanation", "")
 
-    # Strategy A: numeric equality  (e.g. "9 + 0 = 9")
-    num_match = _re2.search(r"=\s*(-?\d+(?:\.\d+)?)", expl)
-    if num_match:
-        stated_num  = num_match.group(1).strip()
-        current_val = opts.get(ans, "").strip()
-        if current_val != stated_num:
-            for letter, opt_val in opts.items():
-                if opt_val.strip() == stated_num:
-                    q["answer"] = letter
-                    q["explanation"] = _re2.sub(
-                        r"((?:correct )?answer is\s+)[A-D]",
-                        lambda m: m.group(1) + letter,
-                        expl, flags=_re2.IGNORECASE
-                    )
-                    return q
-
-    # Strategy B: "correct answer is X - VALUE" or "correct answer is X — VALUE"
+    # Parse "correct answer is X - VALUE" (dash, em-dash, colon, en-dash)
     m = _re2.search(
-        r"correct answer is\s+([A-D])\s*[\u2014\-:\u2013]\s*([^,\.]+)",
+        r"correct answer is\s+([A-D])\s*[\u2014\-:\u2013]\s*([^,\.;]+)",
         expl, _re2.IGNORECASE
     )
-    if m:
-        stated_letter = m.group(1).upper()
-        stated_val    = m.group(2).strip().rstrip(".,;")
-        if stated_letter in opts:
-            if opts[stated_letter].strip().lower() == stated_val.lower():
-                if stated_letter != ans:
-                    q["answer"] = stated_letter
-                return q
-            else:
-                for letter, opt_val in opts.items():
-                    if opt_val.strip().lower() == stated_val.lower():
-                        q["answer"] = letter
-                        q["explanation"] = _re2.sub(
-                            r"(correct answer is\s+)[A-D]",
-                            lambda m2: m2.group(1) + letter,
-                            expl, flags=_re2.IGNORECASE
-                        )
-                        return q
+    if not m:
+        return q  # no structured explanation — leave unchanged
 
-    return q  # best-effort: unchanged
+    stated_val = m.group(2).strip().rstrip(".,; ")
+
+    # Find which option letter actually holds stated_val (exact, case-insensitive)
+    matched_letter = None
+    for letter, opt_val in opts.items():
+        if opt_val.strip().lower() == stated_val.lower():
+            matched_letter = letter
+            break
+
+    if matched_letter is None:
+        # stated_val not in any option — explanation may be garbled; do not corrupt
+        return q
+
+    # If current answer already holds the right value, nothing to fix
+    if opts.get(ans, "").strip().lower() == stated_val.lower():
+        return q
+
+    # Fix: update answer letter and sync the letter reference in explanation
+    q["answer"] = matched_letter
+    q["explanation"] = _re2.sub(
+        r"(correct answer is\s+)[A-D]",
+        lambda mx: mx.group(1) + matched_letter,
+        expl, flags=_re2.IGNORECASE
+    )
+    return q
 
 
 def generate_custom_questions(subj_name, topic):
@@ -1344,9 +1469,11 @@ elif st.session_state.page == "subject":
     subjects_list = list(SUBJECT_DATA.keys())
     # Only show the 6 preset subjects in the grid (filter out any dynamically added custom ones)
     preset_subjects = [s for s in subjects_list if s in PRESET_QUESTIONS]
-    row1 = st.columns(3)
-    row2 = st.columns(3)
-    grid = list(zip([*row1, *row2], preset_subjects))
+    # Use 2 columns on mobile (Streamlit auto-stacks at narrow widths, but 2 cols is safer)
+    row1 = st.columns(2)
+    row2 = st.columns(2)
+    row3 = st.columns(2)
+    grid = list(zip([*row1, *row2, *row3], preset_subjects))
 
     for col, subj in grid:
         info = SUBJECT_DATA.get(subj, {"icon": "✏️", "desc": "Custom Quiz"})
@@ -1370,19 +1497,16 @@ elif st.session_state.page == "subject":
     # ── Custom Subject Card ────────────────────────────────────────────────
     st.markdown("<br>", unsafe_allow_html=True)
     custom_sel_c = "sel" if chosen == "__custom__" else ""
-    ccard_col1, ccard_col2, ccard_col3 = st.columns([1, 2, 1])
-    with ccard_col2:
-        st.markdown(f'''
-        <div class="s-card custom-card {custom_sel_c}">
-            <div class="s-icon">✏️</div>
-            <div class="s-name">Custom Subject</div>
-            <div class="s-desc">Type your own subject &amp; topic — AI generates the quiz!</div>
-        </div>
-        ''', unsafe_allow_html=True)
-        if st.button(f"{'✓ ' if chosen == '__custom__' else ''}+ Create Custom Quiz", key="pick_custom", use_container_width=True):
-            st.session_state.subject_pick = "__custom__"
-            # We no longer aggressively clear custom_ready here to support the "Play Again" flow
-            st.rerun()
+    st.markdown(f'''
+    <div class="s-card custom-card {custom_sel_c}">
+        <div class="s-icon">✏️</div>
+        <div class="s-name">Custom Subject</div>
+        <div class="s-desc">Type your own subject &amp; topic — AI generates the quiz!</div>
+    </div>
+    ''', unsafe_allow_html=True)
+    if st.button(f"{'✓ ' if chosen == '__custom__' else ''}+ Create Custom Quiz", key="pick_custom", use_container_width=True):
+        st.session_state.subject_pick = "__custom__"
+        st.rerun()
 
     # ── Custom Subject Input Panel ─────────────────────────────────────────
     if chosen == "__custom__":
@@ -1448,26 +1572,24 @@ elif st.session_state.page == "subject":
                     st.rerun()
                     
         else:
-            gcol1, gcol2, gcol3 = st.columns([1, 2, 1])
-            with gcol2:
-                st.markdown('<div class="gen-btn-wrap">', unsafe_allow_html=True)
-                if st.button("🤖 Generate Questions with AI", key="gen_custom_qs", use_container_width=True):
-                    sn = c_subj.strip()
-                    tn = c_topic.strip()
-                    if not sn or not tn:
-                        st.error("⚠️ Please fill in both Subject Name and Topic.")
+            st.markdown('<div class="gen-btn-wrap">', unsafe_allow_html=True)
+            if st.button("🤖 Generate Questions with AI", key="gen_custom_qs", use_container_width=True):
+                sn = c_subj.strip()
+                tn = c_topic.strip()
+                if not sn or not tn:
+                    st.error("⚠️ Please fill in both Subject Name and Topic.")
+                else:
+                    with st.spinner(f'🤖 Generating MCQs for "{sn} - {tn}"... this takes ~10 seconds'):
+                        ok = generate_custom_questions(sn, tn)
+                    if ok:
+                        st.session_state.custom_ready       = True
+                        st.session_state.custom_ready_subj  = sn
+                        st.session_state.custom_ready_topic = tn
+                        st.toast(f"✅ Questions ready for {sn} — {tn}!", icon="🤖")
+                        st.rerun()
                     else:
-                        with st.spinner(f'🤖 Generating MCQs for "{sn} - {tn}"... this takes ~10 seconds'):
-                            ok = generate_custom_questions(sn, tn)
-                        if ok:
-                            st.session_state.custom_ready       = True
-                            st.session_state.custom_ready_subj  = sn
-                            st.session_state.custom_ready_topic = tn
-                            st.toast(f"✅ Questions ready for {sn} — {tn}!", icon="🤖")
-                            st.rerun()
-                        else:
-                            st.error("❌ Could not generate questions. Check your API keys and try again.")
-                st.markdown('</div>', unsafe_allow_html=True)
+                        st.error("❌ Could not generate questions. Check your API keys and try again.")
+            st.markdown('</div>', unsafe_allow_html=True)
 
 
     # ── Difficulty Selection Panel (preset subjects only) ─────────────────
@@ -1498,20 +1620,18 @@ elif st.session_state.page == "subject":
 
         refresh_label = f"🤖 AI ✓ Refreshed [{rem_refreshes} left]" if is_refreshed else f"🔄 Refresh All Questions [{rem_refreshes} left]"
         refreshed_class = "refreshed" if is_refreshed else ""
-        
-        rcol1, rcol2, rcol3 = st.columns([1, 2, 1])
-        with rcol2:
-            st.markdown(f'<div class="refresh-btn-wrap {refreshed_class}">', unsafe_allow_html=True)
-            if st.button(refresh_label, key="refresh_chosen_subj", disabled=(refresh_count >= 2), use_container_width=True):
-                with st.spinner(f"Generating fresh {chosen} questions via AI…"):
-                    success = refresh_subject_questions(chosen)
-                if success:
-                    st.session_state[refresh_count_key] = refresh_count + 1
-                    st.toast(f"✅ {chosen} — all 3 modes refreshed!", icon="🤖")
-                    st.rerun()
-                else:
-                    st.error(f"❌ Could not generate questions for {chosen}. Check your API keys.")
-            st.markdown('</div>', unsafe_allow_html=True)
+
+        st.markdown(f'<div class="refresh-btn-wrap {refreshed_class}">', unsafe_allow_html=True)
+        if st.button(refresh_label, key="refresh_chosen_subj", disabled=(refresh_count >= 2), use_container_width=True):
+            with st.spinner(f"Generating fresh {chosen} questions via AI…"):
+                success = refresh_subject_questions(chosen)
+            if success:
+                st.session_state[refresh_count_key] = refresh_count + 1
+                st.toast(f"✅ {chosen} — all 3 modes refreshed!", icon="🤖")
+                st.rerun()
+            else:
+                st.error(f"❌ Could not generate questions for {chosen}. Check your API keys.")
+        st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown('<div class="logout-area">', unsafe_allow_html=True)
@@ -1595,7 +1715,7 @@ elif st.session_state.page == "quiz":
     )
 
     st.markdown("<br>", unsafe_allow_html=True)
-    _, bc_left, bc_right, _ = st.columns([1, 2, 2, 1])
+    bc_left, bc_right = st.columns(2)
 
     with bc_left:
         st.markdown('<div class="back-btn-wrap">', unsafe_allow_html=True)
@@ -1791,4 +1911,3 @@ elif st.session_state.page == "result":
         if st.button("🚪 Log Out", use_container_width=True):
             full_reset()
             st.rerun()
-        
