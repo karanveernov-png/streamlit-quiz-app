@@ -1040,7 +1040,6 @@ def generate_custom_questions(subj_name, topic):
 
     return stored > 0
 
-
 def generate_custom_yt_resources(subj_name, topic):
     """
     Use AI to generate 4 YouTube search resource cards for a custom subject+topic.
@@ -1051,15 +1050,18 @@ def generate_custom_yt_resources(subj_name, topic):
         "Return ONLY a raw JSON array (no markdown, no code fences) like this:\n"
         "[{\"icon\": \"📘\", \"title\": \"Short card title (max 5 words)\", "
         "\"desc\": \"One sentence description\", "
-        "\"url\": \"[https://www.youtube.com/results?search_query=relevant+search+terms](https://www.youtube.com/results?search_query=relevant+search+terms)\", "
+        # FIX: Removed the markdown brackets and parentheses from the URL example
+        "\"url\": \"https://www.youtube.com/results?search_query=relevant+search+terms\", "
         "\"tag\": \"Short Tag\"}]\n"
         "Make the search_query URL-encoded with + between words. "
         "Use 4 different learning angles: full course, beginner tutorial, exam prep, and advanced deep-dive."
     )
     client = groq_client or openrouter_client
     model  = GROK_MODEL if groq_client else OPENROUTER_MODEL
+    
     if client is None:
         return []
+        
     try:
         resp = client.chat.completions.create(
             model=model,
@@ -1073,12 +1075,25 @@ def generate_custom_yt_resources(subj_name, topic):
         text = resp.choices[0].message.content.strip()
         text = re.sub(r"```[a-z]*", "", text).replace("```", "").strip()
         cards = json.loads(text)
+        
         if isinstance(cards, list) and len(cards) > 0:
+            # Sanitize URLs: AI sometimes wraps them in markdown [text](url)
+            for card in cards:
+                raw_url = str(card.get("url", "")).strip()
+                md_match = re.search(r'https?://[^\s\)\"\'\]]+', raw_url)
+                if md_match:
+                    card["url"] = md_match.group(0)
+                elif not raw_url.startswith("http"):
+                    fallback_q = "+".join(card.get("title", "study").split())
+                    card["url"] = f"https://www.youtube.com/results?search_query={fallback_q}"
             return cards[:4]
-    except Exception:
-        pass
-    return []
 
+    except Exception as e:
+        # It's often helpful to print the error to your console during development
+        print(f"Error generating YouTube resources: {e}") 
+        pass
+        
+    return []
 
 def start_custom_quiz(subj_name, topic, difficulty, timer_sec):
     """Start a quiz using custom AI-generated questions."""
@@ -1727,6 +1742,29 @@ elif st.session_state.page == "result":
         </div>
         ''', unsafe_allow_html=True)
 
+        # ── Render clickable YouTube cards ─────────────────────────────────
+        cards_html = '<div class="yt-grid">'
+        for r in yt_resources:
+            icon  = r.get("icon",  "▶️")
+            title = r.get("title", "Watch on YouTube")
+            desc  = r.get("desc",  "")
+            url   = r.get("url",   "#")
+            tag   = r.get("tag",   "")
+            # Ensure url is a clean string (AI sometimes wraps in markdown)
+            url = str(url).strip().strip("[]()").split("](")[-1].rstrip(")")
+            if not url.startswith("http"):
+                url = "https://www.youtube.com/results?search_query=" + "+".join(title.split())
+            cards_html += (
+                f'<a class="yt-card" href="{url}" target="_blank" rel="noopener noreferrer">'
+                f'  <div class="yt-icon">{icon}</div>'
+                f'  <div class="yt-title">{title}</div>'
+                f'  <div class="yt-desc">{desc}</div>'
+                f'  <span class="yt-tag">▶ {tag}</span>'
+                f'</a>'
+            )
+        cards_html += '</div>'
+        st.markdown(cards_html, unsafe_allow_html=True)
+
     st.markdown("<br>", unsafe_allow_html=True)
     a, b, c = st.columns(3)
     with a:
@@ -1753,3 +1791,4 @@ elif st.session_state.page == "result":
         if st.button("🚪 Log Out", use_container_width=True):
             full_reset()
             st.rerun()
+        
