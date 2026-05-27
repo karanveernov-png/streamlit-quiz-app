@@ -3,6 +3,8 @@ import time
 import re
 import json
 import os
+import random
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from openai import OpenAI
 
 ## ── PAGE CONFIG ─────────────────────────────────────────────
@@ -52,33 +54,54 @@ def _css_block():
     return '''
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 
 /* ─── Base ───────────────────────────────────────────────────────────── */
 #MainMenu, footer, header { visibility: hidden; }
 * { box-sizing: border-box; }
 html, body, .stApp {
-    background: #04060d !important;
-    font-family: 'Inter', sans-serif;
-    color: #dde3f0;
+    background: #070a0f !important;
+    font-family: 'DM Sans', sans-serif;
+    color: #c8d8e8;
 }
 
-/* ─── Fix Streamlit's asymmetric mobile padding ──────────────────────── */
+/* ─── Fix Streamlit layout ──────────────────────────────────────────── */
 .block-container {
-    max-width: 740px !important;
+    max-width: 760px !important;
     padding: 2.5rem 1.5rem 5rem !important;
     margin-left: auto !important;
     margin-right: auto !important;
     width: 100% !important;
 }
-
-/* Streamlit inner wrapper — force symmetric padding on all screen sizes */
 section[data-testid="stAppViewContainer"] > div:first-child,
 section.main > div,
 div[data-testid="stAppViewBlockContainer"] {
     padding-left: 0 !important;
     padding-right: 0 !important;
+}
+
+/* ─── Scanline texture overlay ─────────────────────────────────────── */
+.stApp::before {
+    content: "";
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(0,255,200,.018) 3px,
+        rgba(0,255,200,.018) 4px
+    );
+}
+
+/* ─── Grid bg pattern ──────────────────────────────────────────────── */
+.stApp::after {
+    content: "";
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+        linear-gradient(rgba(0,255,160,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,160,.04) 1px, transparent 1px);
+    background-size: 48px 48px;
 }
 
 /* ─── Mobile overrides (≤ 640px) ─────────────────────────────────────── */
@@ -87,510 +110,468 @@ div[data-testid="stAppViewBlockContainer"] {
         padding: 1.2rem 0.9rem 4rem !important;
         max-width: 100% !important;
     }
-
-    /* Brand */
-    .brand-logo { font-size: 36px !important; letter-spacing: -1px !important; }
-    .brand-tag  { font-size: 9px !important; letter-spacing: 2px !important; margin-bottom: 18px !important; }
-
-    /* Step bar */
-    .stepbar { max-width: 100% !important; gap: 0 !important; margin-bottom: 20px !important; }
-    .step-circle { width: 26px !important; height: 26px !important; font-size: 11px !important; }
-    .step-label  { font-size: 8px !important; letter-spacing: 0.5px !important; }
-
-    /* Login card */
-    .login-header { padding: 22px 16px 8px !important; border-radius: 16px !important; }
-    .login-footer { padding: 8px 16px 22px !important; border-radius: 0 0 16px 16px !important; }
-    .login-title  { font-size: 20px !important; }
-    .login-sub    { font-size: 13px !important; }
-
-    /* Inputs */
-    div[data-testid="stTextInput"] input,
-    div[data-testid="stPasswordInput"] input {
-        font-size: 16px !important;  /* prevents iOS zoom-in on focus */
-        padding: 12px 14px !important;
+    .brand-logo { font-size: 30px !important; }
+    .brand-tag  { font-size: 9px !important; letter-spacing: 2px !important; }
+    .stepbar { max-width: 100% !important; gap: 0 !important; }
+    .step-circle { width: 26px !important; height: 26px !important; font-size: 10px !important; }
+    .step-label  { font-size: 8px !important; }
+    div[data-testid="stTextInput"] input, div[data-testid="stPasswordInput"] input {
+        font-size: 16px !important; padding: 12px 14px !important;
     }
-
-    /* Buttons */
-    div[data-testid="stButton"] > button {
-        font-size: 14px !important;
-        padding: 12px 16px !important;
-        border-radius: 12px !important;
-    }
-
-    /* User badge */
-    .ubadge { padding: 9px 12px !important; border-radius: 12px !important; gap: 8px !important; }
-    .uname  { font-size: 13px !important; }
-    .uemail { font-size: 11px !important; }
-    .uxp    { font-size: 10px !important; }
-    .uavatar { width: 30px !important; height: 30px !important; font-size: 12px !important; }
-
-    /* Subject cards */
-    .s-card { padding: 16px 10px !important; border-radius: 14px !important; }
-    .s-icon { font-size: 28px !important; }
-    .s-name { font-size: 13px !important; }
-    .s-desc { font-size: 10px !important; }
-
-    /* Diff panel */
-    .diff-panel { padding: 16px !important; border-radius: 12px !important; }
-    .diff-title { font-size: 15px !important; }
-
-    /* Question card */
-    .qcard { padding: 18px 16px !important; border-radius: 16px !important; margin: 8px 0 14px !important; }
-    .qtxt  { font-size: 16px !important; }
-    .qnum  { font-size: 9px !important; margin-bottom: 8px !important; }
-
-    /* Timer */
-    .tmr { font-size: 16px !important; padding: 9px 14px !important; border-radius: 12px !important; }
-
-    /* Radio options */
-    div[data-testid="stRadio"] > div > label {
-        padding: 11px 14px !important;
-        font-size: 13px !important;
-        border-radius: 11px !important;
-    }
+    div[data-testid="stButton"] > button { font-size: 13px !important; padding: 11px 14px !important; }
+    .ubadge { padding: 8px 12px !important; gap: 8px !important; }
+    .uavatar { width: 28px !important; height: 28px !important; font-size: 11px !important; }
+    .s-card { padding: 14px 8px !important; }
+    .s-icon { font-size: 26px !important; }
+    .s-name { font-size: 12px !important; }
+    .qcard { padding: 16px 14px !important; }
+    .qtxt  { font-size: 15px !important; }
+    .tmr { font-size: 15px !important; padding: 8px 12px !important; }
+    div[data-testid="stRadio"] > div > label { padding: 10px 13px !important; font-size: 12px !important; }
     div[data-testid="stRadio"] > div > label:hover { transform: none !important; }
-
-    /* Result page */
-    .res-emoji { font-size: 52px !important; }
-    .res-grade { font-size: 26px !important; }
-    .res-msg   { font-size: 14px !important; }
-    .badge-card { font-size: 16px !important; padding: 10px 18px !important; }
-
-    /* YouTube grid */
+    .res-emoji { font-size: 48px !important; }
+    .res-grade { font-size: 22px !important; }
     .yt-grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
-    .yt-card { padding: 12px 10px !important; border-radius: 12px !important; }
-    .yt-title { font-size: 12px !important; }
-    .yt-desc  { font-size: 10px !important; }
-    .yt-icon  { font-size: 22px !important; }
-
-    /* Mistake cards */
-    .mk   { padding: 12px 14px !important; border-radius: 10px !important; }
-    .mk-q { font-size: 13px !important; }
-    .mk-u, .mk-c, .mk-e { font-size: 12px !important; }
-
-    /* Custom panel */
-    .custom-panel { padding: 18px 16px !important; border-radius: 14px !important; }
-    .custom-panel-title { font-size: 16px !important; }
-
-    /* AI tip box */
-    .ai-tip-box  { padding: 14px 16px !important; border-radius: 12px !important; }
-    .ai-tip-text { font-size: 13px !important; }
-
-    /* Subject pill */
-    .subj-pill { font-size: 11px !important; padding: 4px 12px !important; }
-
-    /* Metrics row — let Streamlit stack them 2x2 naturally */
+    .mk { padding: 10px 12px !important; }
     div[data-testid="metric-container"] { padding: 8px !important; }
-    div[data-testid="metric-container"] label { font-size: 11px !important; }
-    div[data-testid="metric-container"] div[data-testid="stMetricValue"] { font-size: 22px !important; }
+    div[data-testid="metric-container"] label { font-size: 10px !important; }
+    div[data-testid="metric-container"] div[data-testid="stMetricValue"] { font-size: 20px !important; }
 }
 
 /* ─── Tablet overrides (641px – 768px) ───────────────────────────────── */
 @media (min-width: 641px) and (max-width: 768px) {
     .block-container { padding: 2rem 1.2rem 4rem !important; }
-    .brand-logo { font-size: 42px !important; }
-    .qcard { padding: 22px 22px !important; }
+    .brand-logo { font-size: 38px !important; }
     .yt-grid { grid-template-columns: repeat(2, 1fr) !important; }
 }
 
-/* ─── Orbs ───────────────────────────────────────────────────────────── */
+/* ─── Neon corner glows ─────────────────────────────────────────────── */
 .orb-a {
-    position: fixed; width: 600px; height: 600px;
-    top: -200px; right: -200px;
-    background: radial-gradient(circle, rgba(99,102,241,.16) 0%, transparent 60%);
+    position: fixed; width: 500px; height: 500px;
+    top: -200px; right: -150px;
+    background: radial-gradient(circle, rgba(0,255,160,.12) 0%, transparent 65%);
     border-radius: 50%; pointer-events: none; z-index: 0;
 }
 .orb-b {
-    position: fixed; width: 500px; height: 500px;
-    bottom: -150px; left: -150px;
-    background: radial-gradient(circle, rgba(236,72,153,.11) 0%, transparent 60%);
+    position: fixed; width: 450px; height: 450px;
+    bottom: -150px; left: -120px;
+    background: radial-gradient(circle, rgba(0,180,255,.09) 0%, transparent 65%);
     border-radius: 50%; pointer-events: none; z-index: 0;
 }
 
 /* ─── Brand ──────────────────────────────────────────────────────────── */
-.brand-wrap { text-align: center; margin-bottom: 4px; }
+.brand-wrap { text-align: center; margin-bottom: 2px; margin-top: 8px; }
 .brand-logo {
     display: inline-block;
-    font-family: 'Syne', sans-serif;
-    font-weight: 900; font-size: 52px; letter-spacing: -2px; line-height: 1;
-    background: linear-gradient(135deg, #818cf8 0%, #c084fc 45%, #f472b6 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900; font-size: 44px; letter-spacing: 2px; line-height: 1;
+    color: #00ffa0;
+    text-shadow:
+        0 0 8px rgba(0,255,160,.9),
+        0 0 24px rgba(0,255,160,.5),
+        0 0 60px rgba(0,255,160,.2);
 }
 .brand-tag {
-    text-align: center; letter-spacing: 4px; font-size: 11px;
-    text-transform: uppercase; color: #2d3748; font-weight: 600;
-    margin-bottom: 28px;
+    text-align: center; letter-spacing: 5px; font-size: 10px;
+    text-transform: uppercase; color: rgba(0,255,160,.35); font-weight: 600;
+    margin-bottom: 26px;
 }
 
 /* ─── Step bar ────────────────────────────────────────────────────────── */
 .stepbar {
     display: flex; align-items: center; justify-content: center;
-    gap: 0; margin: 0 auto 32px; max-width: 340px;
+    gap: 0; margin: 0 auto 28px; max-width: 360px;
 }
 .step-item {
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
     flex: 1;
 }
 .step-circle {
-    width: 32px; height: 32px; border-radius: 50%;
+    width: 32px; height: 32px; border-radius: 4px;
     display: flex; align-items: center; justify-content: center;
     font-size: 13px; font-weight: 700;
     transition: all .3s ease;
 }
-.step-circle.done   { background: rgba(99,102,241,.25); color: #818cf8; border: 2px solid #6366f1; }
-.step-circle.active { background: linear-gradient(135deg,#6366f1,#a855f7); color: #fff; border: 2px solid transparent; box-shadow: 0 0 18px rgba(99,102,241,.5); }
-.step-circle.idle   { background: rgba(255,255,255,.04); color: #2d3748; border: 2px solid rgba(255,255,255,.08); }
-.step-label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
-.step-label.done   { color: #6366f1; }
-.step-label.active { color: #c084fc; }
-.step-label.idle   { color: #1e2535; }
-.step-line      { flex: 1; height: 2px; background: rgba(255,255,255,.07); margin-top: -22px; }
-.step-line.done { background: linear-gradient(90deg,#6366f1,#a855f7); }
+.step-circle.done   { background: rgba(0,255,160,.12); color: #00ffa0; border: 1.5px solid rgba(0,255,160,.5); }
+.step-circle.active { background: rgba(0,255,160,.18); color: #00ffa0; border: 1.5px solid #00ffa0; box-shadow: 0 0 14px rgba(0,255,160,.5), inset 0 0 8px rgba(0,255,160,.1); }
+.step-circle.idle   { background: rgba(255,255,255,.03); color: rgba(255,255,255,.18); border: 1.5px solid rgba(255,255,255,.07); }
+.step-label { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; }
+.step-label.done   { color: rgba(0,255,160,.55); }
+.step-label.active { color: #00ffa0; }
+.step-label.idle   { color: rgba(255,255,255,.15); }
+.step-line      { flex: 1; height: 1px; background: rgba(255,255,255,.06); margin-top: -22px; }
+.step-line.done { background: rgba(0,255,160,.4); box-shadow: 0 0 6px rgba(0,255,160,.3); }
 
 /* ─── Login card ───────────────────────────────────────────────────── */
 .login-header {
-    background: linear-gradient(145deg, rgba(22,30,50,.95), rgba(10,15,28,.98));
-    border: 1px solid rgba(99,102,241,.22); border-radius: 24px;
-    padding: 36px 40px 8px; margin-bottom: -10px; position: relative; overflow: hidden;
+    background: rgba(0,15,10,.85);
+    border: 1px solid rgba(0,255,160,.18);
+    border-radius: 4px 4px 0 0;
+    padding: 32px 36px 8px; margin-bottom: 0; position: relative; overflow: hidden;
 }
 .login-header::before {
-    content:""; position:absolute; top:0; left:0; right:0; height:3px;
-    background: linear-gradient(90deg,#6366f1,#a855f7,#ec4899); border-radius: 24px 24px 0 0;
+    content:""; position:absolute; top:0; left:0; right:0; height:2px;
+    background: linear-gradient(90deg, transparent, #00ffa0, #00b4ff, transparent);
+    animation: shimmer 3s ease-in-out infinite;
 }
+@keyframes shimmer { 0%,100% { opacity:.5; } 50% { opacity:1; } }
 .login-footer {
-    background: linear-gradient(145deg, rgba(22,30,50,.95), rgba(10,15,28,.98));
-    border: 1px solid rgba(99,102,241,.22); border-top: none;
-    border-radius: 0 0 24px 24px; padding: 8px 40px 32px;
+    background: rgba(0,15,10,.85);
+    border: 1px solid rgba(0,255,160,.18); border-top: none;
+    border-radius: 0 0 4px 4px; padding: 8px 36px 28px;
 }
 .section-chip {
     display: inline-flex; align-items: center; gap: 6px;
-    background: rgba(99,102,241,.12); border: 1px solid rgba(99,102,241,.3);
-    color: #818cf8; font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
-    text-transform: uppercase; padding: 5px 14px; border-radius: 99px; margin-bottom: 14px;
+    background: rgba(0,255,160,.08); border: 1px solid rgba(0,255,160,.3);
+    color: #00ffa0; font-size: 10px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; padding: 4px 12px; border-radius: 2px; margin-bottom: 12px;
+    font-family: 'Orbitron', sans-serif;
 }
-.login-title { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; color: #f1f5f9; margin-bottom: 6px; }
-.login-sub { color: #3d4f6e; font-size: 14px; margin-bottom: 22px; line-height: 1.6; }
-.divider-line { height: 1px; background: linear-gradient(90deg,transparent,rgba(99,102,241,.35),transparent); margin: 22px 0; }
+.login-title { font-family: 'Orbitron', sans-serif; font-size: 22px; font-weight: 800; color: #e8f8f0; margin-bottom: 6px; }
+.login-sub { color: rgba(0,255,160,.35); font-size: 13px; margin-bottom: 20px; line-height: 1.6; }
+.divider-line { height: 1px; background: linear-gradient(90deg,transparent,rgba(0,255,160,.2),transparent); margin: 20px 0; }
 
 /* ─── Inputs & Buttons ──────────────────────────────────────────────── */
 div[data-testid="stTextInput"] label, div[data-testid="stPasswordInput"] label {
-    font-size: 11px !important; font-weight: 700 !important; letter-spacing: 2px;
-    text-transform: uppercase; color: #3d5070 !important; margin-bottom: 6px;
+    font-size: 10px !important; font-weight: 700 !important; letter-spacing: 2.5px;
+    text-transform: uppercase; color: rgba(0,255,160,.5) !important; margin-bottom: 5px;
+    font-family: 'Orbitron', sans-serif !important;
 }
 div[data-testid="stTextInput"] input, div[data-testid="stPasswordInput"] input {
-    background: rgba(255,255,255,.04) !important; border: 1.5px solid rgba(255,255,255,.09) !important;
-    border-radius: 12px !important; color: #dde3f0 !important; font-size: 15px !important; padding: 13px 16px !important;
+    background: rgba(0,20,12,.6) !important; border: 1px solid rgba(0,255,160,.2) !important;
+    border-radius: 3px !important; color: #00ffa0 !important; font-size: 15px !important;
+    padding: 12px 15px !important; font-family: 'DM Sans', sans-serif !important;
 }
 div[data-testid="stTextInput"] input:focus, div[data-testid="stPasswordInput"] input:focus {
-    border-color: rgba(99,102,241,.7) !important; box-shadow: 0 0 0 3px rgba(99,102,241,.13) !important;
-    background: rgba(99,102,241,.04) !important;
+    border-color: rgba(0,255,160,.7) !important; box-shadow: 0 0 0 2px rgba(0,255,160,.12), 0 0 16px rgba(0,255,160,.1) !important;
+    background: rgba(0,30,18,.7) !important;
 }
 div[data-testid="stButton"] > button {
-    width: 100%; background: linear-gradient(135deg, #5a5fdb 0%, #9b44e8 100%);
-    color: white; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700;
-    letter-spacing: .8px; border: none; border-radius: 14px; padding: 14px 28px; height: auto;
-    box-shadow: 0 4px 24px rgba(99,102,241,.38); transition: all .2s ease;
+    width: 100%; background: transparent;
+    color: #00ffa0; font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 700;
+    letter-spacing: 1px; border: 1px solid rgba(0,255,160,.5); border-radius: 3px;
+    padding: 13px 22px; height: auto;
+    box-shadow: 0 0 12px rgba(0,255,160,.12), inset 0 0 12px rgba(0,255,160,.04);
+    transition: all .2s ease; text-transform: uppercase;
 }
 div[data-testid="stButton"] > button:hover {
-    background: linear-gradient(135deg, #4548c7 0%, #8226d4 100%);
-    box-shadow: 0 8px 32px rgba(99,102,241,.55); transform: translateY(-2px);
+    background: rgba(0,255,160,.08);
+    border-color: #00ffa0;
+    box-shadow: 0 0 24px rgba(0,255,160,.3), inset 0 0 16px rgba(0,255,160,.08);
+    transform: translateY(-1px);
+    color: #fff;
 }
 div[data-testid="stButton"] > button:active { transform: translateY(0); }
 
 .logout-area div[data-testid="stButton"] > button {
-    background: rgba(255,255,255,.05) !important; border: 1px solid rgba(255,255,255,.1) !important;
-    color: #4a5878 !important; font-size: 13px !important; box-shadow: none !important;
-    letter-spacing: 0 !important; width: auto !important; padding: 8px 20px !important;
+    background: transparent !important; border: 1px solid rgba(255,255,255,.1) !important;
+    color: rgba(255,255,255,.25) !important; font-size: 11px !important; box-shadow: none !important;
+    letter-spacing: 1px !important; width: auto !important; padding: 7px 18px !important;
+    text-transform: uppercase !important;
 }
 
-/* ─── Small Test-API button (login page only) ─────────────────────── */
+/* ─── Test-API button ─────────────────────────────────────────────── */
 .test-api-wrap div[data-testid="stButton"] > button {
-    width: auto !important;
-    padding: 5px 14px !important;
-    font-size: 11px !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.5px !important;
-    border-radius: 8px !important;
-    box-shadow: none !important;
-    background: rgba(99,102,241,.18) !important;
-    border: 1px solid rgba(99,102,241,.35) !important;
-    color: #818cf8 !important;
-    height: auto !important;
-    min-height: unset !important;
-    line-height: 1.4 !important;
+    width: auto !important; padding: 4px 12px !important; font-size: 10px !important;
+    font-weight: 700 !important; letter-spacing: 1px !important; border-radius: 2px !important;
+    box-shadow: none !important; background: transparent !important;
+    border: 1px solid rgba(0,255,160,.25) !important; color: rgba(0,255,160,.6) !important;
+    height: auto !important; min-height: unset !important; line-height: 1.4 !important;
 }
 .test-api-wrap div[data-testid="stButton"] > button:hover {
-    background: rgba(99,102,241,.3) !important;
-    transform: none !important;
-    box-shadow: none !important;
+    background: rgba(0,255,160,.08) !important; transform: none !important; box-shadow: none !important;
 }
 
-/* ─── Refresh button on subject cards ────────────────────────────── */
+/* ─── Refresh button ────────────────────────────────────────────── */
 .refresh-btn-wrap div[data-testid="stButton"] > button {
-    width: auto !important;
-    padding: 8px 16px !important;
-    font-size: 12px !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.3px !important;
-    border-radius: 8px !important;
-    box-shadow: none !important;
-    background: rgba(16,185,129,.12) !important;
-    border: 1px solid rgba(16,185,129,.3) !important;
-    color: #34d399 !important;
-    height: auto !important;
-    min-height: unset !important;
-    line-height: 1.3 !important;
-    margin-top: 4px !important;
+    width: auto !important; padding: 7px 14px !important; font-size: 11px !important;
+    font-weight: 700 !important; letter-spacing: 1px !important; border-radius: 2px !important;
+    box-shadow: none !important; background: transparent !important;
+    border: 1px solid rgba(0,180,255,.3) !important; color: rgba(0,180,255,.7) !important;
+    height: auto !important; min-height: unset !important; line-height: 1.3 !important; margin-top: 4px !important;
 }
 .refresh-btn-wrap div[data-testid="stButton"] > button:hover {
-    background: rgba(16,185,129,.25) !important;
-    border-color: rgba(16,185,129,.6) !important;
-    transform: none !important;
-    box-shadow: none !important;
+    background: rgba(0,180,255,.08) !important; border-color: rgba(0,180,255,.6) !important;
+    color: #00b4ff !important; transform: none !important; box-shadow: none !important;
 }
 .refresh-btn-wrap.refreshed div[data-testid="stButton"] > button {
-    background: rgba(99,102,241,.15) !important;
-    border-color: rgba(99,102,241,.4) !important;
-    color: #818cf8 !important;
+    border-color: rgba(0,255,160,.4) !important; color: #00ffa0 !important;
 }
 
 /* ─── Subject cards & Difficulty Panel ───────────────────────────────── */
 .s-card {
-    background: rgba(255,255,255,.03); border: 1.5px solid rgba(255,255,255,.08);
-    border-radius: 18px; padding: 22px 14px; text-align: center; transition: all .25s ease;
+    background: rgba(0,20,12,.5); border: 1px solid rgba(0,255,160,.1);
+    border-radius: 3px; padding: 20px 12px; text-align: center; transition: all .22s ease;
+    position: relative; overflow: hidden;
+}
+.s-card::before {
+    content:""; position:absolute; inset:0;
+    background: linear-gradient(145deg, rgba(0,255,160,.03), transparent);
+    border-radius: 3px;
 }
 .s-card:hover {
-    border-color: rgba(99,102,241,.5); background: rgba(99,102,241,.07);
-    transform: translateY(-4px); box-shadow: 0 10px 32px rgba(99,102,241,.18);
+    border-color: rgba(0,255,160,.45); background: rgba(0,255,160,.06);
+    transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,255,160,.12), 0 0 0 1px rgba(0,255,160,.15);
 }
 .s-card.sel {
-    border-color: rgba(168,85,247,.75); background: rgba(168,85,247,.1);
-    box-shadow: 0 0 0 3px rgba(168,85,247,.2), 0 10px 32px rgba(168,85,247,.15);
+    border-color: rgba(0,255,160,.8); background: rgba(0,255,160,.08);
+    box-shadow: 0 0 0 2px rgba(0,255,160,.25), 0 8px 28px rgba(0,255,160,.15);
 }
-.s-icon { font-size: 38px; line-height: 1; margin-bottom: 10px; }
-.s-name { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 800; color: #e2e8f0; margin-bottom: 4px; }
-.s-desc { font-size: 11px; color: #3d5070; font-weight: 500; }
+.s-icon { font-size: 34px; line-height: 1; margin-bottom: 8px; }
+.s-name { font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 800; color: #e8f8f0; margin-bottom: 4px; letter-spacing: .5px; }
+.s-desc { font-size: 11px; color: rgba(0,255,160,.35); font-weight: 500; }
 
 .diff-panel {
-    background: linear-gradient(145deg, rgba(18,26,48,.6), rgba(8,12,22,.8));
-    border: 1px solid rgba(168,85,247,.3); border-radius: 16px;
-    padding: 24px; margin-top: 16px; text-align: center; animation: fadeIn .4s ease;
+    background: rgba(0,15,10,.7);
+    border: 1px solid rgba(0,255,160,.2);
+    border-radius: 3px;
+    padding: 22px; margin-top: 14px; text-align: center; animation: fadeIn .35s ease;
 }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-.diff-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: #f0f4ff; margin-bottom: 16px; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+.diff-title { font-family: 'Orbitron', sans-serif; font-size: 15px; font-weight: 700; color: #00ffa0; margin-bottom: 14px; letter-spacing: .5px; }
 
 /* ─── User badge ────────────────────────────────────────────────────── */
 .ubadge {
-    display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,.03);
-    border: 1px solid rgba(255,255,255,.07); border-radius: 14px; padding: 11px 18px; margin-bottom: 22px;
+    display: flex; align-items: center; gap: 12px; background: rgba(0,20,12,.6);
+    border: 1px solid rgba(0,255,160,.12); border-radius: 3px; padding: 10px 16px; margin-bottom: 20px;
 }
 .uavatar {
-    width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
-    background: linear-gradient(135deg,#6366f1,#a855f7); display: flex; align-items: center;
-    justify-content: center; font-family: 'Syne', sans-serif; font-weight: 900; font-size: 14px; color: white;
+    width: 34px; height: 34px; border-radius: 3px; flex-shrink: 0;
+    background: rgba(0,255,160,.15); border: 1px solid rgba(0,255,160,.4);
+    display: flex; align-items: center;
+    justify-content: center; font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 13px;
+    color: #00ffa0;
 }
-.uname  { font-weight: 600; font-size: 14px; color: #dde3f0; }
-.uemail { font-size: 12px; color: #2d3e5a; }
-.uxp    { color: #fbbf24; font-weight: 700; font-size: 11px; letter-spacing: 0.5px; }
+.uname  { font-weight: 600; font-size: 13px; color: #c8f0d8; }
+.uemail { font-size: 11px; color: rgba(0,255,160,.3); }
+.uxp    { color: #00b4ff; font-weight: 700; font-size: 11px; letter-spacing: 0.5px; font-family: 'Orbitron', sans-serif; }
 
 /* ─── Timer & Progress ─────────────────────────────────────────────────── */
-.stProgress > div > div { background: rgba(255,255,255,.05) !important; border-radius: 99px !important; height: 5px !important; }
-.stProgress > div > div > div > div { background: linear-gradient(90deg,#6366f1,#a855f7,#ec4899) !important; }
+.stProgress > div > div { background: rgba(0,255,160,.07) !important; border-radius: 2px !important; height: 4px !important; }
+.stProgress > div > div > div > div { background: linear-gradient(90deg,#00ffa0,#00b4ff) !important; box-shadow: 0 0 8px rgba(0,255,160,.4) !important; }
 
 .tmr {
-    border-radius: 14px; padding: 11px 20px; text-align: center; font-family: 'Syne', sans-serif;
-    font-size: 20px; font-weight: 800; margin-bottom: 16px; border: 1.5px solid;
-    display: flex; align-items: center; justify-content: center; gap: 10px;
+    border-radius: 3px; padding: 10px 18px; text-align: center; font-family: 'Orbitron', sans-serif;
+    font-size: 18px; font-weight: 800; margin-bottom: 14px; border: 1px solid;
+    display: flex; align-items: center; justify-content: center; gap: 10px; letter-spacing: 1px;
 }
-.t-safe   { background:rgba(16,185,129,.08); border-color:rgba(16,185,129,.3); color:#34d399; }
-.t-warn   { background:rgba(245,158,11,.08); border-color:rgba(245,158,11,.3); color:#fbbf24; }
-.t-danger { background:rgba(239,68,68,.1);   border-color:rgba(239,68,68,.4);  color:#f87171; }
+.t-safe   { background:rgba(0,255,160,.05);  border-color:rgba(0,255,160,.3);  color:#00ffa0; text-shadow: 0 0 10px rgba(0,255,160,.5); }
+.t-warn   { background:rgba(255,200,0,.05);  border-color:rgba(255,200,0,.3);  color:#ffd700; text-shadow: 0 0 10px rgba(255,200,0,.4); }
+.t-danger { background:rgba(255,50,50,.06);  border-color:rgba(255,50,50,.4);  color:#ff5050; text-shadow: 0 0 10px rgba(255,50,50,.5); animation: pulse 0.8s ease infinite; }
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.6; } }
 
 /* ─── Score spill ───────────────────────────────────────────────────── */
 .spill {
-    font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800;
-    color: #fbbf24; text-align: right; padding-top: 4px;
+    font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 800;
+    color: #00b4ff; text-align: right; padding-top: 4px;
+    text-shadow: 0 0 8px rgba(0,180,255,.5);
 }
 
 /* ─── Subject pill ──────────────────────────────────────────────────── */
 .subj-pill {
-    display: inline-block; background: rgba(168,85,247,.12);
-    border: 1px solid rgba(168,85,247,.3); border-radius: 99px;
-    padding: 5px 16px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px;
-    color: #c084fc; margin-bottom: 14px;
+    display: inline-block; background: rgba(0,180,255,.08);
+    border: 1px solid rgba(0,180,255,.25); border-radius: 2px;
+    padding: 4px 14px; font-size: 11px; font-weight: 700; letter-spacing: 1px;
+    color: #00b4ff; margin-bottom: 12px; font-family: 'Orbitron', sans-serif; text-transform: uppercase;
 }
 
 /* ─── H-divider ─────────────────────────────────────────────────────── */
-.h-divider { height: 1px; background: linear-gradient(90deg,transparent,rgba(99,102,241,.3),transparent); margin: 28px 0; }
+.h-divider { height: 1px; background: linear-gradient(90deg,transparent,rgba(0,255,160,.2),transparent); margin: 24px 0; }
 
 /* ─── Question card ─────────────────────────────────────────────────── */
 .qcard {
-    background: linear-gradient(155deg, rgba(18,26,48,.95), rgba(8,12,22,.98));
-    border: 1.5px solid rgba(99,102,241,.2); border-radius: 22px; padding: 28px 30px;
-    margin: 12px 0 20px; position: relative; overflow: hidden;
+    background: rgba(0,15,10,.85);
+    border: 1px solid rgba(0,255,160,.18); border-radius: 3px; padding: 26px 28px;
+    margin: 10px 0 18px; position: relative; overflow: hidden;
 }
 .qcard::before {
-    content:""; position:absolute; top:0; left:0; right:0; height:3px;
-    background: linear-gradient(90deg,#6366f1,#a855f7,#ec4899);
+    content:""; position:absolute; top:0; left:0; width:3px; bottom:0;
+    background: linear-gradient(180deg,#00ffa0,#00b4ff);
+    box-shadow: 0 0 12px rgba(0,255,160,.5);
 }
-.qnum { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #5a5fdb; margin-bottom: 12px; }
-.qtxt { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; color: #f0f4ff; line-height: 1.5; }
+.qcard::after {
+    content:""; position:absolute; top:0; right:0; left:0; height:1px;
+    background: linear-gradient(90deg,transparent,rgba(0,255,160,.3),transparent);
+}
+.qnum { font-size: 9px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: rgba(0,255,160,.4); margin-bottom: 10px; font-family: 'Orbitron', sans-serif; }
+.qtxt { font-family: 'DM Sans', sans-serif; font-size: 19px; font-weight: 700; color: #e0f0e8; line-height: 1.55; }
 
 /* ─── Radio options ──────────────────────────────────────────────────── */
 div[data-testid="stRadio"] > label { display: none; }
-div[data-testid="stRadio"] > div { gap: 10px !important; flex-direction: column; }
+div[data-testid="stRadio"] > div { gap: 8px !important; flex-direction: column; }
 div[data-testid="stRadio"] > div > label {
-    background: rgba(255,255,255,.03) !important; border: 1.5px solid rgba(255,255,255,.08) !important;
-    border-radius: 13px !important; padding: 13px 18px !important; color: #8899b8 !important; font-size: 14px !important;
+    background: rgba(0,20,12,.4) !important; border: 1px solid rgba(0,255,160,.1) !important;
+    border-radius: 3px !important; padding: 12px 16px !important; color: rgba(200,230,210,.6) !important;
+    font-size: 14px !important; transition: all .18s ease !important;
 }
 div[data-testid="stRadio"] > div > label:hover {
-    background: rgba(99,102,241,.1) !important; border-color: rgba(99,102,241,.45) !important;
-    color: #dde3f0 !important; transform: translateX(6px);
+    background: rgba(0,255,160,.07) !important; border-color: rgba(0,255,160,.4) !important;
+    color: #e0f8e8 !important; transform: translateX(4px);
+    box-shadow: 0 0 12px rgba(0,255,160,.08) !important;
 }
 div[data-testid="stRadio"] > div > label[data-checked="true"] {
-    background: rgba(99,102,241,.15) !important; border-color: rgba(99,102,241,.7) !important; color: #a5b4fc !important;
+    background: rgba(0,255,160,.1) !important; border-color: rgba(0,255,160,.6) !important;
+    color: #00ffa0 !important; box-shadow: 0 0 14px rgba(0,255,160,.12) !important;
 }
 
-/* ─── Mistake cards & Explanations ──────────────────────────────────── */
-.mk { background:rgba(239,68,68,.07); border:1px solid rgba(239,68,68,.22); border-radius:12px; padding:16px 18px; margin:10px 0; }
-.mk-q  { color:#64748b; font-size:14px; margin-bottom:6px; line-height:1.5; font-weight: 600;}
-.mk-u  { color:#fca5a5; font-size:13px; margin-bottom:4px; }
-.mk-c  { color:#86efac; font-size:13px; font-weight:700; margin-bottom: 8px;}
-.mk-e  { color:#94a3b8; font-size:13px; margin-top:8px; line-height: 1.6; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px;}
+/* ─── Mistake cards ──────────────────────────────────────────────────── */
+.mk { background:rgba(255,50,50,.05); border:1px solid rgba(255,80,80,.18); border-radius:3px; padding:14px 16px; margin:8px 0;
+      border-left: 3px solid rgba(255,80,80,.6); }
+.mk-q  { color:#9ab8a8; font-size:14px; margin-bottom:5px; line-height:1.5; font-weight: 600; }
+.mk-u  { color:rgba(255,120,120,.8); font-size:12px; margin-bottom:3px; }
+.mk-c  { color:#00ffa0; font-size:12px; font-weight:700; margin-bottom:6px; }
+.mk-e  { color:rgba(200,220,210,.5); font-size:12px; margin-top:6px; line-height:1.6;
+         border-top: 1px dashed rgba(0,255,160,.1); padding-top:8px; }
 
 /* ─── Result UI & Badges ────────────────────────────────────────────── */
-.res-hero { text-align:center; padding:16px 0 12px; }
-.res-emoji { font-size:72px; line-height:1; margin-bottom:10px; }
-.res-grade { font-family:'Syne',sans-serif; font-size:34px; font-weight:900; margin-bottom:6px; }
-.res-msg { color:#8899b8; font-size:16px; margin-bottom: 24px;}
+.res-hero { text-align:center; padding:12px 0 10px; }
+.res-emoji { font-size:68px; line-height:1; margin-bottom:8px; }
+.res-grade { font-family:'Orbitron',sans-serif; font-size:28px; font-weight:900; margin-bottom:6px; letter-spacing:1px; }
+.res-msg { color:rgba(0,255,160,.45); font-size:15px; margin-bottom:20px; }
 .badge-card {
-    display: inline-block; background: rgba(0,0,0,.3); border: 1px solid;
-    border-radius: 18px; padding: 14px 28px; font-family: 'Syne', sans-serif;
-    font-size: 22px; font-weight: 800; margin-bottom: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.5);
+    display: inline-block; background: rgba(0,15,10,.7); border: 1px solid;
+    border-radius: 3px; padding: 12px 26px; font-family: 'Orbitron', sans-serif;
+    font-size: 18px; font-weight: 800; margin-bottom: 14px; letter-spacing: 1px;
+    box-shadow: 0 0 24px rgba(0,0,0,.6);
 }
 
 /* ─── YouTube Resources Section ──────────────────────────────────── */
 .yt-section-title {
-    font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800;
-    color: #f0f4ff; margin-bottom: 6px; display: flex; align-items: center; gap: 10px;
+    font-family: 'Orbitron', sans-serif; font-size: 17px; font-weight: 800;
+    color: #e8f8f0; margin-bottom: 5px; display: flex; align-items: center; gap: 10px; letter-spacing: .5px;
 }
-.yt-section-sub {
-    font-size: 13px; color: #3d5070; margin-bottom: 18px; line-height: 1.5;
-}
+.yt-section-sub { font-size: 12px; color: rgba(0,255,160,.35); margin-bottom: 16px; line-height: 1.5; }
 .yt-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 12px; margin-bottom: 8px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 10px; margin-bottom: 8px;
 }
 .yt-card {
-    background: linear-gradient(145deg, rgba(18,26,48,.9), rgba(8,12,22,.95));
-    border: 1.5px solid rgba(255,0,0,.2); border-radius: 14px; padding: 16px 14px;
-    text-decoration: none; transition: all .22s ease; display: block; position: relative;
+    background: rgba(0,10,5,.8);
+    border: 1px solid rgba(255,50,50,.18); border-radius: 3px; padding: 14px 12px;
+    text-decoration: none; transition: all .2s ease; display: block; position: relative;
     overflow: hidden;
 }
 .yt-card::before {
-    content:""; position:absolute; top:0; left:0; right:0; height:2px;
-    background: linear-gradient(90deg, #ff0000, #ff6b6b);
+    content:""; position:absolute; top:0; left:0; width:2px; bottom:0;
+    background: linear-gradient(180deg,#ff4040,rgba(255,100,100,.3));
 }
 .yt-card:hover {
-    border-color: rgba(255,0,0,.55); background: rgba(255,0,0,.07);
-    transform: translateY(-3px); box-shadow: 0 8px 24px rgba(255,0,0,.15);
+    border-color: rgba(255,80,80,.5); background: rgba(255,40,40,.05);
+    transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,0,0,.1);
 }
-.yt-icon { font-size: 28px; margin-bottom: 8px; line-height: 1; }
-.yt-title { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: #e2e8f0; margin-bottom: 4px; line-height: 1.4; }
-.yt-desc  { font-size: 11px; color: #3d5070; line-height: 1.4; }
+.yt-icon { font-size: 26px; margin-bottom: 7px; line-height: 1; }
+.yt-title { font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 700; color: #e8f0e8; margin-bottom: 4px; line-height: 1.4; letter-spacing: .3px; }
+.yt-desc  { font-size: 11px; color: rgba(0,255,160,.3); line-height: 1.4; }
 .yt-tag {
-    display: inline-block; background: rgba(255,0,0,.12); border: 1px solid rgba(255,0,0,.25);
-    color: #ff6b6b; font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
-    border-radius: 6px; padding: 2px 8px; margin-top: 6px;
+    display: inline-block; background: rgba(255,50,50,.1); border: 1px solid rgba(255,50,50,.25);
+    color: rgba(255,100,100,.8); font-size: 9px; font-weight: 700; letter-spacing: 1px;
+    border-radius: 2px; padding: 2px 7px; margin-top: 5px; font-family: 'Orbitron', sans-serif; text-transform: uppercase;
 }
 .ai-tip-box {
-    background: linear-gradient(135deg, rgba(99,102,241,.08) 0%, rgba(168,85,247,.06) 100%);
-    border: 1px solid rgba(99,102,241,.22); border-radius: 16px; padding: 18px 22px;
-    margin: 12px 0 20px; position: relative;
-}
-.ai-tip-box::before {
-    content:""; position:absolute; top:0; left:0; right:0; height:2px;
-    background: linear-gradient(90deg,#6366f1,#a855f7,#ec4899); border-radius:16px 16px 0 0;
+    background: rgba(0,20,15,.7);
+    border: 1px solid rgba(0,180,255,.2); border-radius: 3px; padding: 16px 20px;
+    margin: 10px 0 18px; position: relative;
+    border-left: 3px solid rgba(0,180,255,.5);
 }
 .ai-tip-label {
-    font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-    color: #6366f1; margin-bottom: 8px;
+    font-size: 9px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase;
+    color: rgba(0,180,255,.6); margin-bottom: 7px; font-family: 'Orbitron', sans-serif;
 }
-.ai-tip-text { font-size: 14px; color: #94a3b8; line-height: 1.7; }
+.ai-tip-text { font-size: 13px; color: rgba(200,230,220,.65); line-height: 1.7; }
 
 /* ─── Back button override ────────────────────────────────────────── */
 .back-btn-wrap div[data-testid="stButton"] > button {
-    background: rgba(255,255,255,.04) !important;
-    border: 1px solid rgba(255,255,255,.10) !important;
-    color: #5a6a88 !important;
+    background: transparent !important;
+    border: 1px solid rgba(255,255,255,.08) !important;
+    color: rgba(255,255,255,.25) !important;
     box-shadow: none !important;
-    font-size: 12px !important;
-    padding: 9px 14px !important;
-    letter-spacing: 0 !important;
-    font-family: 'Inter', sans-serif !important;
-    font-weight: 500 !important;
-    border-radius: 10px !important;
+    font-size: 10px !important;
+    padding: 8px 14px !important;
+    letter-spacing: 1px !important;
+    font-family: 'Orbitron', sans-serif !important;
+    font-weight: 700 !important;
+    border-radius: 2px !important;
+    text-transform: uppercase !important;
 }
 .back-btn-wrap div[data-testid="stButton"] > button:hover {
-    background: rgba(99,102,241,.10) !important;
-    border-color: rgba(99,102,241,.35) !important;
-    color: #818cf8 !important;
-    box-shadow: none !important;
-    transform: none !important;
+    background: rgba(0,255,160,.06) !important;
+    border-color: rgba(0,255,160,.3) !important;
+    color: rgba(0,255,160,.7) !important;
+    box-shadow: none !important; transform: none !important;
 }
 
 /* ─── Custom Subject Card & Panel ────────────────────────────────── */
 .s-card.custom-card {
-    border-color: rgba(236,72,153,.35);
-    background: rgba(236,72,153,.05);
+    border-color: rgba(0,180,255,.2);
+    background: rgba(0,10,20,.5);
 }
 .s-card.custom-card:hover {
-    border-color: rgba(236,72,153,.7);
-    background: rgba(236,72,153,.1);
-    box-shadow: 0 10px 32px rgba(236,72,153,.18);
+    border-color: rgba(0,180,255,.5);
+    background: rgba(0,180,255,.07);
+    box-shadow: 0 8px 28px rgba(0,180,255,.12);
 }
 .s-card.custom-card.sel {
-    border-color: rgba(236,72,153,.8);
-    background: rgba(236,72,153,.13);
-    box-shadow: 0 0 0 3px rgba(236,72,153,.2), 0 10px 32px rgba(236,72,153,.15);
+    border-color: rgba(0,180,255,.75);
+    background: rgba(0,180,255,.08);
+    box-shadow: 0 0 0 2px rgba(0,180,255,.2), 0 8px 28px rgba(0,180,255,.12);
 }
 .custom-panel {
-    background: linear-gradient(145deg, rgba(18,26,48,.95), rgba(8,12,22,.98));
-    border: 1.5px solid rgba(236,72,153,.3); border-radius: 18px;
-    padding: 26px 28px; margin-top: 16px; animation: fadeIn .35s ease;
+    background: rgba(0,12,20,.8);
+    border: 1px solid rgba(0,180,255,.22); border-radius: 3px;
+    padding: 24px 26px; margin-top: 14px; animation: fadeIn .3s ease;
     position: relative; overflow: hidden;
-}
-.custom-panel::before {
-    content:""; position:absolute; top:0; left:0; right:0; height:3px;
-    background: linear-gradient(90deg,#ec4899,#a855f7,#6366f1); border-radius: 18px 18px 0 0;
+    border-left: 3px solid rgba(0,180,255,.5);
 }
 .custom-panel-title {
-    font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800;
-    color: #f0f4ff; margin-bottom: 4px;
+    font-family: 'Orbitron', sans-serif; font-size: 16px; font-weight: 800;
+    color: #00b4ff; margin-bottom: 4px; letter-spacing: .5px;
 }
 .custom-panel-sub {
-    font-size: 13px; color: #3d5070; margin-bottom: 20px; line-height: 1.5;
+    font-size: 12px; color: rgba(0,180,255,.35); margin-bottom: 18px; line-height: 1.5;
 }
 .gen-btn-wrap div[data-testid="stButton"] > button {
-    background: linear-gradient(135deg, #ec4899 0%, #a855f7 100%) !important;
-    box-shadow: 0 4px 24px rgba(236,72,153,.35) !important;
+    border-color: rgba(0,180,255,.5) !important; color: #00b4ff !important;
+    box-shadow: 0 0 16px rgba(0,180,255,.12) !important;
 }
 .gen-btn-wrap div[data-testid="stButton"] > button:hover {
-    background: linear-gradient(135deg, #db2777 0%, #9333ea 100%) !important;
-    box-shadow: 0 8px 32px rgba(236,72,153,.55) !important;
+    background: rgba(0,180,255,.08) !important; box-shadow: 0 0 28px rgba(0,180,255,.25) !important;
+    border-color: #00b4ff !important; color: #fff !important;
 }
 .custom-ready-panel {
-    background: linear-gradient(145deg, rgba(18,26,48,.9), rgba(8,12,22,.95));
-    border: 1px solid rgba(16,185,129,.3); border-radius: 14px;
-    padding: 14px 20px; margin-bottom: 16px;
+    background: rgba(0,20,12,.7);
+    border: 1px solid rgba(0,255,160,.25); border-radius: 3px;
+    padding: 12px 18px; margin-bottom: 14px;
     display: flex; align-items: center; gap: 12px;
 }
-.custom-ready-text { font-size: 13px; color: #34d399; font-weight: 600; }
-.custom-ready-sub  { font-size: 11px; color: #2d5a4a; margin-top: 2px; }
+.custom-ready-text { font-size: 13px; color: #00ffa0; font-weight: 600; }
+.custom-ready-sub  { font-size: 11px; color: rgba(0,255,160,.3); margin-top: 2px; }
 
-/* ─── Performance: prevent layout thrash & reduce paint cost ─────── */
+/* ─── Metrics ──────────────────────────────────────────────────────── */
+div[data-testid="metric-container"] {
+    background: rgba(0,20,12,.5) !important; border: 1px solid rgba(0,255,160,.1) !important;
+    border-radius: 3px !important; padding: 12px !important;
+}
+div[data-testid="metric-container"] label {
+    color: rgba(0,255,160,.4) !important; font-family: 'Orbitron', sans-serif !important;
+    font-size: 9px !important; letter-spacing: 1.5px !important; text-transform: uppercase !important;
+}
+div[data-testid="metric-container"] div[data-testid="stMetricValue"] {
+    color: #00ffa0 !important; font-family: 'Orbitron', sans-serif !important;
+    font-size: 24px !important; font-weight: 800 !important;
+    text-shadow: 0 0 12px rgba(0,255,160,.4) !important;
+}
+
+/* ─── Expanders ─────────────────────────────────────────────────────── */
+div[data-testid="stExpander"] {
+    background: rgba(0,15,10,.6) !important; border: 1px solid rgba(0,255,160,.12) !important;
+    border-radius: 3px !important;
+}
+div[data-testid="stExpander"] summary {
+    color: rgba(0,255,160,.7) !important; font-family: 'Orbitron', sans-serif !important;
+    font-size: 11px !important; letter-spacing: 1px !important; text-transform: uppercase !important;
+}
+
+/* ─── Performance ───────────────────────────────────────────────────── */
 .stApp { contain: layout style; }
 iframe { will-change: auto !important; }
 div[data-testid="stVerticalBlock"] { contain: layout; }
@@ -813,77 +794,182 @@ def initials(name):
     return "".join(p[0].upper() for p in parts if p)[:2] or "U"
 
 def get_badge_info(xp):
-    if xp >= 50: return "👑 Master Badge", "#8b5cf6", "You are an elite intellect! A true BrainBlitz legend."
-    elif xp >= 40: return "🦸 Heroic Badge", "#ef4444", "A spectacular and brave performance!"
-    elif xp >= 30: return "🥇 Gold Badge", "#eab308", "You're shining brightly at the top!"
-    elif xp >= 20: return "🥈 Silver Badge", "#94a3b8", "Solid, consistent, and highly impressive!"
-    elif xp >= 10: return "🥉 Bronze Badge", "#d97706", "A great start, keep climbing the ranks!"
-    else: return "🌱 Beginner Badge", "#10b981", "Every master was once a beginner. Keep learning!"
+    if xp >= 50: return "👑 MASTER",  "#00ffa0", "You are an elite intellect! A true BrainBlitz legend."
+    elif xp >= 40: return "🦸 HEROIC",  "#00b4ff", "A spectacular and brave performance!"
+    elif xp >= 30: return "🥇 GOLD",    "#ffd700", "You're shining brightly at the top!"
+    elif xp >= 20: return "🥈 SILVER",  "#c0d8e8", "Solid, consistent, and highly impressive!"
+    elif xp >= 10: return "🥉 BRONZE",  "#e8a060", "A great start, keep climbing the ranks!"
+    else: return "🌱 RECRUIT", "#00ffa0", "Every master was once a beginner. Keep learning!"
 
 def full_reset():
     for k in list(st.session_state.keys()):
         del st.session_state[k]
 
 def quiz_reset():
-    for k in ["question_index", "score", "wrong_answers", "start_time", "current_xp", "current_questions"]:
+    for k in ["question_index", "score", "wrong_answers", "start_time", "current_xp", "current_questions",
+              "skips_used"]:
         st.session_state.pop(k, None)
+    st.session_state.streak = 0   # reset streak per quiz but keep best_streak
     radio_keys = [k for k in st.session_state if isinstance(k, str) and re.match(r'^q_\d+$', k)]
     for k in radio_keys:
         del st.session_state[k]
-def _call_api(api_client, model, prompt, max_tokens=MAX_TOKENS):
-    """Call a single API client and return parsed JSON, or raise on failure."""
-    chat_completion = api_client.chat.completions.create(
-        model=model,
-        messages=[
-            {"role": "system", "content": "Reply with raw JSON only. No extra text, no markdown, no code fences."},
-            {"role": "user",   "content": prompt},
-        ],
-        max_tokens=max_tokens,
-        temperature=0.3,
+def _clean_json_text(text):
+    """Robustly strip markdown fences and extract the JSON object/array."""
+    text = text.strip()
+    # Remove ```json ... ``` or ``` ... ``` fences
+    text = re.sub(r"^```(?:json)?\s*", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"\s*```\s*$", "", text)
+    text = text.strip()
+    # Extract from first { or [ to last } or ]
+    start = min(
+        (text.find("{") if text.find("{") != -1 else len(text)),
+        (text.find("[") if text.find("[") != -1 else len(text)),
     )
-    text = chat_completion.choices[0].message.content.strip()
-    text = re.sub(r"\s*```$", "", text)
-    return json.loads(text.strip())
+    if start < len(text):
+        text = text[start:]
+    # Find the matching closing bracket
+    for end_char, open_char in [("}", "{"), ("]", "[")]:
+        if text.startswith(open_char):
+            depth, last = 0, 0
+            for i, c in enumerate(text):
+                if c == open_char: depth += 1
+                elif c == end_char:
+                    depth -= 1
+                    if depth == 0: last = i; break
+            text = text[:last+1]
+            break
+    return text
+
+
+def _call_api(api_client, model, prompt, max_tokens=MAX_TOKENS, retries=2):
+    """Call a single API client and return parsed JSON, or raise on failure.
+    Retries once with a stricter reminder if JSON parse fails first time."""
+    system_msg = (
+        "You are a precise quiz generator. "
+        "Output ONLY valid raw JSON — no markdown, no code fences, no explanation, "
+        "no text before or after the JSON. The first character of your response must be { or [."
+    )
+    last_err = None
+    for attempt in range(retries):
+        try:
+            chat_completion = api_client.chat.completions.create(
+                model=model,
+                messages=[
+                    {"role": "system", "content": system_msg},
+                    {"role": "user",   "content": prompt},
+                ],
+                max_tokens=max_tokens,
+                temperature=0.2,  # Lower temp = more deterministic, more accurate
+            )
+            text = chat_completion.choices[0].message.content
+            text = _clean_json_text(text)
+            return json.loads(text)
+        except json.JSONDecodeError as e:
+            last_err = e
+            # On retry, add a stricter reminder
+            prompt = prompt + "\n\nCRITICAL: Return ONLY the JSON object. No extra text."
+            continue
+    raise last_err
+
+
+def _build_question_prompt(subj, difficulty, count=5):
+    """Build a highly structured, accurate prompt for one difficulty level."""
+    diff_guidance = {
+        "Easy":   "fundamental facts, basic definitions, and simple recall. Suitable for beginners.",
+        "Medium": "conceptual understanding, application, and cause-effect reasoning.",
+        "Hard":   "deep analysis, nuanced distinctions, advanced terminology, and multi-step reasoning.",
+    }[difficulty]
+
+    return (
+        f"Generate exactly {count} multiple-choice quiz questions about '{subj}' at {difficulty} difficulty.\n"
+        f"{difficulty} questions should test: {diff_guidance}\n\n"
+        "STRICT RULES — violating ANY rule means the question is WRONG:\n"
+        "  1. Every question has exactly 4 options: A, B, C, D.\n"
+        "  2. ALL FOUR option values MUST be completely different — never repeat.\n"
+        "  3. Only ONE option is correct. The other three are clearly wrong but plausible.\n"
+        "  4. The 'answer' field must be the letter (A/B/C/D) that holds the correct value.\n"
+        "  5. Vary which letter is correct — use A, B, C, D roughly equally across questions.\n"
+        "  6. Explanation format EXACTLY: 'The correct answer is [LETTER] - [VALUE], because [2-sentence reason].'\n"
+        "  7. The explanation letter and value MUST match the answer field.\n"
+        "  8. Questions must be factually accurate and unambiguous.\n\n"
+        "Return ONLY a raw JSON array of objects (no markdown, no fences, no extra text):\n"
+        '[\n'
+        '  {"question": "...", "options": {"A": "...", "B": "...", "C": "...", "D": "..."}, '
+        '"answer": "C", "explanation": "The correct answer is C - [value], because ..."}\n'
+        ']\n\n'
+        "EXAMPLE (for reference only — generate about the actual subject, NOT this example):\n"
+        '{"question": "What is the powerhouse of the cell?", '
+        '"options": {"A": "Nucleus", "B": "Ribosome", "C": "Mitochondria", "D": "Golgi apparatus"}, '
+        '"answer": "C", '
+        '"explanation": "The correct answer is C - Mitochondria, because mitochondria produce ATP through cellular respiration. They convert nutrients into usable energy for the cell."}'
+    )
+
+
+def _generate_one_difficulty(api_client, model, subj, difficulty, count=5):
+    """Generate questions for ONE difficulty level. Returns (difficulty, validated_list) or raises."""
+    prompt = _build_question_prompt(subj, difficulty, count)
+    result = _call_api(api_client, model, prompt, max_tokens=1800)
+
+    # Handle both array and {"Easy":[...]} response formats
+    if isinstance(result, list):
+        qs = result
+    elif isinstance(result, dict):
+        qs = result.get(difficulty, result.get(difficulty.lower(), []))
+        if not qs:
+            # Maybe the model returned the list under a random key
+            for v in result.values():
+                if isinstance(v, list) and len(v) > 0:
+                    qs = v; break
+    else:
+        qs = []
+
+    validated = _validate_questions(qs)
+    return difficulty, validated
 
 
 def refresh_subject_questions(subj):
     """
-    Call the API to generate NEW questions for all 3 difficulties of a subject.
+    Generate questions for all 3 difficulties IN PARALLEL using threads.
+    Each difficulty is its own API call — faster and more focused.
     Stores results in session_state as q_cache_{subj}_{difficulty}.
     Returns True on success, False on failure.
     """
-    prompt = (
-        f"Generate exactly 5 MCQ questions for the subject '{subj}' at Easy difficulty, "
-        f"5 at Medium difficulty, and 5 at Hard difficulty. "
-        "Return ONLY a raw JSON object (no markdown, no code fences) in this exact format:\n"
-        "{\"Easy\": [...], \"Medium\": [...], \"Hard\": [...]}\n"
-        "Each question object must follow this structure:\n"
-        "{\"question\": \"...\", \"options\": {\"A\": \"...\", \"B\": \"...\", \"C\": \"...\", \"D\": \"...\"}, "
-        "\"answer\": \"A\", \"explanation\": \"2 sentences max.\"}"
-    )
-
-    result = None
-
-    if groq_client:
-        try:
-            result = _call_api(groq_client, GROK_MODEL, prompt, max_tokens=2800)
-        except Exception:
-            pass
-
-    if result is None and openrouter_client:
-        try:
-            result = _call_api(openrouter_client, OPENROUTER_MODEL, prompt, max_tokens=2800)
-        except Exception:
-            return False
-
-    if result is None:
+    client = groq_client or openrouter_client
+    model  = GROK_MODEL if groq_client else OPENROUTER_MODEL
+    if client is None:
         return False
 
+    difficulties = ["Easy", "Medium", "Hard"]
     stored = 0
-    for diff in ["Easy", "Medium", "Hard"]:
-        if diff in result and isinstance(result[diff], list) and len(result[diff]) > 0:
-            st.session_state[f"q_cache_{subj}_{diff}"] = result[diff]
-            stored += 1
+
+    # Run 3 API calls concurrently
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        futures = {
+            executor.submit(_generate_one_difficulty, client, model, subj, diff): diff
+            for diff in difficulties
+        }
+        for future in as_completed(futures):
+            try:
+                diff, validated = future.result()
+                if validated:
+                    st.session_state[f"q_cache_{subj}_{diff}"] = validated
+                    stored += 1
+            except Exception:
+                pass
+
+    # Fallback: if parallel failed, try sequential with the other client
+    if stored == 0:
+        fallback_client = openrouter_client if groq_client else None
+        fallback_model  = OPENROUTER_MODEL  if groq_client else None
+        if fallback_client:
+            for diff in difficulties:
+                try:
+                    _, validated = _generate_one_difficulty(fallback_client, fallback_model, subj, diff)
+                    if validated:
+                        st.session_state[f"q_cache_{subj}_{diff}"] = validated
+                        stored += 1
+                except Exception:
+                    pass
 
     return stored > 0
 
@@ -1102,66 +1188,65 @@ def _repair_question(q):
 def generate_custom_questions(subj_name, topic):
     """
     AI generates 5 Easy + 5 Medium + 5 Hard MCQs for a user-defined subject & topic.
-    Cache key: q_cache_CUSTOM_{subj_name}_{topic}
+    Uses parallel API calls per difficulty for speed and accuracy.
+    Cache key: q_cache_CUSTOM_{subj_name}_{topic}_{difficulty}
     Returns True on success, False on failure.
     """
-    cache_key_prefix = f"q_cache_CUSTOM_{subj_name}_{topic}"
-    prompt = (
-        f"Generate exactly 5 multiple-choice questions (MCQs) about '{topic}' "
-        f"in the subject '{subj_name}' at Easy difficulty, "
-        "5 at Medium difficulty, and 5 at Hard difficulty.\n\n"
-        "RULES (follow exactly):\n"
-        "  1. Every question must have exactly 4 options: A, B, C, D.\n"
-        "  2. ALL FOUR OPTION VALUES MUST BE DIFFERENT — never repeat a value.\n"
-        "  3. Decide the correct answer value first, place it under any letter.\n"
-        "  4. The other 3 letters get distinct WRONG values.\n"
-        "  5. Set 'answer' to whichever letter holds the correct value.\n"
-        "  6. Vary which letter is correct — use A, B, C, D roughly equally.\n"
-        "  7. Explanation: 'The correct answer is [letter] - [value], because [reason].'\n\n"
-        "Return ONLY raw JSON (no markdown, no fences):\n"
-        "{\"Easy\": [...], \"Medium\": [...], \"Hard\": [...]}\n\n"
-        "Question format:\n"
-        "{\"question\": \"...\", \"options\": {\"A\": \"...\", \"B\": \"...\", "
-        "\"C\": \"...\", \"D\": \"...\"}, \"answer\": \"A_OR_B_OR_C_OR_D\", "
-        "\"explanation\": \"The correct answer is [letter] - [value], because [reason].\"}\n\n"
-        "EXAMPLES showing variety of correct-answer letters:\n"
-        "{\"question\": \"What is 3+1?\", "
-        "\"options\": {\"A\": \"3\", \"B\": \"4\", \"C\": \"5\", \"D\": \"6\"}, "
-        "\"answer\": \"B\", "
-        "\"explanation\": \"The correct answer is B - 4, because 3+1=4.\"}\n"
-        "{\"question\": \"Capital of France?\", "
-        "\"options\": {\"A\": \"Paris\", \"B\": \"Berlin\", \"C\": \"Rome\", \"D\": \"Madrid\"}, "
-        "\"answer\": \"A\", "
-        "\"explanation\": \"The correct answer is A - Paris, because Paris is France's capital.\"}\n"
-        "{\"question\": \"What is 10-3?\", "
-        "\"options\": {\"A\": \"6\", \"B\": \"8\", \"C\": \"9\", \"D\": \"7\"}, "
-        "\"answer\": \"D\", "
-        "\"explanation\": \"The correct answer is D - 7, because 10-3=7.\"}"
-    )
-
-    result = None
-    if groq_client:
-        try:
-            result = _call_api(groq_client, GROK_MODEL, prompt, max_tokens=2800)
-        except Exception:
-            pass
-
-    if result is None and openrouter_client:
-        try:
-            result = _call_api(openrouter_client, OPENROUTER_MODEL, prompt, max_tokens=2800)
-        except Exception:
-            return False
-
-    if result is None:
+    client = groq_client or openrouter_client
+    model  = GROK_MODEL if groq_client else OPENROUTER_MODEL
+    if client is None:
         return False
 
+    # Build per-difficulty prompts with topic context injected
+    def custom_prompt(difficulty):
+        diff_guidance = {
+            "Easy":   "basic facts and definitions suitable for beginners.",
+            "Medium": "application, reasoning, and conceptual understanding.",
+            "Hard":   "advanced analysis, edge cases, and expert-level knowledge.",
+        }[difficulty]
+        return (
+            f"Generate exactly 5 multiple-choice quiz questions about the topic '{topic}' "
+            f"in the subject '{subj_name}' at {difficulty} difficulty.\n"
+            f"{difficulty} questions should test: {diff_guidance}\n\n"
+            "STRICT RULES:\n"
+            "  1. Every question has exactly 4 options: A, B, C, D.\n"
+            "  2. ALL FOUR options MUST be different — never repeat a value.\n"
+            "  3. Only ONE option is correct. The other three are plausible but wrong.\n"
+            "  4. 'answer' must be the LETTER of the correct option.\n"
+            "  5. Vary which letter is correct — distribute A/B/C/D roughly equally.\n"
+            "  6. Explanation EXACTLY: 'The correct answer is [LETTER] - [VALUE], because [reason].'\n"
+            "  7. Questions must be factually accurate and unambiguous.\n\n"
+            "Return ONLY a raw JSON array (no markdown, no fences):\n"
+            '[{"question": "...", "options": {"A": "...", "B": "...", "C": "...", "D": "..."}, '
+            '"answer": "B", "explanation": "The correct answer is B - [value], because ..."}]'
+        )
+
+    difficulties = ["Easy", "Medium", "Hard"]
     stored = 0
-    for diff in ["Easy", "Medium", "Hard"]:
-        if diff in result and isinstance(result[diff], list) and len(result[diff]) > 0:
-            validated = _validate_questions(result[diff])
-            if validated:
-                st.session_state[f"{cache_key_prefix}_{diff}"] = validated
-                stored += 1
+    cache_key_prefix = f"q_cache_CUSTOM_{subj_name}_{topic}"
+
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        futures = {
+            executor.submit(_call_api, client, model, custom_prompt(diff), 1800): diff
+            for diff in difficulties
+        }
+        for future in as_completed(futures):
+            diff = futures[future]
+            try:
+                result = future.result()
+                # Handle array or dict
+                if isinstance(result, list):
+                    qs = result
+                elif isinstance(result, dict):
+                    qs = result.get(diff, [])
+                else:
+                    qs = []
+                validated = _validate_questions(qs)
+                if validated:
+                    st.session_state[f"{cache_key_prefix}_{diff}"] = validated
+                    stored += 1
+            except Exception:
+                pass
 
     return stored > 0
 
@@ -1277,8 +1362,8 @@ def start_quiz(subj, difficulty, timer_sec):
 
 # ── UI components ──────────────────────────────────────────────────────────
 def render_brand():
-    st.markdown('<div class="brand-wrap"><span class="brand-logo">BrainBlitz</span></div>', unsafe_allow_html=True)
-    st.markdown('<div class="brand-tag">Personalised Knowledge Challenge</div>', unsafe_allow_html=True)
+    st.markdown('<div class="brand-wrap"><span class="brand-logo">BRAIN<span style="color:#00b4ff;text-shadow:0 0 8px rgba(0,180,255,.9),0 0 24px rgba(0,180,255,.5)">BLITZ</span></span></div>', unsafe_allow_html=True)
+    st.markdown('<div class="brand-tag">// Neural Challenge System v2.0</div>', unsafe_allow_html=True)
 
 def render_steps(current):
     labels = ["Login", "Subject", "Quiz", "Result"]
@@ -1307,7 +1392,7 @@ def render_badge():
     subj_tag = ""
     if subj and diff:
         icon     = SUBJECT_DATA.get(subj, {"icon": "✏️", "desc": "Custom Quiz"})["icon"]
-        subj_tag = f'&nbsp;·&nbsp;<span style="color:#a855f7;font-size:11px;font-weight:700">{icon} {subj} ({diff})</span>'
+        subj_tag = f'&nbsp;<span style="color:rgba(0,180,255,.7);font-size:10px;font-weight:700;font-family:Orbitron,sans-serif">// {icon} {subj} [{diff}]</span>'
 
     st.markdown(f'''
     <div class="ubadge">
@@ -1328,6 +1413,14 @@ if "page" not in st.session_state:
     st.session_state.page = "login"
 if "total_xp" not in st.session_state:
     st.session_state.total_xp = 0
+if "streak" not in st.session_state:
+    st.session_state.streak = 0          # correct answers in a row
+if "best_streak" not in st.session_state:
+    st.session_state.best_streak = 0
+if "bookmarks" not in st.session_state:
+    st.session_state.bookmarks = []      # list of bookmarked question dicts
+if "skips_used" not in st.session_state:
+    st.session_state.skips_used = 0
 
 # ── Restore any custom subjects into SUBJECT_DATA on every rerun ─────────────
 # (module-level dicts reset on each Streamlit rerun; session_state persists)
@@ -1402,25 +1495,26 @@ if st.session_state.page == "login":
 
     st.markdown('''
     <div style="
-        background: linear-gradient(135deg, rgba(99,102,241,.15) 0%, rgba(168,85,247,.12) 50%, rgba(236,72,153,.10) 100%);
-        border: 1px solid rgba(99,102,241,.25); border-radius: 20px; padding: 22px 28px; margin-bottom: 24px;
-        display: flex; align-items: center; gap: 18px; box-shadow: inset 0 1px 0 rgba(255,255,255,.07);
+        background: rgba(0,255,160,.04);
+        border: 1px solid rgba(0,255,160,.15); border-radius: 3px; padding: 20px 24px; margin-bottom: 20px;
+        display: flex; align-items: center; gap: 18px;
+        border-left: 3px solid rgba(0,255,160,.5);
     ">
-        <div style="font-size:48px;line-height:1">🧠</div>
+        <div style="font-size:42px;line-height:1">⚡</div>
         <div>
-            <div style="font-family:\'Syne\',sans-serif;font-size:18px;font-weight:800;color:#e2e8f0;margin-bottom:4px;">
-                Ready to challenge your mind?
+            <div style="font-family:\'Orbitron\',sans-serif;font-size:15px;font-weight:800;color:#00ffa0;margin-bottom:4px;letter-spacing:.5px;">
+                INITIALISE YOUR CHALLENGE
             </div>
-            <div style="font-size:13px;color:#3d5070;line-height:1.6;">
-                Sign in · Pick a subject · Build your XP · Earn the Master Badge!
+            <div style="font-size:12px;color:rgba(0,255,160,.4);line-height:1.6;">
+                Sign in → Pick a subject → Build XP → Earn the Master Badge
             </div>
         </div>
     </div>
 
     <div class="login-header">
-        <div class="section-chip">🔐 Sign In</div>
-        <div class="login-title">Welcome, challenger!</div>
-        <div class="login-sub">Enter your details to begin your personalised quiz journey and save your XP.</div>
+        <div class="section-chip">// AUTH</div>
+        <div class="login-title">IDENTIFY YOURSELF</div>
+        <div class="login-sub">Enter your credentials to access the neural challenge system.</div>
     </div>
     ''', unsafe_allow_html=True)
 
@@ -1455,12 +1549,12 @@ elif st.session_state.page == "subject":
     render_badge()
 
     st.markdown('''
-    <div style="margin-bottom:6px;"><div class="section-chip">📚 Pick Your Subject</div></div>
-    <div style="font-family:\'Syne\',sans-serif;font-size:22px;font-weight:800;color:#f0f4ff;margin-bottom:6px;">
-        What do you want to be tested on?
+    <div style="margin-bottom:6px;"><div class="section-chip">// SELECT MODULE</div></div>
+    <div style="font-family:\'Orbitron\',sans-serif;font-size:19px;font-weight:800;color:#e8f8f0;margin-bottom:6px;letter-spacing:.5px;">
+        CHOOSE YOUR SUBJECT
     </div>
-    <div style="color:#2d3e5a;font-size:14px;margin-bottom:20px;">
-        Harder difficulties reward more XP! Hit 🔄 on any subject to get fresh AI-generated questions.
+    <div style="color:rgba(0,255,160,.35);font-size:13px;margin-bottom:20px;">
+        Higher difficulty = more XP per question. Tap 🔄 to load fresh AI questions.
     </div>
     ''', unsafe_allow_html=True)
 
@@ -1594,11 +1688,11 @@ elif st.session_state.page == "subject":
 
     # ── Difficulty Selection Panel (preset subjects only) ─────────────────
     if chosen and chosen != "__custom__":
-        cache_status = "🤖 AI questions active!" if is_refreshed else "📝 Using preset questions"
+        cache_status = "⚡ AI questions loaded!" if is_refreshed else "// Using preset questions"
         st.markdown(f'''
         <div class="diff-panel">
-            <div class="diff-title">You selected {info['icon']} {chosen}. Now choose your difficulty:</div>
-            <div style="font-size:11px; color:#4a5878; margin-top:-10px; margin-bottom:8px;">{cache_status}</div>
+            <div class="diff-title">MODULE: {info['icon']} {chosen}</div>
+            <div style="font-size:10px; color:rgba(0,255,160,.35); margin-top:-10px; margin-bottom:8px; font-family:\'Orbitron\',sans-serif; letter-spacing:1px;">{cache_status}</div>
         </div>
         ''', unsafe_allow_html=True)
 
@@ -1714,7 +1808,56 @@ elif st.session_state.page == "quiz":
         index=None, key=f"q_{idx}"
     )
 
+    # ── Streak display ─────────────────────────────────────────────────────
+    streak = st.session_state.get("streak", 0)
+    best   = st.session_state.get("best_streak", 0)
+    skips_used = st.session_state.get("skips_used", 0)
+    max_skips  = 1  # allow 1 skip per quiz
+
+    if streak >= 2:
+        st.markdown(
+            f'<div style="text-align:center;font-size:12px;color:#00ffa0;margin-bottom:6px;font-family:Orbitron,sans-serif;letter-spacing:1px;">'
+            f'⚡ {streak}x STREAK — KEEP IT UP!</div>',
+            unsafe_allow_html=True
+        )
+
     st.markdown("<br>", unsafe_allow_html=True)
+
+    # ── Bookmark button ────────────────────────────────────────────────────
+    bm_key  = f"bm_{idx}"
+    already_bookmarked = any(b.get("question") == q["question"] for b in st.session_state.bookmarks)
+    bm_label = "🔖 Bookmarked" if already_bookmarked else "🔖 Bookmark"
+    col_bm, col_skip = st.columns(2)
+    with col_bm:
+        if st.button(bm_label, use_container_width=True, key=bm_key, disabled=already_bookmarked):
+            st.session_state.bookmarks.append({
+                "question": q["question"],
+                "options":  q["options"],
+                "answer":   q["answer"],
+                "explanation": q.get("explanation", ""),
+                "subject":  subj,
+                "difficulty": diff,
+            })
+            st.toast("🔖 Question bookmarked!", icon="📌")
+            st.rerun()
+    with col_skip:
+        skip_label = f"⏭️ Skip ({max_skips - skips_used} left)"
+        if st.button(skip_label, use_container_width=True, key=f"skip_{idx}",
+                     disabled=(skips_used >= max_skips)):
+            # Count skip as a missed question (no XP, adds to wrong answers)
+            ca = q["answer"]
+            st.session_state.wrong_answers.append({
+                "question":    q["question"],
+                "your_answer": "⏭️ Skipped",
+                "correct":     f"{ca} → {q['options'][ca]}",
+                "explanation": q.get("explanation", "No explanation available.")
+            })
+            st.session_state.skips_used = skips_used + 1
+            st.session_state.streak = 0
+            st.session_state.question_index += 1
+            st.session_state.start_time = time.time()
+            st.rerun()
+
     bc_left, bc_right = st.columns(2)
 
     with bc_left:
@@ -1737,6 +1880,11 @@ elif st.session_state.page == "quiz":
                     st.session_state.score      = st.session_state.get("score", 0) + 1
                     st.session_state.current_xp += xp_multiplier
                     st.session_state.total_xp   += xp_multiplier
+                    # Update streak
+                    new_streak = st.session_state.get("streak", 0) + 1
+                    st.session_state.streak = new_streak
+                    if new_streak > st.session_state.get("best_streak", 0):
+                        st.session_state.best_streak = new_streak
                 else:
                     ca = q["answer"]
                     st.session_state.wrong_answers.append({
@@ -1745,6 +1893,7 @@ elif st.session_state.page == "quiz":
                         "correct":     f"{ca} → {q['options'][ca]}",
                         "explanation": q.get("explanation", "No explanation available.")
                     })
+                    st.session_state.streak = 0  # reset streak on wrong
                 st.session_state.question_index += 1
                 st.session_state.start_time = time.time()
                 st.rerun()
@@ -1773,18 +1922,18 @@ elif st.session_state.page == "result":
     render_badge()
     st.balloons()
 
-    if pct == 100:   em, gr = "🏆", "Perfect Score!"
-    elif pct >= 80:  em, gr = "🌟", "Excellent Work!"
-    elif pct >= 60:  em, gr = "👍", "Good Job!"
-    else:            em, gr = "💪", "Keep Practising!"
+    if pct == 100:   em, gr = "🏆", "FLAWLESS VICTORY"
+    elif pct >= 80:  em, gr = "⚡", "EXCELLENT WORK"
+    elif pct >= 60:  em, gr = "✅", "MISSION COMPLETE"
+    else:            em, gr = "💪", "KEEP TRAINING"
 
     hero_html = (
         '<div class="res-hero">'
         + '<div class="res-emoji">' + em + '</div>'
-        + '<div class="res-grade" style="color:' + badge_col + ';">' + gr + '</div>'
-        + '<div class="res-msg">Outstanding effort, <strong>' + user_name + '</strong>! Here is your performance overview.</div>'
-        + '<div class="badge-card" style="border-color:' + badge_col + '; color:' + badge_col + ';">' + badge_name + '</div>'
-        + '<div style="font-size:14px; color:#94a3b8; font-style:italic; margin-bottom:24px;">'
+        + '<div class="res-grade" style="color:' + badge_col + ';text-shadow:0 0 18px ' + badge_col + '80;">' + gr + '</div>'
+        + '<div class="res-msg">WELL EXECUTED, <strong style="color:' + badge_col + ';">' + user_name.upper() + '</strong> — REVIEW YOUR STATS BELOW.</div>'
+        + '<div class="badge-card" style="border-color:' + badge_col + '; color:' + badge_col + '; box-shadow: 0 0 18px ' + badge_col + '40;">' + badge_name + '</div>'
+        + '<div style="font-size:13px; color:rgba(0,255,160,.35); font-style:italic; margin-bottom:20px; font-family:\'Orbitron\',sans-serif; font-size:11px; letter-spacing:1px;">'
         + '&#8220;' + badge_msg + '&#8221;'
         + '</div></div>'
     )
@@ -1793,11 +1942,13 @@ elif st.session_state.page == "result":
     st.progress(fs / total if total > 0 else 0)
     st.markdown("<br>", unsafe_allow_html=True)
 
-    c1, c2, c3, c4 = st.columns(4)
+    best_streak = st.session_state.get("best_streak", 0)
+    c1, c2, c3, c4, c5 = st.columns(5)
     with c1: st.metric("✅ Correct",  fs)
     with c2: st.metric("❌ Wrong",    total - fs)
     with c3: st.metric("📊 Accuracy", f"{pct:.0f}%")
     with c4: st.metric("⚡ XP Earned", f"+{current_xp_earned}")
+    with c5: st.metric("🔥 Best Streak", best_streak)
 
     st.markdown('<div class="h-divider"></div>', unsafe_allow_html=True)
 
@@ -1812,7 +1963,23 @@ elif st.session_state.page == "result":
                     <div class="mk-e">💡 <strong>Explanation:</strong> {w['explanation']}</div>
                 </div>''', unsafe_allow_html=True)
     else:
-        st.success(f"🔥 Zero mistakes! Flawless victory for {user_name}!")
+        st.success(f"⚡ ZERO MISTAKES — ABSOLUTE PERFECTION, {user_name.upper()}!")
+
+    # ── Bookmarks Expander ────────────────────────────────────────────────
+    bookmarks = st.session_state.get("bookmarks", [])
+    if bookmarks:
+        with st.expander(f"🔖 My Bookmarks ({len(bookmarks)} saved)"):
+            for i, b in enumerate(bookmarks, 1):
+                st.markdown(f'''
+                <div class="mk" style="border-left-color:#f59e0b;">
+                    <div class="mk-q">Q{i}: {b['question']}</div>
+                    <div class="mk-u" style="color:#94a3b8;">📚 {b.get("subject","")} · {b.get("difficulty","")}</div>
+                    <div class="mk-c">✓ Answer: {b['answer']} → {b['options'][b['answer']]}</div>
+                    <div class="mk-e">💡 {b['explanation']}</div>
+                </div>''', unsafe_allow_html=True)
+            if st.button("🗑️ Clear All Bookmarks", key="clear_bookmarks"):
+                st.session_state.bookmarks = []
+                st.rerun()
 
     # ── YouTube Study Resources ────────────────────────────────────────────
     st.markdown('<div class="h-divider"></div>', unsafe_allow_html=True)
