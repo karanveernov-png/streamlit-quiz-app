@@ -2044,10 +2044,10 @@ if st.session_state.page == "login":
             """, unsafe_allow_html=True)
 
             st.markdown("<br>", unsafe_allow_html=True)
-            go_login = st.toggle("🔐 Switch to Login", value=False, key="goto_login_toggle")
+            go_login = st.button("🔐 Go to Login", key="goto_login_button")
             if go_login:
                 st.session_state.pop("show_login_switch", None)
-                # Clear signup fields
+             # Clear signup fields
                 for k in ["su_name", "su_email", "su_pw", "su_pw2"]:
                     st.session_state.pop(k, None)
                 st.session_state["active_tab"] = "login"
