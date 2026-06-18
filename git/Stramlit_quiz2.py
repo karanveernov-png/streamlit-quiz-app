@@ -1957,10 +1957,21 @@ if st.session_state.page == "login":
     if not is_configured():
         st.warning("⚠️ Database not configured — add `SUPABASE_URL` and `SUPABASE_ANON_KEY` to your Streamlit secrets to enable accounts.")
 
-    tab_login, tab_signup = st.tabs(["🔐 Log In", "✨ Create Account"])
+   # Initialize the default tab state
+    if "auth_tab" not in st.session_state:
+        st.session_state.auth_tab = "🔐 Log In"
+
+    # A radio button that mimics tabs
+    selected_tab = st.radio(
+        "Authentication",
+        ["🔐 Log In", "✨ Create Account"],
+        horizontal=True,
+        label_visibility="collapsed",
+        key="auth_tab"
+    )
 
     # ── LOG IN TAB ──────────────────────────────────────────────────────
-    with tab_login:
+    if selected_tab == "🔐 Log In":
         li_email = st.text_input("Email Address", placeholder="yourname@example.com", key="li_email")
         li_pw    = st.text_input("Password", type="password", placeholder="Your password", key="li_pw")
 
@@ -1990,7 +2001,7 @@ if st.session_state.page == "login":
                     st.rerun()
 
     # ── CREATE ACCOUNT TAB ──────────────────────────────────────────────
-    with tab_signup:
+    elif selected_tab == "✨ Create Account":
         su_name  = st.text_input("Display Name", placeholder="e.g. Karanveer", key="su_name")
         su_email = st.text_input("Email Address", placeholder="yourname@example.com", key="su_email")
         su_pw    = st.text_input("Password", type="password", placeholder="Minimum 6 characters", key="su_pw")
@@ -2045,13 +2056,14 @@ if st.session_state.page == "login":
 
             st.markdown("<br>", unsafe_allow_html=True)
             go_login = st.button("🔐 Go to Login", key="goto_login_button")
-            if go_login:
-                st.session_state.pop("show_login_switch", None)
-             # Clear signup fields
-                for k in ["su_name", "su_email", "su_pw", "su_pw2"]:
-                    st.session_state.pop(k, None)
-                st.session_state["active_tab"] = "login"
-                st.rerun()
+        if go_login:
+            st.session_state.pop("show_login_switch", None)
+            # Clear signup fields
+            for k in ["su_name", "su_email", "su_pw", "su_pw2"]:
+                st.session_state.pop(k, None)
+            # THIS is what forces the UI to switch views
+            st.session_state.auth_tab = "🔐 Log In"
+            st.rerun()
 
     st.markdown('<div class="login-footer"><div class="divider-line"></div></div>', unsafe_allow_html=True)
 
