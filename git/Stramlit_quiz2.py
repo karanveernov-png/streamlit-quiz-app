@@ -2055,15 +2055,18 @@ if st.session_state.page == "login":
             """, unsafe_allow_html=True)
 
             st.markdown("<br>", unsafe_allow_html=True)
+            
+            # --- MAKE SURE THESE LINES ARE INDENTED EXACTLY LIKE THIS ---
             go_login = st.button("🔐 Go to Login", key="goto_login_button")
-        if go_login:
-            st.session_state.pop("show_login_switch", None)
-            # Clear signup fields
-            for k in ["su_name", "su_email", "su_pw", "su_pw2"]:
-                st.session_state.pop(k, None)
-            # THIS is what forces the UI to switch views
-            st.session_state.auth_tab = "🔐 Log In"
-            st.rerun()
+            
+            if go_login:
+                st.session_state.pop("show_login_switch", None)
+                # Clear signup fields
+                for k in ["su_name", "su_email", "su_pw", "su_pw2"]:
+                    st.session_state.pop(k, None)
+                # This forces the UI to switch to the Log In tab
+                st.session_state.auth_tab = "🔐 Log In"
+                st.rerun()
 
     st.markdown('<div class="login-footer"><div class="divider-line"></div></div>', unsafe_allow_html=True)
 
