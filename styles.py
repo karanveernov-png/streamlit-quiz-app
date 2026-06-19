@@ -354,15 +354,12 @@ div[data-testid="stButton"] > button:active { transform: translateY(0); }
 .qtxt { font-family: 'DM Sans', sans-serif; font-size: 19px; font-weight: 700; color: #e0f0e8; line-height: 1.55; }
 
 /* ─── Radio options ──────────────────────────────────────────────────── */
-/* ─── Radio options ──────────────────────────────────────────────────── */
 div[data-testid="stRadio"] > label { display: none; }
 div[data-testid="stRadio"] > div { gap: 5px !important; flex-direction: column; }
 div[data-testid="stRadio"] > div > label {
     background: rgba(0,20,12,.4) !important; border: 1px solid rgba(0,255,160,.1) !important;
     border-radius: 3px !important; padding: 7px 12px !important; 
     font-size: 12px !important; transition: all .18s ease !important;
-    
-    /* FIX CODE: Force the text to be completely solid bright white/light green */
     color: #e0f8e8 !important; 
     opacity: 1 !important;
 }
@@ -394,8 +391,6 @@ div[data-testid="stRadio"] > div > label[data-checked="true"] {
     flex: 1 1 0;
     justify-content: center;
     text-align: center;
-    
-    /* FIX CODE: Force the login tab text to be solid bright white/light green */
     color: #e0f8e8 !important;
     opacity: 1 !important;
 }
