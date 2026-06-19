@@ -140,39 +140,36 @@ def render():
 
     st.markdown("<br>", unsafe_allow_html=True)
     
-   # ── NEW MOBILE LAYOUT: Submit -> Bookmark & Skip -> Back ──────────────
+   # ── NEW COMPACT LAYOUT: 1. Submit, 2. Bookmark, 3. Skip, 4. Back ──────────────
     bm_key  = f"bm_{idx}"
     already_bookmarked = any(b.get("question") == q["question"] for b in st.session_state.bookmarks)
     bm_label = "🔖 Saved" if already_bookmarked else "🔖 Bookmark"
+    skip_label = f"⏭️ Skip ({max_skips - skips_used} left)"
 
-    # 1. SUBMIT BUTTON (Top position, full width)
+    # We set use_container_width=False to make all buttons small!
+
+    # 1. SUBMIT BUTTON
     st.markdown('<div class="submit-btn-wrap">', unsafe_allow_html=True)
-    if st.button("Submit Answer →", use_container_width=True, key=f"submit_{idx}"):
+    if st.button("Submit Answer →", use_container_width=False, key=f"submit_{idx}"):
         if selected is None:
             st.warning("⚠️ Pick an option first.")
         else:
             if selected == q["answer"]:
                 bonus = 0
                 new_streak = st.session_state.get("streak", 0) + 1
-                # Streak bonus XP: +1 bonus every 3 in a row
                 if new_streak % 3 == 0:
                     bonus = 1
                 earned = xp_multiplier + bonus
-                st.session_state.score      = st.session_state.get("score", 0) + 1
+                st.session_state.score += 1
                 st.session_state.current_xp += earned
-                st.session_state.total_xp   += earned
+                st.session_state.total_xp += earned
                 st.session_state.streak = new_streak
                 if new_streak > st.session_state.get("best_streak", 0):
                     st.session_state.best_streak = new_streak
-                # Track XP flash message
                 flash_msg = f"+{earned} XP" + (" 🔥 STREAK BONUS!" if bonus else "")
                 st.session_state["xp_flash"] = flash_msg
                 if st.session_state.get("user_id"):
-                    save_progress(
-                        st.session_state.user_id,
-                        st.session_state.total_xp,
-                        st.session_state.best_streak,
-                    )
+                    save_progress(st.session_state.user_id, st.session_state.total_xp, st.session_state.best_streak)
             else:
                 ca = q["answer"]
                 st.session_state.wrong_answers.append({
@@ -188,49 +185,42 @@ def render():
             st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # 2 & 3. BOOKMARK and SKIP (Side-by-side in the middle)
+    # 2. BOOKMARK BUTTON
     st.markdown('<div class="quiz-action-btns">', unsafe_allow_html=True)
-    col_bm, col_skip = st.columns(2)
-    with col_bm:
-        if st.button(bm_label, use_container_width=True, key=bm_key, disabled=already_bookmarked):
-            new_bm = {
-                "question": q["question"],
-                "options":  q["options"],
-                "answer":   q["answer"],
-                "explanation": q.get("explanation", ""),
-                "subject":  subj,
-                "difficulty": diff,
-            }
-            st.session_state.bookmarks.append(new_bm)
-            if st.session_state.get("user_id"):
-                save_bookmark(st.session_state.user_id, new_bm)
-            st.toast("🔖 Bookmarked!", icon="📌")
-            st.rerun()
-    with col_skip:
-        skip_label = f"⏭️ Skip ({max_skips - skips_used} left)"
-        if st.button(skip_label, use_container_width=True, key=f"skip_{idx}",
-                     disabled=(skips_used >= max_skips)):
-            ca = q["answer"]
-            st.session_state.wrong_answers.append({
-                "question":    q["question"],
-                "your_answer": "⏭️ Skipped",
-                "correct":     f"{ca} → {q['options'][ca]}",
-                "explanation": q.get("explanation", "No explanation available.")
-            })
-            st.session_state.skips_used = skips_used + 1
-            st.session_state.streak = 0
-            st.session_state.question_index += 1
-            st.session_state.start_time = time.time()
-            st.rerun()
+    if st.button(bm_label, use_container_width=False, key=bm_key, disabled=already_bookmarked):
+        new_bm = {
+            "question": q["question"], "options": q["options"],
+            "answer": q["answer"], "explanation": q.get("explanation", ""),
+            "subject": subj, "difficulty": diff,
+        }
+        st.session_state.bookmarks.append(new_bm)
+        if st.session_state.get("user_id"):
+            save_bookmark(st.session_state.user_id, new_bm)
+        st.toast("🔖 Bookmarked!", icon="📌")
+        st.rerun()
+
+    # 3. SKIP BUTTON
+    if st.button(skip_label, use_container_width=False, key=f"skip_{idx}", disabled=(skips_used >= max_skips)):
+        ca = q["answer"]
+        st.session_state.wrong_answers.append({
+            "question": q["question"], "your_answer": "⏭️ Skipped",
+            "correct": f"{ca} → {q['options'][ca]}",
+            "explanation": q.get("explanation", "No explanation available.")
+        })
+        st.session_state.skips_used = skips_used + 1
+        st.session_state.streak = 0
+        st.session_state.question_index += 1
+        st.session_state.start_time = time.time()
+        st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # 4. BACK BUTTON (Bottom position)
+    # 4. BACK BUTTON
     st.markdown('<div class="back-btn-wrap">', unsafe_allow_html=True)
-    if st.button("← Back", use_container_width=True, key=f"back_{idx}"):
+    if st.button("← Back", use_container_width=False, key=f"back_{idx}"):
         quiz_reset()
         st.session_state.pop("subject_pick", None)
-        st.session_state.pop("subject",      None)
-        st.session_state.pop("difficulty",   None)
+        st.session_state.pop("subject", None)
+        st.session_state.pop("difficulty", None)
         st.session_state.page = "subject"
         st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
