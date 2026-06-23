@@ -33,12 +33,24 @@ def render():
     with st.expander(f"🔖 Bookmarks ({len(bookmarks)})"):
         if bookmarks:
             for i, b in enumerate(bookmarks, 1):
+                # 1. Safely extract all values using .get() to prevent KeyErrors
+                question = b.get('question', 'Question text missing')
+                subject = b.get('subject', 'Unknown Subject')
+                difficulty = b.get('difficulty', 'Unknown Difficulty')
+                
+                answer_key = b.get('answer', 'N/A')
+                options_dict = b.get('options', {})
+                answer_text = options_dict.get(answer_key, 'Option text missing')
+                
+                explanation = b.get('explanation', 'No explanation provided.')
+
+                # 2. Inject the safe variables into the HTML
                 st.markdown(f'''
                 <div class="mk" style="border-left-color:#f59e0b;">
-                    <div class="mk-q">Q{i}: {b['question']}</div>
-                    <div class="mk-u" style="color:#94a3b8;">📚 {b.get("subject","")} · {b.get("difficulty","")}</div>
-                    <div class="mk-c">✓ Answer: {b['answer']} → {b['options'][b['answer']]}</div>
-                    <div class="mk-e">💡 {b['explanation']}</div>
+                    <div class="mk-q">Q{i}: {question}</div>
+                    <div class="mk-u" style="color:#94a3b8;">📚 {subject} · {difficulty}</div>
+                    <div class="mk-c">✓ Answer: {answer_key} → {answer_text}</div>
+                    <div class="mk-e">💡 {explanation}</div>
                 </div>''', unsafe_allow_html=True)
             if st.button("🗑️ Clear All Bookmarks", key="subj_clear_bookmarks", use_container_width=True):
                 st.session_state.bookmarks = []
