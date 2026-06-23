@@ -165,7 +165,15 @@ def render():
                 if st.session_state.get("user_id"):
                     save_progress(st.session_state.user_id, st.session_state.total_xp, new_streak)
             else:
+                # FIXED: Reset streak AND log the wrong answer
                 st.session_state.streak = 0
+                ca = q["answer"]
+                st.session_state.wrong_answers.append({
+                    "question":    q["question"],
+                    "your_answer": f"{selected} → {q['options'][selected]}",
+                    "correct":     f"{ca} → {q['options'][ca]}",
+                    "explanation": q.get("explanation", "No explanation available.")
+                })
             st.session_state.question_index += 1
             st.session_state.start_time = time.time()
             st.rerun()
@@ -176,14 +184,40 @@ def render():
     col_bm, col_skip = st.columns(2)
     with col_bm:
         if st.button(bm_label, use_container_width=True, key=bm_key, disabled=already_bookmarked):
-            # ... (keep bookmark logic)
-            st.session_state.bookmarks.append({"question": q["question"]}) # Simplified for brevity
+            
+            # FIXED: Save ALL the question details, not just the question text!
+            bookmark_data = {
+                "question": q["question"],
+                "subject": subj,
+                "difficulty": diff,
+                "answer": q["answer"],
+                "options": q["options"],
+                "explanation": q.get("explanation", "No explanation available.")
+            }
+            
+            # Add it to the current session
+            st.session_state.bookmarks.append(bookmark_data)
+            
+            # If you are saving to a database, keep your db function here too
+            if st.session_state.get("user_id"):
+                 save_bookmark(st.session_state.user_id, bookmark_data)
+                 
             st.rerun()
     with col_skip:
         if st.button(skip_label, use_container_width=True, key=f"skip_{idx}", disabled=(skips_used >= max_skips)):
-            # ... (keep skip logic)
             st.session_state.skips_used = skips_used + 1
+            
+            # FIXED: Log the skipped question as a wrong answer so it shows in corrections
+            ca = q["answer"]
+            st.session_state.wrong_answers.append({
+                "question":    q["question"],
+                "your_answer": "⏭️ Skipped",
+                "correct":     f"{ca} → {q['options'][ca]}",
+                "explanation": q.get("explanation", "No explanation available.")
+            })
+            
             st.session_state.question_index += 1
+            st.session_state.start_time = time.time() # Reset timer for next question
             st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
