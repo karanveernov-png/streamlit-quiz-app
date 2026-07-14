@@ -100,6 +100,7 @@ def sign_out():
         pass
 
 
+<<<<<<< HEAD
 def get_google_oauth_url() -> tuple:
     """
     Build the Google OAuth redirect URL via Supabase.
@@ -166,6 +167,8 @@ def exchange_google_code(code: str) -> tuple:
         return False, f"Google sign-in failed: {e}", None
 
 
+=======
+>>>>>>> eba016c0bef1060829ab3df69818c8a6d356bc5d
 # ── PROFILE / PROGRESS ───────────────────────────────────────────────────
 def load_profile(user_id: str):
     """

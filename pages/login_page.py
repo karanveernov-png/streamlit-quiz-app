@@ -5,14 +5,19 @@ API connectivity test, and the post-signup "go to login" prompt.
 import streamlit as st
 
 from config import groq_client, openrouter_client, GROK_MODEL, OPENROUTER_MODEL
+<<<<<<< HEAD
 from db import (
     is_configured, sign_in, sign_up, load_profile, load_bookmarks,
     get_google_oauth_url, exchange_google_code,
 )
+=======
+from db import is_configured, sign_in, sign_up, load_profile, load_bookmarks
+>>>>>>> eba016c0bef1060829ab3df69818c8a6d356bc5d
 from utils import valid_email, valid_pw
 from ui_components import render_brand, render_steps
 
 
+<<<<<<< HEAD
 _GOOGLE_G_SVG = """<svg width="18" height="18" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
   <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
   <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
@@ -101,6 +106,9 @@ def render():
     # Handle OAuth redirect-back before any UI is painted
     _handle_oauth_callback()
 
+=======
+def render():
+>>>>>>> eba016c0bef1060829ab3df69818c8a6d356bc5d
     render_brand()
     render_steps(0)
 
@@ -230,8 +238,11 @@ def render():
                     st.success(f"✅ {msg}")
                     st.rerun()
 
+<<<<<<< HEAD
         _google_button()
 
+=======
+>>>>>>> eba016c0bef1060829ab3df69818c8a6d356bc5d
     # ── CREATE ACCOUNT TAB ──────────────────────────────────────────────
     elif selected_tab == "✨ Create Account":
         su_name  = st.text_input("Display Name", placeholder="e.g. Karanveer", key="su_name")
@@ -264,8 +275,11 @@ def render():
                         st.session_state["show_login_switch"] = True
                         st.rerun()
 
+<<<<<<< HEAD
         _google_button()
 
+=======
+>>>>>>> eba016c0bef1060829ab3df69818c8a6d356bc5d
         # ── Post-signup login switch ─────────────────────────────────────────
         if st.session_state.get("show_login_switch"):
             st.markdown("""
