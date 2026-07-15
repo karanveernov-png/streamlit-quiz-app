@@ -16,6 +16,8 @@ import streamlit as st
 # Importing config first runs st.set_page_config() and validates API keys
 # (it will st.stop() the app here if neither XAI_API_KEY nor
 # OPENROUTER_API_KEY is configured).
+# 👉 ADD THIS LINE TO DEBUG:
+st.write("Streamlit sees these URL parameters:", st.query_params)
 import config  # noqa: F401  (imported for its side effects)
 
 import styles
