@@ -30,24 +30,23 @@ styles.inject_css()
 init_session_state()
 
 # ── CATCH SUPABASE LOGIN REDIRECT ─────────────────────────────────────────
-# This stops the "revolving door" bug and correctly loads the user profile!
 if "code" in st.query_params:
-    # Import the helper function directly from your database file
     from db import exchange_google_code
     
     auth_code = st.query_params["code"]
-    
-    # This function exchanges the code AND creates the user profile in the database
     success, msg, user_data = exchange_google_code(auth_code)
     
-    # Wipe the code from the web address so it looks clean
     st.query_params.clear()
     
+    # 🛑 FREEZE THE APP AND PRINT THE SECRET DATA:
+    st.write("--- DEBUGGING RADAR ---")
+    st.write("Did login succeed?", success)
+    st.write("Database Message:", msg)
+    st.write("User Profile Data:", user_data)
+    st.stop() # This forces Streamlit to halt before the page reloads!
+    
     if success:
-        # Save the fully formatted user data (which includes your real name!)
         st.session_state["user"] = user_data
-        
-        # Tell Streamlit the user is logged in and send them to the main app
         st.session_state["page"] = "subject" 
         st.rerun()
     else:
