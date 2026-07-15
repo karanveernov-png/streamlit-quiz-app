@@ -30,23 +30,31 @@ styles.inject_css()
 init_session_state()
 
 # ── CATCH SUPABASE LOGIN REDIRECT ─────────────────────────────────────────
+# This stops the revolving door, unpacks the user, and loads all saved data!
 if "code" in st.query_params:
-    from db import exchange_google_code
+    # Bring in the profile and bookmark loaders from your database file
+    from db import exchange_google_code, load_profile, load_bookmarks
     
     auth_code = st.query_params["code"]
     success, msg, user_data = exchange_google_code(auth_code)
     
     st.query_params.clear()
     
-    # 🛑 FREEZE THE APP AND PRINT THE SECRET DATA:
-    st.write("--- DEBUGGING RADAR ---")
-    st.write("Did login succeed?", success)
-    st.write("Database Message:", msg)
-    st.write("User Profile Data:", user_data)
-    st.stop() # This forces Streamlit to halt before the page reloads!
-    
     if success:
-        st.session_state["user"] = user_data
+        user_id = user_data["id"]
+        
+        # 1. Unpack the Google data exactly how ui_components expects it
+        st.session_state["user_id"] = user_id
+        st.session_state["user_name"] = user_data["display_name"]
+        st.session_state["email"] = user_data["email"]
+        
+        # 2. Fetch the saved XP and Bookmarks from the Supabase tables
+        profile = load_profile(user_id)
+        st.session_state["total_xp"] = profile.get("total_xp", 0)
+        st.session_state["best_streak"] = profile.get("best_streak", 0)
+        st.session_state["bookmarks"] = load_bookmarks(user_id)
+        
+        # 3. Tell Streamlit the user is fully loaded and send them to the app
         st.session_state["page"] = "subject" 
         st.rerun()
     else:
