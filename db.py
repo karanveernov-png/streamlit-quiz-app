@@ -3,7 +3,7 @@ db.py — Supabase database layer: authentication, profile persistence,
 and bookmark storage.
 """
 import streamlit as st
-from supabase import create_client, Client
+from supabase import create_client, Client, ClientOptions
 
 # ── CONFIG ────────────────────────────────────────────────────────────────
 def _get_secret(name):
@@ -19,7 +19,9 @@ SUPABASE_KEY = _get_secret("SUPABASE_ANON_KEY")
 def _get_client() -> "Client | None":
     if not SUPABASE_URL or not SUPABASE_KEY:
         return None
-    return create_client(SUPABASE_URL, SUPABASE_KEY)
+    # Force the modern PKCE flow instead of the hidden hash fragment
+    options = ClientOptions(flow_type="pkce")
+    return create_client(SUPABASE_URL, SUPABASE_KEY, options=options)
 
 
 def is_configured() -> bool:
@@ -103,27 +105,28 @@ def sign_out():
 
 def get_google_oauth_url() -> tuple:
     """
-    Build the Supabase Google OAuth URL manually using implicit flow
-    (no code_challenge → tokens arrive in the URL hash fragment, not as ?code=).
-    JavaScript in login_page converts the hash to ?at= query params that
-    Python can actually read.
-
-    Requires Google provider enabled in Supabase dashboard →
-    Authentication → Providers → Google.
-    Returns (url: str | None, error: str | None).
+    Build the Supabase Google OAuth URL using the official Python client.
+    Because we enabled PKCE in _get_client(), this will correctly return 
+    the user with a visible ?code= parameter that app.py can catch!
     """
-    import urllib.parse
-    supabase_url = SUPABASE_URL
-    if not supabase_url:
-        return None, "SUPABASE_URL not configured."
+    client = _get_client()
+    if client is None:
+        return None, "Database not configured."
+        
     app_url = _get_secret("APP_URL") or "http://localhost:8501"
-    qs = urllib.parse.urlencode({
-        "provider": "google",
-        "redirect_to": app_url,
-        "scopes": "email profile",
-    })
-    url = f"{supabase_url.rstrip('/')}/auth/v1/authorize?{qs}"
-    return url, None
+    
+    try:
+        res = client.auth.sign_in_with_oauth({
+            "provider": "google",
+            "options": {
+                "redirect_to": app_url,
+                "scopes": "email profile"
+            }
+        })
+        # The Supabase client automatically builds the secure URL for us
+        return res.url, None
+    except Exception as e:
+        return None, str(e)
 
 
 def _upsert_google_profile(client, user):
