@@ -130,13 +130,12 @@ def get_google_oauth_url() -> tuple:
 
 
 def _upsert_google_profile(client, user):
-    """Create a profile row for a first-time Google user (best-effort)."""
+    """Create a profile row for a first-time Google user, but explicitly show errors."""
+    meta = user.user_metadata or {}
+    display_name = meta.get("full_name") or meta.get("name") or user.email.split("@")[0]
+    avatar_url = meta.get("avatar_url") or meta.get("picture") or ""
+    
     try:
-        meta = user.user_metadata or {}
-        display_name = (
-            meta.get("full_name") or meta.get("name") or user.email.split("@")[0]
-        )
-        avatar_url = meta.get("avatar_url") or meta.get("picture") or ""
         existing = (
             client.table("profiles")
             .select("id")
@@ -152,13 +151,13 @@ def _upsert_google_profile(client, user):
                 "total_xp": 0,
                 "best_streak": 0,
             }).execute()
-        return display_name, avatar_url
-    except Exception:
-        meta = user.user_metadata or {}
-        return (
-            meta.get("full_name") or meta.get("name") or user.email.split("@")[0],
-            meta.get("avatar_url") or meta.get("picture") or "",
-        )
+            
+    except Exception as e:
+        import streamlit as st
+        # This will blast the exact database error onto your app screen!
+        st.error(f"🚨 DATABASE REJECTION REASON: {str(e)}")
+        
+    return display_name, avatar_url
 
 
 def set_google_session(access_token: str, refresh_token: str = "") -> tuple:
