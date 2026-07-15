@@ -3,15 +3,14 @@ login_page.py — Authentication screen: log in / create account tabs,
 API connectivity test, and the post-signup "go to login" prompt.
 """
 import streamlit as st
+import streamlit.components.v1 as components
 
 from config import groq_client, openrouter_client, GROK_MODEL, OPENROUTER_MODEL
 
 from db import (
     is_configured, sign_in, sign_up, load_profile, load_bookmarks,
-    get_google_oauth_url, exchange_google_code,
+    get_google_oauth_url, exchange_google_code, set_google_session,
 )
-
-from db import is_configured, sign_in, sign_up, load_profile, load_bookmarks
 
 from utils import valid_email, valid_pw
 from ui_components import render_brand, render_steps
@@ -25,19 +24,69 @@ _GOOGLE_G_SVG = """<svg width="18" height="18" viewBox="0 0 48 48" xmlns="http:/
 </svg>"""
 
 
+# ── OAuth helpers ──────────────────────────────────────────────────────────────
+
+def _inject_hash_redirector():
+    """
+    Zero-height JS component that runs on every render of the login page.
+
+    Problem: Supabase implicit OAuth redirects back with tokens in the URL
+    *hash* (#access_token=...), which Python/Streamlit cannot read.
+
+    Fix: JS reads window.parent.location.hash, converts the tokens to
+    plain query params (?at=...&rt=...), then reloads the page.
+    On the next render Python sees ?at= in st.query_params and can log the
+    user in via set_google_session().
+    """
+    components.html(
+        """<script>
+(function () {
+    try {
+        var h = window.parent.location.hash;
+        if (h && h.indexOf("access_token") !== -1) {
+            var p  = new URLSearchParams(h.slice(1));
+            var at = p.get("access_token");
+            var rt = p.get("refresh_token") || "";
+            if (at) {
+                window.parent.location.replace(
+                    window.parent.location.pathname +
+                    "?at=" + encodeURIComponent(at) +
+                    "&rt=" + encodeURIComponent(rt)
+                );
+            }
+        }
+    } catch (e) { /* cross-origin guard */ }
+})();
+</script>""",
+        height=0,
+    )
+
+
 def _handle_oauth_callback():
     """
-    Called at the top of render().  If Supabase redirected back with ?code=,
-    exchange it for a session and drop the user straight into the app.
+    Called at the very top of render() before any UI is drawn.
+
+    Handles two OAuth return shapes:
+      • ?at=   — implicit flow tokens converted from hash by _inject_hash_redirector
+      • ?code= — PKCE flow (fallback if the Supabase project has PKCE enabled)
+
+    On success, sets session state and reruns to the subject page.
     """
+    at   = st.query_params.get("at")
     code = st.query_params.get("code")
-    if not code:
-        return
 
-    with st.spinner("Signing in with Google…"):
-        ok, msg, user = exchange_google_code(code)
+    if not at and not code:
+        return  # normal page visit — nothing to do
 
-    # Clear the one-time code from the URL regardless of outcome
+    if at:
+        rt = st.query_params.get("rt", "")
+        with st.spinner("Signing in with Google…"):
+            ok, msg, user = set_google_session(at, rt)
+    else:
+        with st.spinner("Signing in with Google…"):
+            ok, msg, user = exchange_google_code(code)
+
+    # Clear one-time tokens from the URL regardless of outcome
     try:
         st.query_params.clear()
     except Exception:
@@ -47,28 +96,26 @@ def _handle_oauth_callback():
         st.error(f"⚠️ {msg}")
         return
 
-    profile          = load_profile(user["id"])
-    saved_bookmarks  = load_bookmarks(user["id"])
+    profile         = load_profile(user["id"])
+    saved_bookmarks = load_bookmarks(user["id"])
     st.session_state.user_id     = user["id"]
     st.session_state.user_name   = (profile.get("display_name") or user["display_name"]).title()
     st.session_state.email       = user["email"]
+    st.session_state.user_avatar = user.get("avatar_url", "")
     st.session_state.total_xp    = profile.get("total_xp", 0)
     st.session_state.best_streak = profile.get("best_streak", 0)
     st.session_state.bookmarks   = saved_bookmarks
+    st.session_state.is_guest    = False
     st.session_state.page        = "subject"
-    st.success(f"✅ {msg}")
     st.rerun()
 
 
 def _google_button():
-    """
-    Render an OR divider and the Google sign-in button.
-    Generates the OAuth URL once per session and caches it.
-    """
+    """Render OR divider + Google sign-in button."""
     if not is_configured():
         return
 
-    # Build URL once per session (contains an anti-CSRF state token)
+    # Cache the OAuth URL for the lifetime of this browser session
     if "google_oauth_url" not in st.session_state:
         url, err = get_google_oauth_url()
         st.session_state["google_oauth_url"] = url if not err else ""
@@ -101,11 +148,13 @@ def _google_button():
 """, unsafe_allow_html=True)
 
 
-def render():
-    # Handle OAuth redirect-back before any UI is painted
-    _handle_oauth_callback()
+# ── Page render ───────────────────────────────────────────────────────────────
 
 def render():
+    # ── Step 1: convert hash tokens → query params (JS, zero-height) ──────
+    _inject_hash_redirector()
+    # ── Step 2: exchange any OAuth tokens/code for a Supabase session ─────
+    _handle_oauth_callback()
 
     render_brand()
     render_steps(0)
@@ -113,10 +162,8 @@ def render():
     # ── Test API button — uses cached results so it never re-calls the API ─
     st.markdown('<div class="test-api-wrap">', unsafe_allow_html=True)
     if st.button("🔌 Test APIs", key="test_api_btn"):
-        # Only test if results not already cached in this session
         st.session_state._api_test_requested = True
 
-    # Run tests in a fragment so only this section rerenders
     if st.session_state.get("_api_test_requested"):
         col1, col2 = st.columns(2)
         with col1:
@@ -193,11 +240,9 @@ def render():
     if not is_configured():
         st.warning("⚠️ Database not configured — add `SUPABASE_URL` and `SUPABASE_ANON_KEY` to your Streamlit secrets to enable accounts.")
 
-   # Initialize the default tab state
     if "auth_tab" not in st.session_state:
         st.session_state.auth_tab = "🔐 Log In"
 
-    # A radio button that mimics tabs
     selected_tab = st.radio(
         "Authentication",
         ["🔐 Log In", "✨ Create Account"],
@@ -206,7 +251,7 @@ def render():
         key="auth_tab"
     )
 
-    # ── LOG IN TAB ──────────────────────────────────────────────────────
+    # ── LOG IN TAB ──────────────────────────────────────────────────────────
     if selected_tab == "🔐 Log In":
         li_email = st.text_input("Email Address", placeholder="yourname@example.com", key="li_email")
         li_pw    = st.text_input("Password", type="password", placeholder="Your password", key="li_pw")
@@ -223,23 +268,23 @@ def render():
                 if not ok:
                     st.error(f"⚠️ {msg}")
                 else:
-                    # Load saved progress from the database
                     profile = load_profile(user["id"])
                     saved_bookmarks = load_bookmarks(user["id"])
                     st.session_state.user_id     = user["id"]
                     st.session_state.user_name   = (profile.get("display_name") or user["display_name"]).title()
                     st.session_state.email       = user["email"]
+                    st.session_state.user_avatar = ""
                     st.session_state.total_xp    = profile.get("total_xp", 0)
                     st.session_state.best_streak = profile.get("best_streak", 0)
                     st.session_state.bookmarks   = saved_bookmarks
+                    st.session_state.is_guest    = False
                     st.session_state.page        = "subject"
                     st.success(f"✅ {msg}")
                     st.rerun()
 
-
         _google_button()
 
-    # ── CREATE ACCOUNT TAB ──────────────────────────────────────────────
+    # ── CREATE ACCOUNT TAB ──────────────────────────────────────────────────
     elif selected_tab == "✨ Create Account":
         su_name  = st.text_input("Display Name", placeholder="e.g. Karanveer", key="su_name")
         su_email = st.text_input("Email Address", placeholder="yourname@example.com", key="su_email")
@@ -264,15 +309,13 @@ def render():
                     st.error(f"⚠️ {msg}")
                 else:
                     st.success(f"✅ {msg}")
-                    # If no email confirmation required, Supabase already returned a session
-                    # via sign_up — but to keep auth state simple/consistent we ask the user
-                    # to log in explicitly on the Log In tab.
                     if user_id:
                         st.session_state["show_login_switch"] = True
                         st.rerun()
 
+        _google_button()
 
-        # ── Post-signup login switch ─────────────────────────────────────────
+        # ── Post-signup login switch ───────────────────────────────────────
         if st.session_state.get("show_login_switch"):
             st.markdown("""
             <div style="
@@ -296,16 +339,12 @@ def render():
 
             st.markdown("<br>", unsafe_allow_html=True)
 
-            # Define the callback function right before the button
             def switch_to_login_callback():
                 st.session_state.pop("show_login_switch", None)
-                # Clear signup fields
                 for k in ["su_name", "su_email", "su_pw", "su_pw2"]:
                     st.session_state.pop(k, None)
-                # Safely update the radio menu state
                 st.session_state.auth_tab = "🔐 Log In"
 
-            # Create the button and attach the callback
             st.button("🔐 Go to Login", key="goto_login_button", on_click=switch_to_login_callback)
 
     st.markdown('<div class="login-footer"><div class="divider-line"></div></div>', unsafe_allow_html=True)

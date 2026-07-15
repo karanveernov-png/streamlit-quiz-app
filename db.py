@@ -103,32 +103,89 @@ def sign_out():
 
 def get_google_oauth_url() -> tuple:
     """
-    Build the Google OAuth redirect URL via Supabase.
-    Returns (url: str | None, error: str | None).
-    Requires 'Google' provider to be enabled in Supabase dashboard →
+    Build the Supabase Google OAuth URL manually using implicit flow
+    (no code_challenge → tokens arrive in the URL hash fragment, not as ?code=).
+    JavaScript in login_page converts the hash to ?at= query params that
+    Python can actually read.
+
+    Requires Google provider enabled in Supabase dashboard →
     Authentication → Providers → Google.
+    Returns (url: str | None, error: str | None).
     """
-    import os
+    import urllib.parse
+    supabase_url = SUPABASE_URL
+    if not supabase_url:
+        return None, "SUPABASE_URL not configured."
+    app_url = _get_secret("APP_URL") or "http://localhost:8501"
+    qs = urllib.parse.urlencode({
+        "provider": "google",
+        "redirect_to": app_url,
+        "scopes": "email profile",
+    })
+    url = f"{supabase_url.rstrip('/')}/auth/v1/authorize?{qs}"
+    return url, None
+
+
+def _upsert_google_profile(client, user):
+    """Create a profile row for a first-time Google user (best-effort)."""
+    try:
+        meta = user.user_metadata or {}
+        display_name = (
+            meta.get("full_name") or meta.get("name") or user.email.split("@")[0]
+        )
+        avatar_url = meta.get("avatar_url") or meta.get("picture") or ""
+        existing = (
+            client.table("profiles")
+            .select("id")
+            .eq("id", user.id)
+            .limit(1)
+            .execute()
+        )
+        if not existing.data:
+            client.table("profiles").insert({
+                "id": user.id,
+                "display_name": display_name,
+                "email": user.email,
+                "total_xp": 0,
+                "best_streak": 0,
+            }).execute()
+        return display_name, avatar_url
+    except Exception:
+        meta = user.user_metadata or {}
+        return (
+            meta.get("full_name") or meta.get("name") or user.email.split("@")[0],
+            meta.get("avatar_url") or meta.get("picture") or "",
+        )
+
+
+def set_google_session(access_token: str, refresh_token: str = "") -> tuple:
+    """
+    Activate a Supabase session from implicit-flow tokens returned in the
+    URL hash and converted to query params by the JS hash redirector.
+    Returns (success: bool, message: str, user: dict | None).
+    """
     client = _get_client()
     if client is None:
-        return None, "Database not configured."
+        return False, "Database not configured.", None
     try:
-        app_url = _get_secret("APP_URL") or os.getenv("APP_URL") or "http://localhost:8501"
-        res = client.auth.sign_in_with_oauth({
-            "provider": "google",
-            "options": {
-                "redirect_to": app_url,
-                "scopes": "email profile",
-            },
-        })
-        return res.url, None
+        res = client.auth.set_session(access_token, refresh_token)
+        if not res.user:
+            return False, "Could not verify Google session.", None
+        display_name, avatar_url = _upsert_google_profile(client, res.user)
+        return True, "Signed in with Google!", {
+            "id": res.user.id,
+            "email": res.user.email,
+            "display_name": display_name,
+            "avatar_url": avatar_url,
+        }
     except Exception as e:
-        return None, str(e)
+        return False, f"Google sign-in failed: {e}", None
 
 
 def exchange_google_code(code: str) -> tuple:
     """
-    Exchange the OAuth authorisation code (from ?code= callback) for a session.
+    PKCE fallback: exchange ?code= for a session (used if the Supabase project
+    has PKCE enabled at the dashboard level).
     Returns (success: bool, message: str, user: dict | None).
     """
     client = _get_client()
@@ -138,30 +195,12 @@ def exchange_google_code(code: str) -> tuple:
         res = client.auth.exchange_code_for_session({"auth_code": code})
         if not res.user:
             return False, "Google sign-in failed — no user returned.", None
-        user = res.user
-        meta = user.user_metadata or {}
-        display_name = (
-            meta.get("full_name")
-            or meta.get("name")
-            or user.email.split("@")[0]
-        )
-        # Create profile row for first-time Google users (no-op if already exists)
-        try:
-            existing = client.table("profiles").select("id").eq("id", user.id).limit(1).execute()
-            if not existing.data:
-                client.table("profiles").insert({
-                    "id": user.id,
-                    "display_name": display_name,
-                    "email": user.email,
-                    "total_xp": 0,
-                    "best_streak": 0,
-                }).execute()
-        except Exception:
-            pass  # profile creation is best-effort
+        display_name, avatar_url = _upsert_google_profile(client, res.user)
         return True, "Signed in with Google!", {
-            "id": user.id,
-            "email": user.email,
+            "id": res.user.id,
+            "email": res.user.email,
             "display_name": display_name,
+            "avatar_url": avatar_url,
         }
     except Exception as e:
         return False, f"Google sign-in failed: {e}", None
