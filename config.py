@@ -43,7 +43,7 @@ if openrouter_api_key:
     openrouter_client = _build_openrouter_client(openrouter_api_key)
 
 # ── CONSTANTS ────────────────────────────────────────────────────────────────
-GROK_MODEL       = "llama-3.1-8b-instant"
+GROK_MODEL       = "openai/gpt-oss-20b"
 OPENROUTER_MODEL = "openai/gpt-4o-mini"
 NUM_QUESTIONS    = 5
 MAX_TOKENS       = 900
